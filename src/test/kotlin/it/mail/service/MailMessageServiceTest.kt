@@ -40,7 +40,7 @@ class MailMessageServiceTest {
             every { mailMessageRepository.persist(capture(mailMessageSlot)) }.answers {}
 
             // when
-            mailMessageService.createNewMessage(text, subject, from, to)
+            mailMessageService.createNewMail(text, subject, from, to)
 
             // then
             verify(exactly = 1) { mailMessageRepository.persist(any<MailMessage>()) }

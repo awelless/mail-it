@@ -5,6 +5,7 @@ import it.mail.repository.MailMessageRepository
 import mu.KLogging
 import java.util.UUID.randomUUID
 import javax.enterprise.context.ApplicationScoped
+import javax.transaction.Transactional
 
 @ApplicationScoped
 class MailMessageService(
@@ -12,7 +13,8 @@ class MailMessageService(
 ) {
     companion object: KLogging()
 
-    fun createNewMessage(text: String, subject: String?, emailFrom: String, emailTo: String): MailMessage {
+    @Transactional
+    fun createNewMail(text: String, subject: String?, emailFrom: String, emailTo: String): MailMessage {
         val externalId = randomUUID().toString()
 
         val message = MailMessage(

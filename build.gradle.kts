@@ -11,8 +11,9 @@ repositories {
     mavenLocal()
 }
 
-val quarkusVersion: String by project
 val mockkVersion = "1.12.3"
+val quarkusVersion: String by project
+val restAssuredKotlinExtensionsVersion = "4.5.1"
 
 dependencies {
     implementation(enforcedPlatform("io.quarkus.platform:quarkus-bom:$quarkusVersion"))
@@ -21,6 +22,7 @@ dependencies {
     implementation("io.quarkus:quarkus-config-yaml")
     implementation("io.quarkus:quarkus-flyway")
     implementation("io.quarkus:quarkus-hibernate-orm-panache-kotlin")
+    implementation("io.quarkus:quarkus-hibernate-validator")
     implementation("io.quarkus:quarkus-jdbc-h2")
     implementation("io.quarkus:quarkus-kotlin")
     implementation("io.quarkus:quarkus-mailer")
@@ -35,6 +37,7 @@ dependencies {
     testImplementation("io.mockk:mockk:$mockkVersion")
     testImplementation("io.quarkus:quarkus-junit5")
     testImplementation("io.rest-assured:rest-assured")
+    testImplementation("io.rest-assured:kotlin-extensions:$restAssuredKotlinExtensionsVersion")
 }
 
 group = "it.mail"
