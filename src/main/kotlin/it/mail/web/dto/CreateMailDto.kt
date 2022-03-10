@@ -14,4 +14,7 @@ data class CreateMailDto(
 
     @field:NotBlank(message = "Email to shouldn't be blank")
     val to: String?,
+
+    @field:NotBlank(message = "Type shouldn't be blank")
+    val type: String?,
 )

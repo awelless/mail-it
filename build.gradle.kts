@@ -11,12 +11,15 @@ repositories {
     mavenLocal()
 }
 
+val kotlinLoggingVersion = "2.1.21"
 val mockkVersion = "1.12.3"
 val quarkusVersion: String by project
 val restAssuredKotlinExtensionsVersion = "4.5.1"
 
 dependencies {
     implementation(enforcedPlatform("io.quarkus.platform:quarkus-bom:$quarkusVersion"))
+
+    implementation("io.github.microutils:kotlin-logging-jvm:$kotlinLoggingVersion")
 
     implementation("io.quarkus:quarkus-arc")
     implementation("io.quarkus:quarkus-config-yaml")
@@ -29,10 +32,8 @@ dependencies {
     implementation("io.quarkus:quarkus-resteasy-reactive")
     implementation("io.quarkus:quarkus-resteasy-reactive-jackson")
 
-    implementation("io.github.microutils:kotlin-logging-jvm:2.1.20")
-
-
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+
 
     testImplementation("io.mockk:mockk:$mockkVersion")
     testImplementation("io.quarkus:quarkus-junit5")

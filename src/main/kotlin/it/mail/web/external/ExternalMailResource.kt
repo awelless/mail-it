@@ -1,6 +1,6 @@
 package it.mail.web.external
 
-import it.mail.service.MailMessageService
+import it.mail.service.external.MailMessageService
 import it.mail.web.dto.CreateMailDto
 import it.mail.web.dto.IdDto
 import org.jboss.resteasy.reactive.ResponseStatus
@@ -17,7 +17,7 @@ class ExternalMailResource(
     @ResponseStatus(ACCEPTED)
     @POST
     fun sendMail(@Valid dto: CreateMailDto): IdDto {
-        val savedMail = mailMessageService.createNewMail(dto.text!!, dto.subject, dto.from!!, dto.to!!)
+        val savedMail = mailMessageService.createNewMail(dto.text!!, dto.subject, dto.from!!, dto.to!!, dto.type!!)
         return IdDto(savedMail.externalId)
     }
 }

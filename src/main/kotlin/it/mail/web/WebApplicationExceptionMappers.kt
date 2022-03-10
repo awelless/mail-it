@@ -10,7 +10,7 @@ import javax.ws.rs.ext.ExceptionMapper
 import javax.ws.rs.ext.Provider
 
 @Provider
-class ConstraintViolationExceptionMapper: ExceptionMapper<ConstraintViolationException> {
+class ConstraintViolationExceptionMapper : ExceptionMapper<ConstraintViolationException> {
 
     override fun toResponse(exception: ConstraintViolationException): Response {
         val violationDtos = exception.constraintViolations
