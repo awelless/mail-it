@@ -11,7 +11,7 @@ import javax.ws.rs.Path
 
 @Path("/external/mail")
 class ExternalMailResource(
-    private val mailMessageService: MailMessageService,
+        private val mailMessageService: MailMessageService,
 ) {
 
     @ResponseStatus(ACCEPTED)

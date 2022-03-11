@@ -9,13 +9,7 @@ import javax.transaction.Transactional
 @ApplicationScoped
 class MailMessageRepository : PanacheRepository<MailMessage> {
 
-    fun findOneByExternalId(externalId: String): MailMessage? {
-        val query = find(
-            """
-            SELECT m FROM MailMessage m 
-             WHERE m.externalId = ?1""",
-            externalId)
-
-        return query.firstResult()
-    }
+    fun findOneByExternalId(externalId: String): MailMessage? =
+            find("externalId", externalId)
+                    .firstResult()
 }

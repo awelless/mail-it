@@ -1,4 +1,4 @@
-package it.mail.service
+package it.mail.service.external
 
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
@@ -9,14 +9,16 @@ import io.mockk.verify
 import it.mail.domain.MailMessage
 import it.mail.domain.MailMessageType
 import it.mail.repository.MailMessageRepository
-import it.mail.service.external.ExternalMailMessageTypeService
-import it.mail.service.external.MailMessageService
+import it.mail.repository.MailMessageTypeRepository
+import it.mail.service.BadRequestException
+import it.mail.test.createMailMessageType
 import it.mail.test.isUuid
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
 
 @ExtendWith(MockKExtension::class)
@@ -24,8 +26,9 @@ class MailMessageServiceTest {
 
     @RelaxedMockK
     lateinit var mailMessageRepository: MailMessageRepository
+
     @RelaxedMockK
-    lateinit var mailMessageTypeService: ExternalMailMessageTypeService
+    lateinit var mailMessageTypeRepository: MailMessageTypeRepository
 
     @InjectMockKs
     lateinit var mailMessageService: MailMessageService
@@ -36,7 +39,7 @@ class MailMessageServiceTest {
 
     @BeforeEach
     fun setUp() {
-        mailType = MailMessageType("DEFAULT")
+        mailType = createMailMessageType()
     }
 
     @Nested
@@ -50,7 +53,7 @@ class MailMessageServiceTest {
             val from = "from@gmail.com"
             val to = "to@mail.com"
 
-            every { mailMessageTypeService.getTypeByName(mailType.name) }.returns(mailType)
+            every { mailMessageTypeRepository.findOneByName(mailType.name) }.returns(mailType)
             every { mailMessageRepository.persist(capture(mailMessageSlot)) }.answers {}
 
             // when
@@ -66,6 +69,18 @@ class MailMessageServiceTest {
             assertEquals(to, savedMailMessage.emailTo)
             assertTrue(savedMailMessage.externalId.isUuid())
             assertEquals(mailType, savedMailMessage.type)
+        }
+
+        @Test
+        fun `when message type is invalid - throws exception`() {
+            val mailTypeName = "invalid"
+            every { mailMessageTypeRepository.findOneByName(mailTypeName) }.returns(null)
+
+            assertThrows<BadRequestException> {
+                mailMessageService.createNewMail("1", "sub", "em@gmail.com", "aa@gm.co", mailTypeName)
+            }
+
+            verify(exactly = 0) { mailMessageRepository.persist(any<MailMessage>()) }
         }
     }
 }

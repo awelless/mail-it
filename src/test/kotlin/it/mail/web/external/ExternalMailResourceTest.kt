@@ -15,9 +15,7 @@ import org.hamcrest.Matchers.hasItems
 import org.jboss.resteasy.reactive.RestResponse.StatusCode.ACCEPTED
 import org.jboss.resteasy.reactive.RestResponse.StatusCode.BAD_REQUEST
 import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import javax.inject.Inject
@@ -29,6 +27,7 @@ class ExternalMailResourceTest {
 
     @Inject
     lateinit var mailMessageRepository: MailMessageRepository
+
     @Inject
     lateinit var mailMessageTypeRepository: MailMessageTypeRepository
 
@@ -36,9 +35,8 @@ class ExternalMailResourceTest {
 
     @BeforeEach
     fun setUp() {
-        val typeName = "DEFAULT"
-        mailMessageTypeRepository.persist(MailMessageType(typeName))
-        mailType = mailMessageTypeRepository.findOneByName(typeName)!!
+        mailType = MailMessageType("DEFAULT")
+        mailMessageTypeRepository.persist(mailType)
     }
 
     @AfterEach
@@ -49,13 +47,13 @@ class ExternalMailResourceTest {
     }
 
     @Test
-    fun `with valid message - saves mail to db`() {
+    fun `sendMail with valid message - saves mail to db`() {
         val createMailDto = CreateMailDto(
-            text = "Hello. How are you?",
-            subject = "Greeting",
-            from = "yoshito@gmail.com",
-            to = "makise@gmail.com",
-            type = mailType.name,
+                text = "Hello. How are you?",
+                subject = "Greeting",
+                from = "yoshito@gmail.com",
+                to = "makise@gmail.com",
+                type = mailType.name,
         )
 
         val messageId: String = Given {
@@ -78,11 +76,11 @@ class ExternalMailResourceTest {
     }
 
     @Test
-    fun `without required fields - returns 400`() {
+    fun `sendMail without required fields - returns 400`() {
         Given {
             contentType(JSON)
             body(
-                """
+                    """
                     {
                         "subject":"a"
                     }"""
@@ -95,6 +93,28 @@ class ExternalMailResourceTest {
             body("size()", equalTo(4))
             body("fieldName", hasItems("text", "from", "to", "type"))
             body("errorMessage", hasItems("Text shouldn't be blank", "Email from shouldn't be blank", "Email to shouldn't be blank"))
+        }
+    }
+
+    @Test
+    fun `sendMail with invalid message type - returns 400`() {
+        val createMailDto = CreateMailDto(
+                text = "Hello. How are you?",
+                subject = "Greeting",
+                from = "yoshito@gmail.com",
+                to = "makise@gmail.com",
+                type = "invalid_type",
+        )
+
+        Given {
+            contentType(JSON)
+            body(createMailDto)
+        } When {
+            post(baseUrl)
+        } Then {
+            statusCode(BAD_REQUEST)
+        } Extract {
+            assertEquals("Invalid type: invalid_type is passed", body().asString())
         }
     }
 }

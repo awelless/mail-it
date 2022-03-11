@@ -11,23 +11,23 @@ import javax.persistence.Table
 @Entity
 class MailMessageType(
 
-    /**
-     * Name of actual mail type. Used in external API
-     * to determine a type of mail that is sent
-     */
-    @Column(name = "name", nullable = false, unique = true)
-    var name: String,
+        /**
+         * Name of actual mail type. Used in external API
+         * to determine a type of mail that is sent
+         */
+        @Column(name = "name", nullable = false, unique = true, updatable = false)
+        val name: String,
 
-    @Column(name = "description")
-    var description: String? = null,
+        @Column(name = "description")
+        var description: String? = null,
 
-    /**
-     * Number of max mail send retry attempts.
-     * If null, then infinite retries are possible
-     */
-    @Column(name = "max_retry_count")
-    var maxRetryCount: Int? = null,
+        /**
+         * Number of max mail send retry attempts.
+         * If null, then infinite retries are possible
+         */
+        @Column(name = "max_retries_count")
+        var maxRetriesCount: Int? = null,
 
-    // TODO html template
+        // TODO html template
 
 ) : BaseEntity()
