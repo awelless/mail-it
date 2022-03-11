@@ -16,7 +16,6 @@ import it.mail.web.dto.MailMessageTypeCreateDto
 import it.mail.web.dto.MailMessageTypeUpdateDto
 import org.jboss.resteasy.reactive.RestResponse.StatusCode.CREATED
 import org.jboss.resteasy.reactive.RestResponse.StatusCode.OK
-import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -42,11 +41,6 @@ class MailMessageTypeResourceTest {
     fun setUp() {
         mailType = MailMessageType("DEFAULT", "desc", 4)
         mailMessageTypeRepository.persist(mailType)
-    }
-
-    @AfterEach
-    fun tearDown() {
-        mailMessageTypeRepository.deleteAll()
     }
 
     @Test

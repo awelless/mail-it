@@ -14,7 +14,6 @@ import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.hasItems
 import org.jboss.resteasy.reactive.RestResponse.StatusCode.ACCEPTED
 import org.jboss.resteasy.reactive.RestResponse.StatusCode.BAD_REQUEST
-import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -37,13 +36,6 @@ class ExternalMailResourceTest {
     fun setUp() {
         mailType = MailMessageType("DEFAULT")
         mailMessageTypeRepository.persist(mailType)
-    }
-
-    @AfterEach
-    fun tearDown() {
-        // TODO implement automated db cleanup
-        mailMessageRepository.deleteAll()
-        mailMessageTypeRepository.deleteAll()
     }
 
     @Test
