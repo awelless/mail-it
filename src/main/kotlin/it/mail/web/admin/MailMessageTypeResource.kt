@@ -21,7 +21,7 @@ import javax.ws.rs.QueryParam
 
 @Path("/admin/mail/type")
 class MailMessageTypeResource(
-        private val mailMessageTypeService: MailMessageTypeService,
+    private val mailMessageTypeService: MailMessageTypeService,
 ) {
 
     @GET
@@ -33,8 +33,8 @@ class MailMessageTypeResource(
 
     @GET
     fun getAllSliced(
-            @QueryParam(PAGE_PARAM) page: Int?,
-            @QueryParam(SIZE_PARAM) size: Int?,
+        @QueryParam(PAGE_PARAM) page: Int?,
+        @QueryParam(SIZE_PARAM) size: Int?,
     ): Slice<MailMessageTypeResponseDto> {
 
         val slice = mailMessageTypeService.getAllSliced(page ?: DEFAULT_PAGE, size ?: DEFAULT_SIZE)
@@ -45,9 +45,9 @@ class MailMessageTypeResource(
     @POST
     fun create(createDto: MailMessageTypeCreateDto): MailMessageTypeResponseDto {
         val mailType = mailMessageTypeService.createNewMailType(
-                name = createDto.name,
-                description = createDto.description,
-                maxRetriesCount = createDto.maxRetriesCount,
+            name = createDto.name,
+            description = createDto.description,
+            maxRetriesCount = createDto.maxRetriesCount,
         )
 
         return toDto(mailType)
@@ -56,25 +56,24 @@ class MailMessageTypeResource(
     @PUT
     @Path("/{id}")
     fun update(
-            @PathParam("id") id: Long,
-            updateDto: MailMessageTypeUpdateDto
+        @PathParam("id") id: Long,
+        updateDto: MailMessageTypeUpdateDto
     ): MailMessageTypeResponseDto {
 
         val mailType = mailMessageTypeService.updateMailType(
-                id = id,
-                description = updateDto.description,
-                maxRetriesCount = updateDto.maxRetriesCount,
+            id = id,
+            description = updateDto.description,
+            maxRetriesCount = updateDto.maxRetriesCount,
         )
 
         return toDto(mailType)
     }
 
-
     private fun toDto(mailType: MailMessageType) =
-            MailMessageTypeResponseDto(
-                    id = mailType.id!!,
-                    name = mailType.name,
-                    description = mailType.description,
-                    maxRetriesCount = mailType.maxRetriesCount,
-            )
+        MailMessageTypeResponseDto(
+            id = mailType.id!!,
+            name = mailType.name,
+            description = mailType.description,
+            maxRetriesCount = mailType.maxRetriesCount,
+        )
 }

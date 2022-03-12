@@ -14,7 +14,6 @@ abstract class BaseEntity {
     @Column(name = "id", nullable = false, updatable = false, unique = true)
     var id: Long? = null
 
-
     override fun equals(other: Any?): Boolean {
         if (this === other) {
             return true

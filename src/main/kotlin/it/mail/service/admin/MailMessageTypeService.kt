@@ -11,16 +11,16 @@ import javax.transaction.Transactional
 
 @ApplicationScoped
 class MailMessageTypeService(
-        private val mailMessageTypeRepository: MailMessageTypeRepository,
+    private val mailMessageTypeRepository: MailMessageTypeRepository,
 ) {
     companion object : KLogging()
 
     fun getById(id: Long): MailMessageType =
-            mailMessageTypeRepository.findById(id)
-                    ?: throw NotFoundException("MailMessageType with id: $id is not found")
+        mailMessageTypeRepository.findById(id)
+            ?: throw NotFoundException("MailMessageType with id: $id is not found")
 
     fun getAllSliced(page: Int, size: Int): Slice<MailMessageType> =
-            mailMessageTypeRepository.findAllSliced(page, size)
+        mailMessageTypeRepository.findAllSliced(page, size)
 
     @Transactional
     fun createNewMailType(name: String, description: String?, maxRetriesCount: Int?): MailMessageType {
@@ -29,9 +29,9 @@ class MailMessageTypeService(
         }
 
         val mailType = MailMessageType(
-                name = name,
-                description = description,
-                maxRetriesCount = maxRetriesCount,
+            name = name,
+            description = description,
+            maxRetriesCount = maxRetriesCount,
         )
 
         mailMessageTypeRepository.persist(mailType)

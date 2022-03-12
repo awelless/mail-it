@@ -1,0 +1,7 @@
+root = true
+
+# should be uncommented, when spotless wil support ktlint with .editorconfig
+# https://github.com/diffplug/spotless/issues/142
+
+# [*.{kt,kts}]
+# ij_kotlin_imports_layout=it.mail.**,|,java.**,javax.**,kotlin.**,kotlinx.**,|,*

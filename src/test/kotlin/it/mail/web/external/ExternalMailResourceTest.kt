@@ -41,11 +41,11 @@ class ExternalMailResourceTest {
     @Test
     fun `sendMail with valid message - saves mail to db`() {
         val createMailDto = CreateMailDto(
-                text = "Hello. How are you?",
-                subject = "Greeting",
-                from = "yoshito@gmail.com",
-                to = "makise@gmail.com",
-                type = mailType.name,
+            text = "Hello. How are you?",
+            subject = "Greeting",
+            from = "yoshito@gmail.com",
+            to = "makise@gmail.com",
+            type = mailType.name,
         )
 
         val messageId: String = Given {
@@ -72,10 +72,11 @@ class ExternalMailResourceTest {
         Given {
             contentType(JSON)
             body(
-                    """
+                """
                     {
                         "subject":"a"
-                    }"""
+                    }
+                """
             )
         } When {
             post(baseUrl)
@@ -91,11 +92,11 @@ class ExternalMailResourceTest {
     @Test
     fun `sendMail with invalid message type - returns 400`() {
         val createMailDto = CreateMailDto(
-                text = "Hello. How are you?",
-                subject = "Greeting",
-                from = "yoshito@gmail.com",
-                to = "makise@gmail.com",
-                type = "invalid_type",
+            text = "Hello. How are you?",
+            subject = "Greeting",
+            from = "yoshito@gmail.com",
+            to = "makise@gmail.com",
+            type = "invalid_type",
         )
 
         Given {

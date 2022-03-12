@@ -1,10 +1,11 @@
 pluginManagement {
-    val quarkusVersion: String by settings
     val kotlinVersion: String by settings
+    val quarkusVersion: String by settings
+    val spotlessVersion = "6.3.0"
 
     repositories {
-        mavenLocal()
         mavenCentral()
+        mavenLocal()
         gradlePluginPortal()
     }
 
@@ -14,7 +15,9 @@ pluginManagement {
         kotlin("plugin.jpa") version kotlinVersion
 
         id("io.quarkus") version quarkusVersion
+
+        id("com.diffplug.spotless") version spotlessVersion
     }
 }
 
-rootProject.name="mail-it"
+rootProject.name = "mail-it"

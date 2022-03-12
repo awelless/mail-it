@@ -7,9 +7,9 @@ val COUNTER = AtomicLong()
 
 fun createMailMessageType(): MailMessageType {
     val mailType = MailMessageType(
-            name = "DEFAULT",
-            description = "Some description",
-            maxRetriesCount = 111,
+        name = "DEFAULT",
+        description = "Some description",
+        maxRetriesCount = 111,
     )
 
     mailType.id = COUNTER.incrementAndGet()

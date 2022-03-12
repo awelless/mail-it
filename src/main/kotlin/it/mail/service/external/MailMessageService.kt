@@ -12,26 +12,26 @@ import javax.transaction.Transactional
 
 @ApplicationScoped
 class MailMessageService(
-        private val mailMessageRepository: MailMessageRepository,
-        private val mailMessageTypeRepository: MailMessageTypeRepository,
+    private val mailMessageRepository: MailMessageRepository,
+    private val mailMessageTypeRepository: MailMessageTypeRepository,
 ) {
     companion object : KLogging()
 
     @Transactional
     fun createNewMail(text: String, subject: String?, emailFrom: String, emailTo: String, messageTypeName: String): MailMessage {
         val messageType = mailMessageTypeRepository.findOneByName(messageTypeName)
-                ?: throw BadRequestException("Invalid type: $messageTypeName is passed")
+            ?: throw BadRequestException("Invalid type: $messageTypeName is passed")
 
         val externalId = randomUUID().toString()
 
         val message = MailMessage(
-                text = text,
-                subject = subject,
-                emailFrom = emailFrom,
-                emailTo = emailTo,
-                externalId = externalId,
-                type = messageType,
-                createdAt = Instant.now(),
+            text = text,
+            subject = subject,
+            emailFrom = emailFrom,
+            emailTo = emailTo,
+            externalId = externalId,
+            type = messageType,
+            createdAt = Instant.now(),
         )
 
         mailMessageRepository.persist(message)

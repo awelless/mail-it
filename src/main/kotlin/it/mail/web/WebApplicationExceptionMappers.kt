@@ -17,10 +17,10 @@ import javax.ws.rs.ext.Provider
 class BadRequestExceptionMapper : ExceptionMapper<BadRequestException> {
 
     override fun toResponse(exception: BadRequestException): Response =
-            Response.status(BAD_REQUEST)
-                    .type(TEXT_PLAIN_TYPE) // TODO some dto ?
-                    .entity(exception.message)
-                    .build()
+        Response.status(BAD_REQUEST)
+            .type(TEXT_PLAIN_TYPE) // TODO some dto ?
+            .entity(exception.message)
+            .build()
 }
 
 @Provider
@@ -28,12 +28,12 @@ class ConstraintViolationExceptionMapper : ExceptionMapper<ConstraintViolationEx
 
     override fun toResponse(exception: ConstraintViolationException): Response {
         val violationDtos = exception.constraintViolations
-                .map { FieldConstraintViolation(getFieldName(it), it.message) }
+            .map { FieldConstraintViolation(getFieldName(it), it.message) }
 
         return Response.status(BAD_REQUEST)
-                .type(APPLICATION_JSON_TYPE)
-                .entity(violationDtos)
-                .build()
+            .type(APPLICATION_JSON_TYPE)
+            .entity(violationDtos)
+            .build()
     }
 
     private fun getFieldName(violation: ConstraintViolation<*>) = violation.propertyPath.last().name
@@ -43,8 +43,8 @@ class ConstraintViolationExceptionMapper : ExceptionMapper<ConstraintViolationEx
 class NotFoundExceptionMapper : ExceptionMapper<NotFoundException> {
 
     override fun toResponse(exception: NotFoundException): Response =
-            Response.status(NOT_FOUND)
-                    .type(TEXT_PLAIN_TYPE) // TODO some dto ?
-                    .entity(exception.message)
-                    .build()
+        Response.status(NOT_FOUND)
+            .type(TEXT_PLAIN_TYPE) // TODO some dto ?
+            .entity(exception.message)
+            .build()
 }

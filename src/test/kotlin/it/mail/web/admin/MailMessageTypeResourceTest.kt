@@ -103,9 +103,9 @@ class MailMessageTypeResourceTest {
     @Test
     fun create() {
         val createDto = MailMessageTypeCreateDto(
-                name = "name",
-                description = "yup",
-                maxRetriesCount = 1,
+            name = "name",
+            description = "yup",
+            maxRetriesCount = 1,
         )
 
         val jsonPath = Given {
@@ -127,8 +127,8 @@ class MailMessageTypeResourceTest {
     @Test
     fun update() {
         val updateDto = MailMessageTypeUpdateDto(
-                description = "yup",
-                maxRetriesCount = 1,
+            description = "yup",
+            maxRetriesCount = 1,
         )
 
         val jsonPath = Given {

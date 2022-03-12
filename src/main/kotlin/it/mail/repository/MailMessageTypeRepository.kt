@@ -12,17 +12,17 @@ import javax.transaction.Transactional
 class MailMessageTypeRepository : PanacheRepository<MailMessageType> {
 
     fun findOneByName(name: String): MailMessageType? =
-            find("name", name)
-                    .firstResult()
+        find("name", name)
+            .firstResult()
 
     fun findAllSliced(page: Int, size: Int): Slice<MailMessageType> {
         val content = findAll(Sort.by("id"))
-                .page(page, size)
-                .list()
+            .page(page, size)
+            .list()
 
         return Slice(content, page, size)
     }
 
     fun existsOneWithName(name: String): Boolean =
-            count("name", name) > 0
+        count("name", name) > 0
 }

@@ -1,9 +1,16 @@
+import com.diffplug.gradle.spotless.SpotlessExtension
+import com.diffplug.spotless.LineEnding
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
+
 plugins {
     kotlin("jvm")
     kotlin("plugin.allopen")
     kotlin("plugin.jpa")
 
     id("io.quarkus")
+
+    id("com.diffplug.spotless")
 }
 
 repositories {
@@ -34,7 +41,6 @@ dependencies {
 
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 
-
     testImplementation("io.mockk:mockk:$mockkVersion")
     testImplementation("io.quarkus:quarkus-junit5")
     testImplementation("io.rest-assured:rest-assured")
@@ -57,7 +63,42 @@ allOpen {
     annotations("javax.persistence.Entity", "javax.persistence.MappedSuperclass", "javax.persistence.Embeddable")
 }
 
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
+tasks.withType<KotlinCompile> {
     kotlinOptions.jvmTarget = JavaVersion.VERSION_11.toString()
     kotlinOptions.javaParameters = true
+}
+
+configure<SpotlessExtension> {
+    kotlin {
+        lineEndings = LineEnding.UNIX
+        encoding("UTF-8")
+        endWithNewline()
+        trimTrailingWhitespace()
+
+        ktlint()
+    }
+
+    kotlinGradle {
+        lineEndings = LineEnding.UNIX
+        encoding("UTF-8")
+        endWithNewline()
+        trimTrailingWhitespace()
+
+        ktlint()
+    }
+
+    format("misc") {
+        target(".gitignore", "**/*.yml", "**/*.xml")
+        targetExclude(".gradle/**", ".idea/**", "build/**")
+
+        lineEndings = LineEnding.UNIX
+        encoding("UTF-8")
+        endWithNewline()
+        trimTrailingWhitespace()
+    }
+}
+
+task("copyGitHooks", Copy::class) {
+    from("git")
+    into(".git/hooks")
 }

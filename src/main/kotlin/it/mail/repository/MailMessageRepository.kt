@@ -10,6 +10,6 @@ import javax.transaction.Transactional
 class MailMessageRepository : PanacheRepository<MailMessage> {
 
     fun findOneByExternalId(externalId: String): MailMessage? =
-            find("externalId", externalId)
-                    .firstResult()
+        find("externalId", externalId)
+            .firstResult()
 }

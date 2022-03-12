@@ -11,8 +11,8 @@ class ClearDatabaseCallback : QuarkusTestAfterEachCallback {
 
     override fun afterEach(context: QuarkusTestMethodContext) {
         val datasource = Arc.container()
-                .instance(DataSource::class.java)
-                .get()
+            .instance(DataSource::class.java)
+            .get()
 
         datasource?.clear()
     }
