@@ -7,6 +7,7 @@ import io.mockk.junit5.MockKExtension
 import io.mockk.slot
 import io.mockk.verify
 import it.mail.domain.MailMessage
+import it.mail.domain.MailMessageStatus.PENDING
 import it.mail.domain.MailMessageType
 import it.mail.repository.MailMessageRepository
 import it.mail.repository.MailMessageTypeRepository
@@ -69,6 +70,7 @@ class MailMessageServiceTest {
             assertEquals(to, savedMailMessage.emailTo)
             assertTrue(savedMailMessage.externalId.isUuid())
             assertEquals(mailType, savedMailMessage.type)
+            assertEquals(PENDING, savedMailMessage.status)
         }
 
         @Test

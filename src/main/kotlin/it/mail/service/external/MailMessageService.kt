@@ -1,6 +1,7 @@
 package it.mail.service.external
 
 import it.mail.domain.MailMessage
+import it.mail.domain.MailMessageStatus.PENDING
 import it.mail.repository.MailMessageRepository
 import it.mail.repository.MailMessageTypeRepository
 import it.mail.service.BadRequestException
@@ -32,6 +33,7 @@ class MailMessageService(
             externalId = externalId,
             type = messageType,
             createdAt = Instant.now(),
+            status = PENDING,
         )
 
         mailMessageRepository.persist(message)

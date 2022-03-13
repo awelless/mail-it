@@ -6,6 +6,7 @@ import javax.persistence.Entity
 import javax.persistence.JoinColumn
 import javax.persistence.ManyToOne
 import javax.persistence.Table
+import javax.persistence.Version
 
 @Table(name = "mail_message")
 @Entity
@@ -33,4 +34,24 @@ class MailMessage(
     @Column(name = "created_at", nullable = false, updatable = false)
     val createdAt: Instant,
 
-) : BaseEntity()
+    @Column(name = "sent_at")
+    var sentAt: Instant? = null,
+
+    @Column(name = "status", nullable = false)
+    val status: MailMessageStatus,
+
+) : BaseEntity() {
+
+    @Version
+    @Column(name = "version")
+    var version: Int = 0
+}
+
+enum class MailMessageStatus {
+
+    PENDING,
+    RETRY,
+    SENDING,
+    SENT,
+    FAILED,
+}
