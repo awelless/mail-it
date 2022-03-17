@@ -39,7 +39,10 @@ dependencies {
     implementation("io.quarkus:quarkus-resteasy-reactive")
     implementation("io.quarkus:quarkus-resteasy-reactive-jackson")
 
+    implementation("io.smallrye.reactive:mutiny-kotlin")
+
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
 
     testImplementation("io.mockk:mockk:$mockkVersion")
     testImplementation("io.quarkus:quarkus-junit5")

@@ -12,7 +12,7 @@ abstract class BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false, updatable = false, unique = true)
-    var id: Long? = null
+    var id: Long = 0
 
     override fun equals(other: Any?): Boolean {
         if (this === other) {

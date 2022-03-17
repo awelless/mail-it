@@ -38,7 +38,7 @@ class MailMessageService(
 
         mailMessageRepository.persist(message)
 
-        logger.debug { "Persisted message: $externalId" }
+        logger.debug { "Persisted message with externalId: $externalId" }
 
         return message
     }

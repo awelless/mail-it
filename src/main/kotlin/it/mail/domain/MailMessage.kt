@@ -5,11 +5,17 @@ import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.JoinColumn
 import javax.persistence.ManyToOne
+import javax.persistence.NamedAttributeNode
+import javax.persistence.NamedEntityGraph
 import javax.persistence.Table
 import javax.persistence.Version
 
 @Table(name = "mail_message")
 @Entity
+@NamedEntityGraph(
+    name = "MailMessage[type]",
+    attributeNodes = [NamedAttributeNode("type")],
+)
 class MailMessage(
 
     @Column(name = "text", nullable = false, updatable = false)
@@ -18,8 +24,11 @@ class MailMessage(
     @Column(name = "subject", updatable = false)
     val subject: String?,
 
-    @Column(name = "email_from", nullable = false, updatable = false)
-    val emailFrom: String,
+    /**
+     * Overrides default sender email address
+     */
+    @Column(name = "email_from", updatable = false)
+    val emailFrom: String?,
 
     @Column(name = "email_to", nullable = false, updatable = false)
     val emailTo: String,
@@ -38,7 +47,10 @@ class MailMessage(
     var sentAt: Instant? = null,
 
     @Column(name = "status", nullable = false)
-    val status: MailMessageStatus,
+    var status: MailMessageStatus,
+
+    @Column(name = "failed_count", nullable = false)
+    var failedCount: Int = 0,
 
 ) : BaseEntity() {
 
