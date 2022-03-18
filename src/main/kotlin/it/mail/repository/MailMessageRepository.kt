@@ -10,11 +10,10 @@ import javax.transaction.Transactional
 @ApplicationScoped
 class MailMessageRepository : PanacheRepository<MailMessage> {
 
-    fun findOneWithTypeByIdAndStatus(id: Long, statuses: Collection<MailMessageStatus>): MailMessage? {
-        return find("id = ?1 AND status IN ?2", id, statuses)
+    fun findOneWithTypeByIdAndStatus(id: Long, statuses: Collection<MailMessageStatus>): MailMessage? =
+        find("id = ?1 AND status IN ?2", id, statuses)
             .withFetchGraph("MailMessage[type]")
             .firstResult()
-    }
 
     fun findOneByExternalId(externalId: String): MailMessage? =
         find("externalId", externalId)
@@ -22,6 +21,7 @@ class MailMessageRepository : PanacheRepository<MailMessage> {
 
     fun findAllIdsByStatusIn(statuses: Collection<MailMessageStatus>): List<Long> =
         find("status IN ?1", statuses)
-            .project(Long::class.java)
+            .project(IdProjection::class.java) // is it possible to use long here?
             .list()
+            .map { it.id }
 }
