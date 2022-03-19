@@ -1,6 +1,6 @@
 package it.mail.web.external
 
-import it.mail.service.external.MailMessageService
+import it.mail.service.external.ExternalMailMessageService
 import it.mail.web.dto.CreateMailDto
 import it.mail.web.dto.IdDto
 import org.jboss.resteasy.reactive.ResponseStatus
@@ -11,7 +11,7 @@ import javax.ws.rs.Path
 
 @Path("/external/mail")
 class ExternalMailResource(
-    private val mailMessageService: MailMessageService,
+    private val mailMessageService: ExternalMailMessageService,
 ) {
 
     @ResponseStatus(ACCEPTED)

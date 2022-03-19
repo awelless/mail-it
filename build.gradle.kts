@@ -48,6 +48,7 @@ dependencies {
     testImplementation("io.quarkus:quarkus-junit5")
     testImplementation("io.rest-assured:rest-assured")
     testImplementation("io.rest-assured:kotlin-extensions:$restAssuredKotlinExtensionsVersion")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test")
 }
 
 group = "it.mail"

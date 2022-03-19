@@ -12,7 +12,7 @@ import javax.enterprise.context.ApplicationScoped
 import javax.transaction.Transactional
 
 @ApplicationScoped
-class MailMessageService(
+class ExternalMailMessageService(
     private val mailMessageRepository: MailMessageRepository,
     private val mailMessageTypeRepository: MailMessageTypeRepository,
 ) {

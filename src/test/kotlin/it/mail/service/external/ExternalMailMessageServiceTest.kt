@@ -23,7 +23,7 @@ import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
 
 @ExtendWith(MockKExtension::class)
-class MailMessageServiceTest {
+class ExternalMailMessageServiceTest {
 
     @RelaxedMockK
     lateinit var mailMessageRepository: MailMessageRepository
@@ -32,7 +32,7 @@ class MailMessageServiceTest {
     lateinit var mailMessageTypeRepository: MailMessageTypeRepository
 
     @InjectMockKs
-    lateinit var mailMessageService: MailMessageService
+    lateinit var mailMessageService: ExternalMailMessageService
 
     val mailMessageSlot = slot<MailMessage>()
 

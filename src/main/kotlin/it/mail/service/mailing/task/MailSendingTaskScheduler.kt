@@ -1,8 +1,6 @@
 package it.mail.service.mailing.task
 
-import it.mail.domain.MailMessageStatus.PENDING
-import it.mail.domain.MailMessageStatus.RETRY
-import it.mail.repository.MailMessageRepository
+import it.mail.service.mailing.MailMessageService
 import it.mail.service.mailing.SendMailMessageService
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -16,14 +14,11 @@ import kotlin.time.Duration.Companion.seconds
 
 @ApplicationScoped
 class MailSendingTaskProcessor(
-    private val mailMessageRepository: MailMessageRepository,
+    private val mailMessageService: MailMessageService,
     private val sendService: SendMailMessageService,
 ) {
-
-    private val unsentMessageStatuses = listOf(PENDING, RETRY)
-
     fun processUnsentMail() {
-        mailMessageRepository.findAllIdsByStatusIn(unsentMessageStatuses)
+        mailMessageService.getAllIdsOfPossibleToSentMessages()
             .forEach(sendService::sendMail)
     }
 }
@@ -35,7 +30,7 @@ class MailSendingTaskScheduler(
     // TODO single threaded dispatcher here ?
     private val coroutineScope = CoroutineScope(Dispatchers.Default)
 
-    private val delayDuration = 30.seconds
+    private val delayDuration = 10.seconds
 
     @PostConstruct
     private fun setUp() {
