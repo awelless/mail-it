@@ -71,7 +71,7 @@ class MailMessageTypeResource(
 
     private fun toDto(mailType: MailMessageType) =
         MailMessageTypeResponseDto(
-            id = mailType.id!!,
+            id = mailType.id,
             name = mailType.name,
             description = mailType.description,
             maxRetriesCount = mailType.maxRetriesCount,

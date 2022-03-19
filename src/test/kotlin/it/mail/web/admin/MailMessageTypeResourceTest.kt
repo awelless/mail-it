@@ -46,7 +46,7 @@ class MailMessageTypeResourceTest {
     @Test
     fun getById() {
         val jsonPath = When {
-            get(mailTypeUrl, mailType.id!!)
+            get(mailTypeUrl, mailType.id)
         } Then {
             statusCode(OK)
         } Extract {

@@ -68,10 +68,10 @@ class MailMessageTypeServiceTest {
             val description = "new d"
             val retries = null
 
-            every { mailMessageTypeRepository.findById(mailType.id!!) }.returns(mailType)
+            every { mailMessageTypeRepository.findById(mailType.id) }.returns(mailType)
             every { mailMessageTypeRepository.persist(any<MailMessageType>()) }.returnsArgument(0)
 
-            val actual = mailMessageTypeService.updateMailType(mailType.id!!, description, retries)
+            val actual = mailMessageTypeService.updateMailType(mailType.id, description, retries)
 
             assertEquals(mailType.name, actual.name)
             assertEquals(description, actual.description)
