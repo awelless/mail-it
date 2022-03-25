@@ -1,6 +1,7 @@
 package it.mail.service.mailing
 
 import it.mail.domain.MailMessage
+import it.mail.domain.MailMessageStatus.CANCELED
 import it.mail.domain.MailMessageStatus.FAILED
 import it.mail.domain.MailMessageStatus.PENDING
 import it.mail.domain.MailMessageStatus.RETRY
@@ -59,6 +60,11 @@ class MailMessageService(
             }
         }
 
+        mailMessageRepository.persist(mailMessage)
+    }
+
+    fun processMessageTypeForceDeletion(mailMessage: MailMessage) {
+        mailMessage.status = CANCELED
         mailMessageRepository.persist(mailMessage)
     }
 }

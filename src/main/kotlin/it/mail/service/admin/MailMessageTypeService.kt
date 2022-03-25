@@ -1,6 +1,8 @@
 package it.mail.service.admin
 
 import it.mail.domain.MailMessageType
+import it.mail.domain.MailMessageTypeState.DELETED
+import it.mail.domain.MailMessageTypeState.FORCE_DELETED
 import it.mail.repository.MailMessageTypeRepository
 import it.mail.service.BadRequestException
 import it.mail.service.NotFoundException
@@ -36,7 +38,7 @@ class MailMessageTypeService(
 
         mailMessageTypeRepository.persist(mailType)
 
-        logger.debug { "Saved MailMessageType: ${mailType.id}" }
+        logger.info { "Saved MailMessageType: ${mailType.id}" }
 
         return mailType
     }
@@ -50,10 +52,23 @@ class MailMessageTypeService(
 
         mailMessageTypeRepository.persist(mailType)
 
-        logger.debug { "Updated MailMessageType: ${mailType.id}" }
+        logger.info { "Updated MailMessageType: ${mailType.id}" }
 
         return mailType
     }
 
-    // TODO mail message type deletion
+    @Transactional
+    fun deleteMailType(id: Long, force: Boolean) {
+        val mailType = getById(id)
+
+        mailType.state = if (force) { FORCE_DELETED } else { DELETED }
+
+        mailMessageTypeRepository.persist(mailType)
+
+        if (force) {
+            logger.info { "MailMessageType: ${mailType.id} is marked as force deleted" }
+        } else {
+            logger.info { "MailMessageType: ${mailType.id} is marked as deleted" }
+        }
+    }
 }

@@ -7,6 +7,8 @@ import io.restassured.module.kotlin.extensions.Given
 import io.restassured.module.kotlin.extensions.Then
 import io.restassured.module.kotlin.extensions.When
 import it.mail.domain.MailMessageType
+import it.mail.domain.MailMessageTypeState.DELETED
+import it.mail.domain.MailMessageTypeState.FORCE_DELETED
 import it.mail.repository.MailMessageTypeRepository
 import it.mail.web.DEFAULT_PAGE
 import it.mail.web.DEFAULT_SIZE
@@ -14,6 +16,7 @@ import it.mail.web.PAGE_PARAM
 import it.mail.web.SIZE_PARAM
 import it.mail.web.dto.MailMessageTypeCreateDto
 import it.mail.web.dto.MailMessageTypeUpdateDto
+import org.jboss.resteasy.reactive.RestResponse.StatusCode.ACCEPTED
 import org.jboss.resteasy.reactive.RestResponse.StatusCode.CREATED
 import org.jboss.resteasy.reactive.RestResponse.StatusCode.OK
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -26,6 +29,7 @@ class MailMessageTypeResourceTest {
 
     private val mailTypesUrl = "/api/admin/mail/type"
     private val mailTypeUrl = "$mailTypesUrl/{id}"
+    private val mailTypeForceDeleteUrl = "$mailTypeUrl/force"
 
     private val idPath = "id"
     private val namePath = "name"
@@ -144,5 +148,31 @@ class MailMessageTypeResourceTest {
 
         assertEquals(updateDto.description, jsonPath.getString(descriptionPath))
         assertEquals(updateDto.maxRetriesCount, jsonPath.getInt(maxRetriesCountPath))
+    }
+
+    @Test
+    fun delete_marksAsDeleted() {
+        When {
+            delete(mailTypeUrl, mailType.id)
+        } Then {
+            statusCode(ACCEPTED)
+        }
+
+        val actual = mailMessageTypeRepository.findById(mailType.id)!!
+
+        assertEquals(DELETED, actual.state)
+    }
+
+    @Test
+    fun delete_force_marksAsForceDeleted() {
+        When {
+            delete(mailTypeForceDeleteUrl, mailType.id)
+        } Then {
+            statusCode(ACCEPTED)
+        }
+
+        val actual = mailMessageTypeRepository.findById(mailType.id)!!
+
+        assertEquals(FORCE_DELETED, actual.state)
     }
 }

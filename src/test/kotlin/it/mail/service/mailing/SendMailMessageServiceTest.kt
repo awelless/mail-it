@@ -8,6 +8,8 @@ import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.verify
 import it.mail.domain.MailMessage
+import it.mail.domain.MailMessageType
+import it.mail.domain.MailMessageTypeState.FORCE_DELETED
 import it.mail.test.createMailMessage
 import it.mail.test.createMailMessageType
 import kotlinx.coroutines.test.runTest
@@ -28,10 +30,11 @@ class SendMailMessageServiceTest {
     lateinit var sendService: SendMailMessageService
 
     lateinit var mailMessage: MailMessage
+    lateinit var mailMessageType: MailMessageType
 
     @BeforeEach
     fun setUp() {
-        val mailMessageType = createMailMessageType()
+        mailMessageType = createMailMessageType()
         mailMessage = createMailMessage(mailMessageType)
     }
 
@@ -53,5 +56,16 @@ class SendMailMessageServiceTest {
         sendService.sendMail(mailMessage.id).join()
 
         coVerify(exactly = 1) { mailMessageService.processFailedDelivery(mailMessage) }
+    }
+
+    @Test
+    fun sendMail_whenTypeIsForceDeleted_cancelSending() = runTest {
+        mailMessageType.state = FORCE_DELETED
+        every { mailMessageService.getMessageForSending(mailMessage.id) }.returns(mailMessage)
+
+        sendService.sendMail(mailMessage.id).join()
+
+        coVerify(exactly = 1) { mailMessageService.processMessageTypeForceDeletion(mailMessage) }
+        coVerify(exactly = 0) { mailSender.send(any()) }
     }
 }

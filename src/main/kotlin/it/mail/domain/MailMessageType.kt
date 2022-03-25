@@ -1,5 +1,6 @@
 package it.mail.domain
 
+import it.mail.domain.MailMessageTypeState.ENABLED
 import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.Table
@@ -28,6 +29,16 @@ class MailMessageType(
     @Column(name = "max_retries_count")
     var maxRetriesCount: Int? = null,
 
+    @Column(name = "state", nullable = false)
+    var state: MailMessageTypeState = ENABLED,
+
     // TODO html template
 
 ) : BaseEntity()
+
+enum class MailMessageTypeState {
+
+    ENABLED,
+    DELETED,
+    FORCE_DELETED,
+}

@@ -3,6 +3,7 @@ package it.mail.repository
 import io.quarkus.hibernate.orm.panache.kotlin.PanacheRepository
 import io.quarkus.panache.common.Sort
 import it.mail.domain.MailMessageType
+import it.mail.domain.MailMessageTypeState
 import it.mail.service.model.Slice
 import javax.enterprise.context.ApplicationScoped
 import javax.transaction.Transactional
@@ -12,11 +13,11 @@ import javax.transaction.Transactional
 class MailMessageTypeRepository : PanacheRepository<MailMessageType> {
 
     fun findOneByName(name: String): MailMessageType? =
-        find("name", name)
+        find("name = ?1 AND state = ?2", name, MailMessageTypeState.ENABLED)
             .firstResult()
 
     fun findAllSliced(page: Int, size: Int): Slice<MailMessageType> {
-        val content = findAll(Sort.by("id"))
+        val content = find("state = ?1", Sort.by("id"), MailMessageTypeState.ENABLED)
             .page(page, size)
             .list()
 
@@ -24,5 +25,5 @@ class MailMessageTypeRepository : PanacheRepository<MailMessageType> {
     }
 
     fun existsOneWithName(name: String): Boolean =
-        count("name", name) > 0
+        count("name = ?1 AND state = ?2", name, MailMessageTypeState.ENABLED) > 0
 }

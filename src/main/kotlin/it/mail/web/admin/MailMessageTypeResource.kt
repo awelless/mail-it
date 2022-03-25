@@ -11,7 +11,9 @@ import it.mail.web.dto.MailMessageTypeCreateDto
 import it.mail.web.dto.MailMessageTypeResponseDto
 import it.mail.web.dto.MailMessageTypeUpdateDto
 import org.jboss.resteasy.reactive.ResponseStatus
+import org.jboss.resteasy.reactive.RestResponse.StatusCode.ACCEPTED
 import org.jboss.resteasy.reactive.RestResponse.StatusCode.CREATED
+import javax.ws.rs.DELETE
 import javax.ws.rs.GET
 import javax.ws.rs.POST
 import javax.ws.rs.PUT
@@ -55,11 +57,7 @@ class MailMessageTypeResource(
 
     @PUT
     @Path("/{id}")
-    fun update(
-        @PathParam("id") id: Long,
-        updateDto: MailMessageTypeUpdateDto
-    ): MailMessageTypeResponseDto {
-
+    fun update(@PathParam("id") id: Long, updateDto: MailMessageTypeUpdateDto): MailMessageTypeResponseDto {
         val mailType = mailMessageTypeService.updateMailType(
             id = id,
             description = updateDto.description,
@@ -68,6 +66,16 @@ class MailMessageTypeResource(
 
         return toDto(mailType)
     }
+
+    @ResponseStatus(ACCEPTED)
+    @DELETE
+    @Path("/{id}")
+    fun delete(@PathParam("id") id: Long) = mailMessageTypeService.deleteMailType(id, false)
+
+    @ResponseStatus(ACCEPTED)
+    @DELETE
+    @Path("/{id}/force")
+    fun forceDelete(@PathParam("id") id: Long) = mailMessageTypeService.deleteMailType(id, true)
 
     private fun toDto(mailType: MailMessageType) =
         MailMessageTypeResponseDto(
