@@ -21,7 +21,7 @@ repositories {
 val kotlinLoggingVersion = "2.1.21"
 val mockkVersion = "1.12.3"
 val quarkusVersion: String by project
-val restAssuredKotlinExtensionsVersion = "4.5.1"
+val restAssuredKotlinExtensionsVersion = "5.0.1"
 
 dependencies {
     implementation(enforcedPlatform("io.quarkus.platform:quarkus-bom:$quarkusVersion"))
@@ -52,7 +52,7 @@ dependencies {
 }
 
 group = "it.mail"
-version = "0.0.1-SNAPSHOT"
+version = "0.1.0"
 
 java {
     sourceCompatibility = JavaVersion.VERSION_11
