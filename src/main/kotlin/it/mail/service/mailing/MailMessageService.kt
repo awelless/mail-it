@@ -31,10 +31,12 @@ class MailMessageService(
         val message = mailMessageRepository.findOneWithTypeByIdAndStatus(messageId, possibleToSendMessageStatuses)
             ?: throw NotFoundException("MailMessage, id: $messageId for delivery is not found")
 
-        message.status = SENDING
-        mailMessageRepository.persist(message)
+        return message.apply {
+            status = SENDING
+            sendingStartedAt = Instant.now()
 
-        return message
+            mailMessageRepository.persist(this)
+        }
     }
 
     fun processSuccessfulDelivery(mailMessage: MailMessage) {
@@ -58,6 +60,8 @@ class MailMessageService(
                 status = RETRY
                 logger.info { "Failed MailMessage, externalId: $externalId is scheduled for another delivery" }
             }
+
+            sendingStartedAt = null
         }
 
         mailMessageRepository.persist(mailMessage)

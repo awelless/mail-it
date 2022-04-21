@@ -22,6 +22,7 @@ class MailSendingTaskProcessor(
     companion object : KLogging()
 
     fun processUnsentMail() {
+        // TODO select in batches
         val messageIds = mailMessageService.getAllIdsOfPossibleToSentMessages()
 
         logger.info { "Processing ${messageIds.size} unsent messages" }

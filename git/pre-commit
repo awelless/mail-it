@@ -1,1 +1,3 @@
-./gradlew copyGitHooks spotlessCheck
+#!/bin/sh
+
+./gradlew copyGitHooks spotlessCheck test --fail-fast

@@ -2,7 +2,6 @@ import com.diffplug.gradle.spotless.SpotlessExtension
 import com.diffplug.spotless.LineEnding
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-
 plugins {
     kotlin("jvm")
     kotlin("plugin.allopen")
@@ -30,7 +29,6 @@ dependencies {
 
     implementation("io.quarkus:quarkus-arc")
     implementation("io.quarkus:quarkus-config-yaml")
-    implementation("io.quarkus:quarkus-flyway")
     implementation("io.quarkus:quarkus-hibernate-orm-panache-kotlin")
     implementation("io.quarkus:quarkus-hibernate-validator")
     implementation("io.quarkus:quarkus-jdbc-h2")

@@ -43,6 +43,9 @@ class MailMessage(
     @Column(name = "created_at", nullable = false, updatable = false)
     val createdAt: Instant,
 
+    @Column(name = "sending_started_at")
+    var sendingStartedAt: Instant? = null,
+
     @Column(name = "sent_at")
     var sentAt: Instant? = null,
 

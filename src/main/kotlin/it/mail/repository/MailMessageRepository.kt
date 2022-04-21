@@ -3,6 +3,7 @@ package it.mail.repository
 import io.quarkus.hibernate.orm.panache.kotlin.PanacheRepository
 import it.mail.domain.MailMessage
 import it.mail.domain.MailMessageStatus
+import java.time.Instant
 import javax.enterprise.context.ApplicationScoped
 import javax.transaction.Transactional
 
@@ -24,4 +25,9 @@ class MailMessageRepository : PanacheRepository<MailMessage> {
             .project(IdProjection::class.java) // is it possible to use long here?
             .list()
             .map { it.id }
+
+    fun findAllWithTypeByStatusesAndSendingStartedBefore(statuses: Collection<MailMessageStatus>, sendingStartedBefore: Instant): List<MailMessage> =
+        find("status IN ?1 AND sendingStartedAt < ?2", statuses, sendingStartedBefore)
+            .withFetchGraph("MailMessage[type]")
+            .list()
 }
