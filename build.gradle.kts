@@ -5,7 +5,6 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     kotlin("jvm")
     kotlin("plugin.allopen")
-    kotlin("plugin.jpa")
 
     id("io.quarkus")
 
