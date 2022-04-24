@@ -9,13 +9,14 @@ import io.restassured.module.kotlin.extensions.When
 import it.mail.domain.MailMessageType
 import it.mail.domain.MailMessageTypeState.DELETED
 import it.mail.domain.MailMessageTypeState.FORCE_DELETED
-import it.mail.repository.MailMessageTypeRepository
+import it.mail.persistence.api.MailMessageTypeRepository
 import it.mail.web.DEFAULT_PAGE
 import it.mail.web.DEFAULT_SIZE
 import it.mail.web.PAGE_PARAM
 import it.mail.web.SIZE_PARAM
 import it.mail.web.dto.MailMessageTypeCreateDto
 import it.mail.web.dto.MailMessageTypeUpdateDto
+import kotlinx.coroutines.runBlocking
 import org.jboss.resteasy.reactive.RestResponse.StatusCode.ACCEPTED
 import org.jboss.resteasy.reactive.RestResponse.StatusCode.CREATED
 import org.jboss.resteasy.reactive.RestResponse.StatusCode.OK
@@ -43,8 +44,14 @@ class MailMessageTypeResourceTest {
 
     @BeforeEach
     fun setUp() {
-        mailType = MailMessageType("DEFAULT", "desc", 4)
-        mailMessageTypeRepository.persist(mailType)
+        runBlocking {
+            mailType = MailMessageType(
+                name = "DEFAULT",
+                description = "desc",
+                maxRetriesCount = 4,
+            )
+            mailMessageTypeRepository.persist(mailType)
+        }
     }
 
     @Test
@@ -151,7 +158,7 @@ class MailMessageTypeResourceTest {
     }
 
     @Test
-    fun delete_marksAsDeleted() {
+    suspend fun delete_marksAsDeleted() {
         When {
             delete(mailTypeUrl, mailType.id)
         } Then {
@@ -164,7 +171,7 @@ class MailMessageTypeResourceTest {
     }
 
     @Test
-    fun delete_force_marksAsForceDeleted() {
+    suspend fun delete_force_marksAsForceDeleted() {
         When {
             delete(mailTypeForceDeleteUrl, mailType.id)
         } Then {

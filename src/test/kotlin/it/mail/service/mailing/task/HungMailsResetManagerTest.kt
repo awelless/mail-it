@@ -1,16 +1,16 @@
 package it.mail.service.mailing.task
 
-import io.mockk.every
+import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.junit5.MockKExtension
-import io.mockk.verify
 import it.mail.domain.MailMessage
 import it.mail.domain.MailMessageStatus.SENDING
-import it.mail.repository.MailMessageRepository
 import it.mail.service.mailing.MailMessageService
 import it.mail.test.createMailMessage
 import it.mail.test.createMailMessageType
+import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -25,8 +25,6 @@ class HungMailsResetManagerTest {
 
     private val hungMessageStatuses = listOf(SENDING)
 
-    @RelaxedMockK
-    lateinit var mailMessageRepository: MailMessageRepository
     @RelaxedMockK
     lateinit var mailMessageService: MailMessageService
 
@@ -44,17 +42,18 @@ class HungMailsResetManagerTest {
     }
 
     @Test
-    fun resetAllHungMails_considersThemAsFailed() {
+    fun resetAllHungMails_considersThemAsFailed() = runTest {
         // given
         val clock = Clock.fixed(Instant.parse("2022-04-21T21:00:00Z"), UTC)
         val hungMessagesBefore = Instant.now(clock).minus(2.minutes.toJavaDuration())
-        every { mailMessageRepository.findAllWithTypeByStatusesAndSendingStartedBefore(hungMessageStatuses, hungMessagesBefore) }.returns(listOf(mail1, mail2))
+
+        coEvery { mailMessageService.getAllHungMessages() }.returns(listOf(mail1, mail2))
 
         // when
         hungMailsResetManager.resetAllHungMails(clock)
 
         // then
-        verify { mailMessageService.processFailedDelivery(mail1) }
-        verify { mailMessageService.processFailedDelivery(mail2) }
+        coVerify { mailMessageService.processFailedDelivery(mail1) }
+        coVerify { mailMessageService.processFailedDelivery(mail2) }
     }
 }

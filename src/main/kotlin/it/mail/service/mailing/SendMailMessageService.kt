@@ -37,13 +37,13 @@ class SendMailMessageService(
             mailSender.send(message)
             mailMessageService.processSuccessfulDelivery(message)
         } catch (e: Exception) {
-            logger.warn(e) { "Failed to send message with externalId: ${message.externalId}. Cause: ${e.message}" }
+            logger.warn(e) { "Failed to send message: ${message.id}. Cause: ${e.message}" }
             mailMessageService.processFailedDelivery(message)
         }
     }
 
     @PreDestroy
-    private fun shutDown() {
+    internal fun shutDown() {
         coroutineScope.cancel()
     }
 }

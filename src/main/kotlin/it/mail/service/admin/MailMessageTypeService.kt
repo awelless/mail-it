@@ -3,13 +3,12 @@ package it.mail.service.admin
 import it.mail.domain.MailMessageType
 import it.mail.domain.MailMessageTypeState.DELETED
 import it.mail.domain.MailMessageTypeState.FORCE_DELETED
-import it.mail.repository.MailMessageTypeRepository
+import it.mail.persistence.api.MailMessageTypeRepository
 import it.mail.service.BadRequestException
 import it.mail.service.NotFoundException
 import it.mail.service.model.Slice
 import mu.KLogging
 import javax.enterprise.context.ApplicationScoped
-import javax.transaction.Transactional
 
 @ApplicationScoped
 class MailMessageTypeService(
@@ -17,15 +16,15 @@ class MailMessageTypeService(
 ) {
     companion object : KLogging()
 
-    fun getById(id: Long): MailMessageType =
+    suspend fun getById(id: Long): MailMessageType =
         mailMessageTypeRepository.findById(id)
             ?: throw NotFoundException("MailMessageType with id: $id is not found")
 
-    fun getAllSliced(page: Int, size: Int): Slice<MailMessageType> =
+    suspend fun getAllSliced(page: Int, size: Int): Slice<MailMessageType> =
         mailMessageTypeRepository.findAllSliced(page, size)
 
-    @Transactional
-    fun createNewMailType(name: String, description: String?, maxRetriesCount: Int?): MailMessageType {
+//    @Transactional // todo transaction doesn't work
+    suspend fun createNewMailType(name: String, description: String?, maxRetriesCount: Int?): MailMessageType {
         if (mailMessageTypeRepository.existsOneWithName(name)) {
             throw BadRequestException("MailMessageType name: $name is not unique")
         }
@@ -43,8 +42,8 @@ class MailMessageTypeService(
         return mailType
     }
 
-    @Transactional
-    fun updateMailType(id: Long, description: String?, maxRetriesCount: Int?): MailMessageType {
+//    @Transactional // todo transaction doesn't work
+    suspend fun updateMailType(id: Long, description: String?, maxRetriesCount: Int?): MailMessageType {
         val mailType = getById(id)
 
         mailType.description = description
@@ -57,8 +56,8 @@ class MailMessageTypeService(
         return mailType
     }
 
-    @Transactional
-    fun deleteMailType(id: Long, force: Boolean) {
+    // @Transactional
+    suspend fun deleteMailType(id: Long, force: Boolean) {
         val mailType = getById(id)
 
         mailType.state = if (force) { FORCE_DELETED } else { DELETED }

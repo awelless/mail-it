@@ -2,14 +2,12 @@ package it.mail.service.external
 
 import it.mail.domain.MailMessage
 import it.mail.domain.MailMessageStatus.PENDING
-import it.mail.repository.MailMessageRepository
-import it.mail.repository.MailMessageTypeRepository
+import it.mail.persistence.api.MailMessageRepository
+import it.mail.persistence.api.MailMessageTypeRepository
 import it.mail.service.BadRequestException
 import mu.KLogging
 import java.time.Instant
-import java.util.UUID.randomUUID
 import javax.enterprise.context.ApplicationScoped
-import javax.transaction.Transactional
 
 @ApplicationScoped
 class ExternalMailMessageService(
@@ -18,27 +16,24 @@ class ExternalMailMessageService(
 ) {
     companion object : KLogging()
 
-    @Transactional
-    fun createNewMail(text: String, subject: String?, emailFrom: String, emailTo: String, messageTypeName: String): MailMessage {
-        val messageType = mailMessageTypeRepository.findOneByName(messageTypeName)
-            ?: throw BadRequestException("Invalid type: $messageTypeName is passed")
-
-        val externalId = randomUUID().toString()
+    // @Transactional // todo transactions don't work
+    suspend fun createNewMail(text: String, subject: String?, emailFrom: String, emailTo: String, mailMessageTypeId: Long): MailMessage {
+        val messageType = mailMessageTypeRepository.findById(mailMessageTypeId)
+            ?: throw BadRequestException("Invalid type: $mailMessageTypeId is passed")
 
         val message = MailMessage(
             text = text,
             subject = subject,
             emailFrom = emailFrom,
             emailTo = emailTo,
-            externalId = externalId,
             type = messageType,
             createdAt = Instant.now(),
             status = PENDING,
         )
 
-        mailMessageRepository.persist(message)
+        mailMessageRepository.create(message)
 
-        logger.debug { "Persisted message with externalId: $externalId" }
+        logger.debug { "Persisted message with id: ${message.id}" }
 
         return message
     }

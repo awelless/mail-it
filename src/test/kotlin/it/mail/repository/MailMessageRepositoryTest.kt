@@ -4,12 +4,15 @@ import io.quarkus.test.junit.QuarkusTest
 import it.mail.domain.MailMessage
 import it.mail.domain.MailMessageStatus.PENDING
 import it.mail.domain.MailMessageType
+import it.mail.persistence.api.MailMessageRepository
+import it.mail.persistence.api.MailMessageTypeRepository
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.time.Instant
-import java.util.UUID.randomUUID
 import javax.inject.Inject
 
 @QuarkusTest
@@ -26,31 +29,31 @@ class MailMessageRepositoryTest {
 
     @BeforeEach
     fun setUp() {
-        mailMessageType = MailMessageType("type")
-        mailMessageTypeRepository.persist(mailMessageType)
+        runBlocking {
+            mailMessageType = MailMessageType(name = "type")
+            mailMessageTypeRepository.persist(mailMessageType)
 
-        mailMessage = MailMessage(
-            text = "text",
-            subject = null,
-            emailFrom = "email@from.com",
-            emailTo = "email@to.com",
-            externalId = randomUUID().toString(),
-            type = mailMessageType,
-            createdAt = Instant.now(),
-            status = PENDING,
-        )
-        mailMessageRepository.persist(mailMessage)
+            mailMessage = MailMessage(
+                text = "text",
+                subject = null,
+                emailFrom = "email@from.com",
+                emailTo = "email@to.com",
+                type = mailMessageType,
+                createdAt = Instant.now(),
+                status = PENDING,
+            )
+            mailMessageRepository.create(mailMessage)
+        }
     }
 
     @Test
-    fun findOneWithTypeByIdAndStatus_fetchesMailType() {
+    fun findOneWithTypeByIdAndStatus_fetchesMailType() = runTest {
         val actual = mailMessageRepository.findOneWithTypeByIdAndStatus(mailMessage.id, listOf(PENDING))!!
 
         assertEquals(mailMessage.id, actual.id)
         assertEquals(mailMessage.subject, actual.subject)
         assertEquals(mailMessage.emailFrom, actual.emailFrom)
         assertEquals(mailMessage.emailTo, actual.emailTo)
-        assertEquals(mailMessage.externalId, actual.externalId)
         assertEquals(mailMessage.createdAt.epochSecond, actual.createdAt.epochSecond)
         assertEquals(mailMessage.status, actual.status)
 
@@ -62,19 +65,18 @@ class MailMessageRepositoryTest {
     }
 
     @Test
-    fun findAllIdsByStatusIn_returnsIdsOnly() {
+    fun findAllIdsByStatusIn_returnsIdsOnly() = runTest {
         // given
         val message2 = MailMessage(
             text = "text2",
             subject = null,
             emailFrom = "email@from.com",
             emailTo = "email@to.com",
-            externalId = randomUUID().toString(),
             type = mailMessageType,
             createdAt = Instant.now(),
             status = PENDING,
         )
-        mailMessageRepository.persist(message2)
+        mailMessageRepository.create(message2)
 
         // when
         val actual = mailMessageRepository.findAllIdsByStatusIn(listOf(PENDING))

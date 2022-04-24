@@ -1,3 +1,3 @@
 package it.mail.web.dto
 
-data class IdDto(val id: String)
+data class IdDto(val id: Long)

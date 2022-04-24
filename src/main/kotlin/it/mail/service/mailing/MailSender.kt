@@ -17,10 +17,12 @@ class MailSender(
         // TODO add support for plain html and templates
 
         val mail = Mail.withText(mailMessage.emailTo, mailMessage.subject, mailMessage.text)
-        mail.from = mailMessage.emailFrom
+        if (mailMessage.emailFrom != null) {
+            mail.from = mailMessage.emailFrom
+        }
 
         mailer.send(mail).awaitSuspending()
 
-        logger.debug { "Successfully sent message with externalId: ${mailMessage.externalId}" }
+        logger.debug { "Successfully sent message: ${mailMessage.id}" }
     }
 }

@@ -28,13 +28,13 @@ class MailMessageTypeResource(
 
     @GET
     @Path("/{id}")
-    fun getById(@PathParam("id") id: Long): MailMessageTypeResponseDto {
+    suspend fun getById(@PathParam("id") id: Long): MailMessageTypeResponseDto {
         val mailType = mailMessageTypeService.getById(id)
         return toDto(mailType)
     }
 
     @GET
-    fun getAllSliced(
+    suspend fun getAllSliced(
         @QueryParam(PAGE_PARAM) page: Int?,
         @QueryParam(SIZE_PARAM) size: Int?,
     ): Slice<MailMessageTypeResponseDto> {
@@ -45,7 +45,7 @@ class MailMessageTypeResource(
 
     @ResponseStatus(CREATED)
     @POST
-    fun create(createDto: MailMessageTypeCreateDto): MailMessageTypeResponseDto {
+    suspend fun create(createDto: MailMessageTypeCreateDto): MailMessageTypeResponseDto {
         val mailType = mailMessageTypeService.createNewMailType(
             name = createDto.name,
             description = createDto.description,
@@ -57,7 +57,7 @@ class MailMessageTypeResource(
 
     @PUT
     @Path("/{id}")
-    fun update(@PathParam("id") id: Long, updateDto: MailMessageTypeUpdateDto): MailMessageTypeResponseDto {
+    suspend fun update(@PathParam("id") id: Long, updateDto: MailMessageTypeUpdateDto): MailMessageTypeResponseDto {
         val mailType = mailMessageTypeService.updateMailType(
             id = id,
             description = updateDto.description,
@@ -70,12 +70,12 @@ class MailMessageTypeResource(
     @ResponseStatus(ACCEPTED)
     @DELETE
     @Path("/{id}")
-    fun delete(@PathParam("id") id: Long) = mailMessageTypeService.deleteMailType(id, false)
+    suspend fun delete(@PathParam("id") id: Long) = mailMessageTypeService.deleteMailType(id, false)
 
     @ResponseStatus(ACCEPTED)
     @DELETE
     @Path("/{id}/force")
-    fun forceDelete(@PathParam("id") id: Long) = mailMessageTypeService.deleteMailType(id, true)
+    suspend fun forceDelete(@PathParam("id") id: Long) = mailMessageTypeService.deleteMailType(id, true)
 
     private fun toDto(mailType: MailMessageType) =
         MailMessageTypeResponseDto(

@@ -17,6 +17,7 @@ repositories {
     mavenLocal()
 }
 
+var dbUtilsVersion = "1.7"
 val kotlinLoggingVersion = "2.1.21"
 val mockkVersion = "1.12.3"
 val quarkusVersion: String by project
@@ -25,12 +26,12 @@ val restAssuredKotlinExtensionsVersion = "5.0.1"
 dependencies {
     implementation(enforcedPlatform("io.quarkus.platform:quarkus-bom:$quarkusVersion"))
 
+    implementation("commons-dbutils:commons-dbutils:$dbUtilsVersion")
     implementation("io.github.microutils:kotlin-logging-jvm:$kotlinLoggingVersion")
 
     implementation("io.quarkus:quarkus-arc")
+    implementation("io.quarkus:quarkus-agroal")
     implementation("io.quarkus:quarkus-config-yaml")
-    implementation("io.quarkus:quarkus-hibernate-orm-panache-kotlin")
-    implementation("io.quarkus:quarkus-hibernate-validator")
     implementation("io.quarkus:quarkus-jdbc-h2")
     implementation("io.quarkus:quarkus-kotlin")
     implementation("io.quarkus:quarkus-mailer")
@@ -61,8 +62,6 @@ allOpen {
     annotation("javax.ws.rs.Path")
     annotation("javax.enterprise.context.ApplicationScoped")
     annotation("io.quarkus.test.junit.QuarkusTest")
-
-    annotations("javax.persistence.Entity", "javax.persistence.MappedSuperclass", "javax.persistence.Embeddable")
 }
 
 tasks.withType<KotlinCompile> {

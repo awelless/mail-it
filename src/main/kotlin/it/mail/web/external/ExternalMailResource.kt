@@ -5,7 +5,6 @@ import it.mail.web.dto.CreateMailDto
 import it.mail.web.dto.IdDto
 import org.jboss.resteasy.reactive.ResponseStatus
 import org.jboss.resteasy.reactive.RestResponse.StatusCode.ACCEPTED
-import javax.validation.Valid
 import javax.ws.rs.POST
 import javax.ws.rs.Path
 
@@ -16,8 +15,8 @@ class ExternalMailResource(
 
     @ResponseStatus(ACCEPTED)
     @POST
-    fun sendMail(@Valid dto: CreateMailDto): IdDto {
-        val savedMail = mailMessageService.createNewMail(dto.text!!, dto.subject, dto.from!!, dto.to!!, dto.type!!)
-        return IdDto(savedMail.externalId)
+    suspend fun sendMail(dto: CreateMailDto): IdDto {
+        val savedMail = mailMessageService.createNewMail(dto.text!!, dto.subject, dto.from!!, dto.to!!, dto.typeId!!)
+        return IdDto(savedMail.id)
     }
 }

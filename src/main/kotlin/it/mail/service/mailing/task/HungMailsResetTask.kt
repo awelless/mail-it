@@ -2,8 +2,6 @@ package it.mail.service.mailing.task
 
 import io.quarkus.runtime.Startup
 import it.mail.domain.MailMessage
-import it.mail.domain.MailMessageStatus.SENDING
-import it.mail.repository.MailMessageRepository
 import it.mail.service.mailing.MailMessageService
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -12,41 +10,33 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import mu.KLogging
 import java.time.Clock
-import java.time.Instant
 import javax.annotation.PostConstruct
 import javax.annotation.PreDestroy
 import javax.enterprise.context.ApplicationScoped
-import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
-import kotlin.time.toJavaDuration
 
 @ApplicationScoped
 class HungMailsResetManager(
-    private val mailMessageRepository: MailMessageRepository,
     private val mailMessageService: MailMessageService,
 ) {
     companion object : KLogging()
 
-    private val hungMessageStatuses = listOf(SENDING)
-    private val hungMessageDuration = 2.minutes.toJavaDuration()
-
-    fun resetAllHungMails(clock: Clock) {
-        val sendingStartedBefore = Instant.now(clock).minus(hungMessageDuration)
+    suspend fun resetAllHungMails(clock: Clock) {
         // TODO select in batches
-        val hungMails = mailMessageRepository.findAllWithTypeByStatusesAndSendingStartedBefore(hungMessageStatuses, sendingStartedBefore)
+        val hungMails = mailMessageService.getAllHungMessages()
 
         logger.info { "${hungMails.size} hung mails discovered" }
 
         hungMails.forEach { resetHungMail(it) }
     }
 
-    private fun resetHungMail(mail: MailMessage) {
-        logger.debug { "Resetting delivery for mail with externalId: ${mail.externalId}" }
+    private suspend fun resetHungMail(mail: MailMessage) {
+        logger.debug { "Resetting delivery for mail: ${mail.id}" }
         try {
             mailMessageService.processFailedDelivery(mail) // hung messages are considered as failed
-            logger.debug { "Resetting delivery for mail with externalId: ${mail.externalId} finished successfully" }
+            logger.debug { "Resetting delivery for mail: ${mail.id} finished successfully" }
         } catch (e: Exception) {
-            logger.warn { "Failed to reset delivery for hung mail with externalId: ${mail.externalId}. Cause: ${e.message}" }
+            logger.warn { "Failed to reset delivery for hung mail: ${mail.id}. Cause: ${e.message}" }
         }
     }
 }
@@ -61,7 +51,7 @@ class HungMailsResetTaskScheduler(
     private val delayDuration = 30.seconds
 
     @PostConstruct
-    private fun setUp() {
+    internal fun setUp() {
         coroutineScope.launch {
             while (true) {
                 delay(delayDuration)
@@ -71,7 +61,7 @@ class HungMailsResetTaskScheduler(
     }
 
     @PreDestroy
-    private fun tearDown() {
+    internal fun tearDown() {
         coroutineScope.cancel()
     }
 }

@@ -2,11 +2,9 @@ package it.mail.service.mailing
 
 import io.mockk.coEvery
 import io.mockk.coVerify
-import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.junit5.MockKExtension
-import io.mockk.verify
 import it.mail.domain.MailMessage
 import it.mail.domain.MailMessageType
 import it.mail.domain.MailMessageTypeState.FORCE_DELETED
@@ -40,17 +38,17 @@ class SendMailMessageServiceTest {
 
     @Test
     fun sendMail_withSuccess() = runTest {
-        every { mailMessageService.getMessageForSending(mailMessage.id) }.returns(mailMessage)
+        coEvery { mailMessageService.getMessageForSending(mailMessage.id) }.returns(mailMessage)
 
         sendService.sendMail(mailMessage.id).join()
 
         coVerify(exactly = 1) { mailSender.send(mailMessage) }
-        verify(exactly = 1) { mailMessageService.processSuccessfulDelivery(mailMessage) }
+        coVerify(exactly = 1) { mailMessageService.processSuccessfulDelivery(mailMessage) }
     }
 
     @Test
     fun sendMail_withFailure() = runTest {
-        every { mailMessageService.getMessageForSending(mailMessage.id) }.returns(mailMessage)
+        coEvery { mailMessageService.getMessageForSending(mailMessage.id) }.returns(mailMessage)
         coEvery { mailSender.send(any()) }.throws(Exception())
 
         sendService.sendMail(mailMessage.id).join()
@@ -61,7 +59,7 @@ class SendMailMessageServiceTest {
     @Test
     fun sendMail_whenTypeIsForceDeleted_cancelSending() = runTest {
         mailMessageType.state = FORCE_DELETED
-        every { mailMessageService.getMessageForSending(mailMessage.id) }.returns(mailMessage)
+        coEvery { mailMessageService.getMessageForSending(mailMessage.id) }.returns(mailMessage)
 
         sendService.sendMail(mailMessage.id).join()
 

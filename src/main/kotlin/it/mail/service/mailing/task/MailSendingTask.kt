@@ -21,7 +21,7 @@ class MailSendingTaskProcessor(
 ) {
     companion object : KLogging()
 
-    fun processUnsentMail() {
+    suspend fun processUnsentMail() {
         // TODO select in batches
         val messageIds = mailMessageService.getAllIdsOfPossibleToSentMessages()
 
@@ -41,7 +41,7 @@ class MailSendingTaskScheduler(
     private val delayDuration = 10.seconds
 
     @PostConstruct
-    private fun setUp() {
+    internal fun setUp() {
         coroutineScope.launch {
             while (true) {
                 delay(delayDuration)
@@ -51,7 +51,7 @@ class MailSendingTaskScheduler(
     }
 
     @PreDestroy
-    private fun tearDown() {
+    internal fun tearDown() {
         coroutineScope.cancel()
     }
 }

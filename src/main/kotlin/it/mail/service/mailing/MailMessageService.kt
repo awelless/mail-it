@@ -7,12 +7,13 @@ import it.mail.domain.MailMessageStatus.PENDING
 import it.mail.domain.MailMessageStatus.RETRY
 import it.mail.domain.MailMessageStatus.SENDING
 import it.mail.domain.MailMessageStatus.SENT
-import it.mail.repository.MailMessageRepository
+import it.mail.persistence.api.MailMessageRepository
 import it.mail.service.NotFoundException
 import mu.KLogging
 import java.time.Instant
 import javax.enterprise.context.ApplicationScoped
-import javax.transaction.Transactional
+import kotlin.time.Duration.Companion.minutes
+import kotlin.time.toJavaDuration
 
 @ApplicationScoped
 class MailMessageService(
@@ -20,55 +21,63 @@ class MailMessageService(
 ) {
     companion object : KLogging()
 
+    private val hungMessageStatuses = listOf(SENDING)
+    private val hungMessageDuration = 2.minutes.toJavaDuration()
+
     private val possibleToSendMessageStatuses = listOf(PENDING, RETRY)
 
-    fun getAllIdsOfPossibleToSentMessages(): List<Long> =
+    suspend fun getAllHungMessages(): List<MailMessage> =
+        mailMessageRepository.findAllWithTypeByStatusesAndSendingStartedBefore(hungMessageStatuses, Instant.now().minus(hungMessageDuration))
+
+    suspend fun getAllIdsOfPossibleToSentMessages(): List<Long> =
         mailMessageRepository.findAllIdsByStatusIn(possibleToSendMessageStatuses)
 
-    @Transactional
-    // TODO rewrite as a suspend method
-    fun getMessageForSending(messageId: Long): MailMessage {
+    // @Transactional // todo transaction doesn't work
+    suspend fun getMessageForSending(messageId: Long): MailMessage {
         val message = mailMessageRepository.findOneWithTypeByIdAndStatus(messageId, possibleToSendMessageStatuses)
             ?: throw NotFoundException("MailMessage, id: $messageId for delivery is not found")
 
-        return message.apply {
+        message.apply {
             status = SENDING
             sendingStartedAt = Instant.now()
-
-            mailMessageRepository.persist(this)
         }
+
+        mailMessageRepository.updateMessageStatusAndSendingStartedTime(messageId, message.status, message.sendingStartedAt!!)
+
+        return message
     }
 
-    fun processSuccessfulDelivery(mailMessage: MailMessage) {
+    suspend fun processSuccessfulDelivery(mailMessage: MailMessage) {
         mailMessage.apply {
-            sentAt = Instant.now()
             status = SENT
+            sentAt = Instant.now()
         }
 
-        mailMessageRepository.persist(mailMessage)
+        mailMessageRepository.updateMessageStatusAndSentTime(mailMessage.id, mailMessage.status, mailMessage.sentAt!!)
     }
 
-    fun processFailedDelivery(mailMessage: MailMessage) {
+    suspend fun processFailedDelivery(mailMessage: MailMessage) {
         mailMessage.apply {
             val maxRetries = type.maxRetriesCount ?: Int.MAX_VALUE
 
             if (failedCount >= maxRetries) {
                 status = FAILED
-                logger.error { "Max number of retries exceeded. Marking MailMessage, externalId: $externalId as failed" }
+                logger.error { "Max number of retries exceeded. Marking MailMessage: $id as failed" }
             } else {
                 failedCount++
                 status = RETRY
-                logger.info { "Failed MailMessage, externalId: $externalId is scheduled for another delivery" }
+                logger.info { "Failed MailMessage: $id is scheduled for another delivery" }
             }
 
             sendingStartedAt = null
         }
 
-        mailMessageRepository.persist(mailMessage)
+        mailMessageRepository.updateMessageStatusFailedCountAndSendingStartedTime(mailMessage.id, mailMessage.status, mailMessage.failedCount, null)
     }
 
-    fun processMessageTypeForceDeletion(mailMessage: MailMessage) {
+    suspend fun processMessageTypeForceDeletion(mailMessage: MailMessage) {
         mailMessage.status = CANCELED
-        mailMessageRepository.persist(mailMessage)
+
+        mailMessageRepository.updateMessageStatus(mailMessage.id, mailMessage.status)
     }
 }

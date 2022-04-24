@@ -1,6 +1,7 @@
 package it.mail.service.mailing
 
-import io.mockk.every
+import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.junit5.MockKExtension
@@ -12,11 +13,11 @@ import it.mail.domain.MailMessageStatus.RETRY
 import it.mail.domain.MailMessageStatus.SENDING
 import it.mail.domain.MailMessageStatus.SENT
 import it.mail.domain.MailMessageType
-import it.mail.repository.MailMessageRepository
+import it.mail.persistence.api.MailMessageRepository
 import it.mail.test.createMailMessage
 import it.mail.test.createMailMessageType
+import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -44,8 +45,8 @@ class MailMessageServiceTest {
     }
 
     @Test
-    fun getMessageForSending_marksStatusSending() {
-        every { mailMessageRepository.findOneWithTypeByIdAndStatus(mailMessage.id, possibleToSendMessageStatuses) }.returns(mailMessage)
+    fun getMessageForSending_marksStatusSending() = runTest {
+        coEvery { mailMessageRepository.findOneWithTypeByIdAndStatus(mailMessage.id, possibleToSendMessageStatuses) }.returns(mailMessage)
 
         val actual = mailMessageService.getMessageForSending(mailMessage.id)
 
@@ -54,42 +55,28 @@ class MailMessageServiceTest {
     }
 
     @Test
-    fun processSuccessfulDelivery_marksStatusSent() {
-        every { mailMessageRepository.persist(capture(mailMessageSlot)) }.returns(Unit)
-
+    fun processSuccessfulDelivery_marksStatusSent() = runTest {
         mailMessageService.processSuccessfulDelivery(mailMessage)
-        val actual = mailMessageSlot.captured
 
-        assertEquals(mailMessage.id, actual.id)
-        assertEquals(SENT, actual.status)
-        assertNotNull(actual.sentAt)
+        coVerify { mailMessageRepository.updateMessageStatusAndSentTime(eq(mailMessage.id), eq(SENT), any()) }
     }
 
     @Test
-    fun processFailedDelivery_whenLimitIsNotExceeded_marksStatusRetry() {
+    fun processFailedDelivery_whenLimitIsNotExceeded_marksStatusRetry() = runTest {
         mailMessage.failedCount = 0
 
-        every { mailMessageRepository.persist(capture(mailMessageSlot)) }.returns(Unit)
-
         mailMessageService.processFailedDelivery(mailMessage)
-        val actual = mailMessageSlot.captured
 
-        assertEquals(mailMessage.id, actual.id)
-        assertEquals(RETRY, actual.status)
-        assertEquals(1, actual.failedCount)
+        coVerify { mailMessageRepository.updateMessageStatusFailedCountAndSendingStartedTime(mailMessage.id, RETRY, 1, null) }
     }
 
     @Test
-    fun processFailedDelivery_whenLimitIsNotExceeded_marksStatusFailed() {
+    fun processFailedDelivery_whenLimitIsNotExceeded_marksStatusFailed() = runTest {
         mailMessageType.maxRetriesCount = 10
         mailMessage.failedCount = 10
 
-        every { mailMessageRepository.persist(capture(mailMessageSlot)) }.returns(Unit)
-
         mailMessageService.processFailedDelivery(mailMessage)
-        val actual = mailMessageSlot.captured
 
-        assertEquals(mailMessage.id, actual.id)
-        assertEquals(FAILED, actual.status)
+        coVerify { mailMessageRepository.updateMessageStatusFailedCountAndSendingStartedTime(mailMessage.id, FAILED, 10, null) }
     }
 }
