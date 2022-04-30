@@ -1,7 +1,6 @@
 package it.mail.persistence.jdbc
 
 import it.mail.domain.MailMessageType
-import it.mail.domain.MailMessageTypeState
 import it.mail.persistence.api.MailMessageTypeRepository
 import it.mail.persistence.common.IdGenerator
 import it.mail.service.model.Slice
@@ -10,8 +9,26 @@ import org.apache.commons.dbutils.ResultSetHandler
 import java.sql.ResultSet
 import javax.sql.DataSource
 
-private const val FIND_BY_ID_SQL = "SELECT mail_message_type_id, name, description, max_retries_count, state FROM mail_message_type WHERE mail_message_type_id = ?"
-private const val FIND_ALL_SLICED_SQL = "SELECT mail_message_type_id, name, description, max_retries_count, state FROM mail_message_type LIMIT ? OFFSET ?"
+private const val FIND_BY_ID_SQL = """
+    SELECT mail_message_type_id mt_mail_message_type_id,
+           name mt_name,
+           description mt_description,
+           max_retries_count mt_max_retries_count,
+           state mt_state
+      FROM mail_message_type
+     WHERE mail_message_type_id = ?
+"""
+
+private const val FIND_ALL_SLICED_SQL = """
+    SELECT mail_message_type_id mt_mail_message_type_id,
+           name mt_name,
+           description mt_description,
+           max_retries_count mt_max_retries_count,
+           state mt_state
+      FROM mail_message_type
+     LIMIT ? OFFSET ?
+"""
+
 private const val EXISTS_BY_NAME_SQL = "SELECT 1 FROM mail_message_type WHERE name = ?"
 private const val INSERT_SQL = "INSERT INTO mail_message_type(mail_message_type_id, name, description, max_retries_count, state) VALUES(?, ?, ?, ?, ?)"
 private const val UPDATE_SQL = "UPDATE mail_message_type SET description = ?, max_retries_count = ?, state = ? WHERE mail_message_type_id = ?"
@@ -97,7 +114,7 @@ private class SingleMailMessageTypeResultSetMapper : ResultSetHandler<MailMessag
 
     override fun handle(rs: ResultSet?): MailMessageType? =
         if (rs?.next() == true) {
-            rs.mapRowToMailMessageType()
+            rs.getMailMessageTypeFromRow()
         } else {
             null
         }
@@ -115,28 +132,10 @@ private class MultipleMailMessageTypesResultSetMapper : ResultSetHandler<List<Ma
 
         val mailTypes = ArrayList<MailMessageType>()
         while (rs.next()) {
-            mailTypes.add(rs.mapRowToMailMessageType())
+            mailTypes.add(rs.getMailMessageTypeFromRow())
         }
         return mailTypes
     }
-}
-
-private fun ResultSet.mapRowToMailMessageType(): MailMessageType {
-    val id = getLong(1)
-    val typeName = getString(2)
-    val descriptionValue = getString(3)
-    val description = if (wasNull()) null else descriptionValue
-    val maxRetriesCountValue = getInt(4)
-    val maxRetriesCount = if (wasNull()) null else maxRetriesCountValue
-    val state = MailMessageTypeState.valueOf(getString(5))
-
-    return MailMessageType(
-        id = id,
-        name = typeName,
-        description = description,
-        maxRetriesCount = maxRetriesCount,
-        state = state,
-    )
 }
 
 private fun MailMessageType.isNew() = id == 0L

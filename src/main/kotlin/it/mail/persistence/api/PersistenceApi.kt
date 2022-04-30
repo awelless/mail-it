@@ -18,13 +18,13 @@ interface MailMessageRepository {
 
     suspend fun create(mailMessage: MailMessage): MailMessage
 
-    suspend fun updateMessageStatus(id: Long, status: MailMessageStatus)
+    suspend fun updateMessageStatus(id: Long, status: MailMessageStatus): Int
 
-    suspend fun updateMessageStatusAndSendingStartedTime(id: Long, status: MailMessageStatus, sendingStartedAt: Instant)
+    suspend fun updateMessageStatusAndSendingStartedTime(id: Long, status: MailMessageStatus, sendingStartedAt: Instant): Int
 
-    suspend fun updateMessageStatusAndSentTime(id: Long, status: MailMessageStatus, sentAt: Instant)
+    suspend fun updateMessageStatusAndSentTime(id: Long, status: MailMessageStatus, sentAt: Instant): Int
 
-    suspend fun updateMessageStatusFailedCountAndSendingStartedTime(id: Long, status: MailMessageStatus, failedCount: Int, sendingStartedAt: Instant?)
+    suspend fun updateMessageStatusFailedCountAndSendingStartedTime(id: Long, status: MailMessageStatus, failedCount: Int, sendingStartedAt: Instant?): Int
 }
 
 interface MailMessageTypeRepository {
@@ -35,5 +35,6 @@ interface MailMessageTypeRepository {
 
     suspend fun existsOneWithName(name: String): Boolean
 
+    // todo replace with separate queries
     suspend fun persist(mailMessageType: MailMessageType): MailMessageType
 }

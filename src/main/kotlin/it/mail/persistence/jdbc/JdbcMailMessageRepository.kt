@@ -2,8 +2,6 @@ package it.mail.persistence.jdbc
 
 import it.mail.domain.MailMessage
 import it.mail.domain.MailMessageStatus
-import it.mail.domain.MailMessageType
-import it.mail.domain.MailMessageTypeState
 import it.mail.persistence.api.MailMessageRepository
 import it.mail.persistence.common.IdGenerator
 import org.apache.commons.dbutils.QueryRunner
@@ -163,41 +161,37 @@ class JdbcMailMessageRepository(
         return mailMessage
     }
 
-    override suspend fun updateMessageStatus(id: Long, status: MailMessageStatus) {
+    override suspend fun updateMessageStatus(id: Long, status: MailMessageStatus): Int =
         dataSource.connection.use {
             queryRunner.update(
                 it, UPDATE_STATUS_SQL,
                 status, id
             )
         }
-    }
 
-    override suspend fun updateMessageStatusAndSendingStartedTime(id: Long, status: MailMessageStatus, sendingStartedAt: Instant) {
+    override suspend fun updateMessageStatusAndSendingStartedTime(id: Long, status: MailMessageStatus, sendingStartedAt: Instant): Int =
         dataSource.connection.use {
             queryRunner.update(
                 it, UPDATE_STATUS_AND_SENDING_START_SQL,
                 status, sendingStartedAt, id
             )
         }
-    }
 
-    override suspend fun updateMessageStatusAndSentTime(id: Long, status: MailMessageStatus, sentAt: Instant) {
+    override suspend fun updateMessageStatusAndSentTime(id: Long, status: MailMessageStatus, sentAt: Instant): Int =
         dataSource.connection.use {
             queryRunner.update(
                 it, UPDATE_STATUS_AND_SENT_AT_SQL,
                 status, sentAt, id
             )
         }
-    }
 
-    override suspend fun updateMessageStatusFailedCountAndSendingStartedTime(id: Long, status: MailMessageStatus, failedCount: Int, sendingStartedAt: Instant?) {
+    override suspend fun updateMessageStatusFailedCountAndSendingStartedTime(id: Long, status: MailMessageStatus, failedCount: Int, sendingStartedAt: Instant?): Int =
         dataSource.connection.use {
             queryRunner.update(
                 it, UPDATE_STATUS_FILED_COUNT_AND_SENDING_START_SQL,
                 status, failedCount, sendingStartedAt, id
             )
         }
-    }
 }
 
 /**
@@ -207,7 +201,7 @@ private class SingleMailMessageWithTypeResultSetMapper : ResultSetHandler<MailMe
 
     override fun handle(rs: ResultSet?): MailMessage? =
         if (rs?.next() == true) {
-            rs.mapRowToMailMessageWithType()
+            rs.getMailMessageWithTypeFromRow()
         } else {
             null
         }
@@ -225,59 +219,8 @@ private class MultipleMailMessagesWithTypeResultSetMapper : ResultSetHandler<Lis
 
         val mailTypes = ArrayList<MailMessage>()
         while (rs.next()) {
-            mailTypes.add(rs.mapRowToMailMessageWithType())
+            mailTypes.add(rs.getMailMessageWithTypeFromRow())
         }
         return mailTypes
     }
-}
-
-private fun ResultSet.mapRowToMailMessageWithType(): MailMessage {
-    val typeId = getLong("mt_mail_message_type_id")
-    val typeName = getString("mt_name")
-
-    val typeDescriptionValue = getString("mt_description")
-    val typeDescription = if (wasNull()) null else typeDescriptionValue
-
-    val typeMaxRetriesCountValue = getInt("mt_max_retries_count")
-    val typeMaxRetriesCount = if (wasNull()) null else typeMaxRetriesCountValue
-
-    val typeState = MailMessageTypeState.valueOf(getString("mt_state"))
-
-    val mailMessageType = MailMessageType(
-        id = typeId,
-        name = typeName,
-        description = typeDescription,
-        maxRetriesCount = typeMaxRetriesCount,
-        state = typeState,
-    )
-
-    val id = getLong("m_mail_message_id")
-    val text = getString("m_text")
-    val subject = getString("m_subject")
-    val emailFrom = getString("m_email_from")
-    val emailTo = getString("m_email_to")
-    val createdAt = getObject("m_created_at", Instant::class.java)
-
-    val sendingStartedAtValue = getObject("m_sending_started_at", Instant::class.java)
-    val sendingStartedAt = if (wasNull()) null else sendingStartedAtValue
-
-    val sentAtValue = getObject("m_sent_at", Instant::class.java)
-    val sentAt = if (wasNull()) null else sentAtValue
-
-    val status = MailMessageStatus.valueOf(getString("m_status"))
-    val failedCount = getInt("m_failed_count")
-
-    return MailMessage(
-        id = id,
-        text = text,
-        subject = subject,
-        emailFrom = emailFrom,
-        emailTo = emailTo,
-        type = mailMessageType,
-        createdAt = createdAt,
-        sendingStartedAt = sendingStartedAt,
-        sentAt = sentAt,
-        status = status,
-        failedCount = failedCount,
-    )
 }
