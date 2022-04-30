@@ -8,9 +8,7 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import mu.KLogging
 import javax.annotation.PreDestroy
-import javax.enterprise.context.ApplicationScoped
 
-@ApplicationScoped
 class SendMailMessageService(
     private val mailSender: MailSender,
     private val mailMessageService: MailMessageService,

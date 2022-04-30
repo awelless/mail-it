@@ -11,11 +11,9 @@ import it.mail.persistence.api.MailMessageRepository
 import it.mail.service.NotFoundException
 import mu.KLogging
 import java.time.Instant
-import javax.enterprise.context.ApplicationScoped
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.toJavaDuration
 
-@ApplicationScoped
 class MailMessageService(
     private val mailMessageRepository: MailMessageRepository,
 ) {

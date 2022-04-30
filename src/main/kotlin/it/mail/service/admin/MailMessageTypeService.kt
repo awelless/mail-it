@@ -8,9 +8,7 @@ import it.mail.service.BadRequestException
 import it.mail.service.NotFoundException
 import it.mail.service.model.Slice
 import mu.KLogging
-import javax.enterprise.context.ApplicationScoped
 
-@ApplicationScoped
 class MailMessageTypeService(
     private val mailMessageTypeRepository: MailMessageTypeRepository,
 ) {

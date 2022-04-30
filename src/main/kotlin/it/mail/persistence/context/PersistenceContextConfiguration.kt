@@ -5,28 +5,28 @@ import it.mail.persistence.common.LocalCounterIdGenerator
 import it.mail.persistence.jdbc.JdbcMailMessageRepository
 import it.mail.persistence.jdbc.JdbcMailMessageTypeRepository
 import org.apache.commons.dbutils.QueryRunner
-import javax.enterprise.context.ApplicationScoped
+import javax.inject.Singleton
 import javax.sql.DataSource
 
 class PersistenceContextConfiguration {
 
-    @ApplicationScoped
+    @Singleton
     fun queryRunner() = QueryRunner()
 
-    @ApplicationScoped
+    @Singleton
     fun idGenerator() = LocalCounterIdGenerator()
 }
 
-@ApplicationScoped
+@Singleton
 class RepositoriesConfiguration(
     private val idGenerator: IdGenerator,
     private val dataSource: DataSource,
     private val queryRunner: QueryRunner,
 ) {
 
-    @ApplicationScoped
+    @Singleton
     fun mailMessageTypeRepository() = JdbcMailMessageTypeRepository(idGenerator, dataSource, queryRunner)
 
-    @ApplicationScoped
+    @Singleton
     fun mailMessageRepository() = JdbcMailMessageRepository(idGenerator, dataSource, queryRunner)
 }

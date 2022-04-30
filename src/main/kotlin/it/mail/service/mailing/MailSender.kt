@@ -5,11 +5,9 @@ import io.quarkus.mailer.reactive.ReactiveMailer
 import io.smallrye.mutiny.coroutines.awaitSuspending
 import it.mail.domain.MailMessage
 import mu.KLogging
-import javax.enterprise.context.ApplicationScoped
 
-@ApplicationScoped
 class MailSender(
-    private val mailer: ReactiveMailer
+    private val mailer: ReactiveMailer,
 ) {
     companion object : KLogging()
 

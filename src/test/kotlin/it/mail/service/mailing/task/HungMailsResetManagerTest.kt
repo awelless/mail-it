@@ -7,6 +7,7 @@ import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.junit5.MockKExtension
 import it.mail.domain.MailMessage
 import it.mail.domain.MailMessageStatus.SENDING
+import it.mail.service.mailing.HungMailsResetManager
 import it.mail.service.mailing.MailMessageService
 import it.mail.test.createMailMessage
 import it.mail.test.createMailMessageType

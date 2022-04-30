@@ -7,9 +7,7 @@ import it.mail.persistence.api.MailMessageTypeRepository
 import it.mail.service.BadRequestException
 import mu.KLogging
 import java.time.Instant
-import javax.enterprise.context.ApplicationScoped
 
-@ApplicationScoped
 class ExternalMailMessageService(
     private val mailMessageRepository: MailMessageRepository,
     private val mailMessageTypeRepository: MailMessageTypeRepository,
