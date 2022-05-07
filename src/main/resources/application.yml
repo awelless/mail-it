@@ -1,1 +1,9 @@
-
+quarkus:
+#  todo when migrations are written
+  datasource:
+    jdbc:
+      url: jdbc:h2:mem:;INIT=RUNSCRIPT FROM 'classpath:db/expected_schema.sql'
+  quartz:
+    clustered: false
+    store-type: ram
+    thread-count: 2 # should be configured according to an amount of scheduled tasks

@@ -16,11 +16,11 @@ repositories {
     mavenLocal()
 }
 
-var dbUtilsVersion = "1.7"
-val kotlinLoggingVersion = "2.1.21"
-val mockkVersion = "1.12.3"
-val quarkusVersion: String by project
-val restAssuredKotlinExtensionsVersion = "5.0.1"
+var dbUtilsVersion = "1.7" // https://mvnrepository.com/artifact/commons-dbutils/commons-dbutils
+val kotlinLoggingVersion = "2.1.21" // https://mvnrepository.com/artifact/io.github.microutils/kotlin-logging
+val mockkVersion = "1.12.3" // https://mvnrepository.com/artifact/io.mockk/mockk
+val quarkusVersion: String by project // https://mvnrepository.com/artifact/io.quarkus.platform/quarkus-bom
+val restAssuredKotlinExtensionsVersion = "5.0.1" // https://mvnrepository.com/artifact/io.rest-assured/kotlin-extensions
 
 dependencies {
     implementation(enforcedPlatform("io.quarkus.platform:quarkus-bom:$quarkusVersion"))
@@ -34,6 +34,7 @@ dependencies {
     implementation("io.quarkus:quarkus-jdbc-h2")
     implementation("io.quarkus:quarkus-kotlin")
     implementation("io.quarkus:quarkus-mailer")
+    implementation("io.quarkus:quarkus-quartz")
     implementation("io.quarkus:quarkus-resteasy-reactive")
     implementation("io.quarkus:quarkus-resteasy-reactive-jackson")
 
@@ -59,7 +60,7 @@ java {
 
 allOpen {
     annotation("javax.ws.rs.Path")
-    annotation("javax.enterprise.context.ApplicationScoped")
+    annotation("javax.inject.Singleton")
     annotation("io.quarkus.test.junit.QuarkusTest")
 }
 
