@@ -1,9 +1,9 @@
 package it.mail.persistence.jdbc
 
 import it.mail.domain.MailMessageType
+import it.mail.domain.Slice
 import it.mail.persistence.api.MailMessageTypeRepository
 import it.mail.persistence.common.IdGenerator
-import it.mail.service.model.Slice
 import org.apache.commons.dbutils.QueryRunner
 import org.apache.commons.dbutils.ResultSetHandler
 import java.sql.ResultSet

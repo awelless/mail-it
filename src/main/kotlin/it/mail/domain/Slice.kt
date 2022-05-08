@@ -1,4 +1,4 @@
-package it.mail.service.model
+package it.mail.domain
 
 data class Slice<T>(
     val content: List<T>,

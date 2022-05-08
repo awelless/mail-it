@@ -3,7 +3,7 @@ package it.mail.persistence.api
 import it.mail.domain.MailMessage
 import it.mail.domain.MailMessageStatus
 import it.mail.domain.MailMessageType
-import it.mail.service.model.Slice
+import it.mail.domain.Slice
 import java.time.Instant
 
 interface MailMessageRepository {

@@ -3,10 +3,10 @@ package it.mail.service.admin
 import it.mail.domain.MailMessageType
 import it.mail.domain.MailMessageTypeState.DELETED
 import it.mail.domain.MailMessageTypeState.FORCE_DELETED
+import it.mail.domain.Slice
 import it.mail.persistence.api.MailMessageTypeRepository
-import it.mail.service.BadRequestException
 import it.mail.service.NotFoundException
-import it.mail.service.model.Slice
+import it.mail.service.ValidationException
 import mu.KLogging
 
 class MailMessageTypeService(
@@ -24,7 +24,7 @@ class MailMessageTypeService(
 //    @Transactional // todo transaction doesn't work
     suspend fun createNewMailType(name: String, description: String?, maxRetriesCount: Int?): MailMessageType {
         if (mailMessageTypeRepository.existsOneWithName(name)) {
-            throw BadRequestException("MailMessageType name: $name is not unique")
+            throw ValidationException("MailMessageType name: $name is not unique")
         }
 
         val mailType = MailMessageType(

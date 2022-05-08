@@ -6,7 +6,7 @@ import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
 import it.mail.domain.MailMessageType
 import it.mail.persistence.api.MailMessageTypeRepository
-import it.mail.service.BadRequestException
+import it.mail.service.ValidationException
 import it.mail.test.createMailMessageType
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -57,7 +57,7 @@ class MailMessageTypeServiceTest {
 
             coEvery { mailMessageTypeRepository.existsOneWithName(name) }.returns(true)
 
-            assertThrows<BadRequestException> { mailMessageTypeService.createNewMailType(name, null, null) }
+            assertThrows<ValidationException> { mailMessageTypeService.createNewMailType(name, null, null) }
         }
     }
 

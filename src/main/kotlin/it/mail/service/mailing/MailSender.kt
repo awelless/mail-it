@@ -15,7 +15,7 @@ class MailSender(
         // TODO add support for plain html and templates
 
         val mail = Mail.withText(mailMessage.emailTo, mailMessage.subject, mailMessage.text)
-        if (mailMessage.emailFrom != null) {
+        if (!mailMessage.emailFrom.isNullOrBlank()) {
             mail.from = mailMessage.emailFrom
         }
 

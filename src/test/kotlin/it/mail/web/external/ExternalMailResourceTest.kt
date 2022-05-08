@@ -12,13 +12,10 @@ import it.mail.persistence.api.MailMessageTypeRepository
 import it.mail.web.dto.CreateMailDto
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
-import org.hamcrest.Matchers.equalTo
-import org.hamcrest.Matchers.hasItems
 import org.jboss.resteasy.reactive.RestResponse.StatusCode.ACCEPTED
 import org.jboss.resteasy.reactive.RestResponse.StatusCode.BAD_REQUEST
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import javax.inject.Inject
 
@@ -73,7 +70,6 @@ class ExternalMailResourceTest {
     }
 
     @Test
-    @Disabled("Add validation for queries")
     fun `sendMail without required fields - returns 400`() {
         Given {
             contentType(JSON)
@@ -88,10 +84,6 @@ class ExternalMailResourceTest {
             post(baseUrl)
         } Then {
             statusCode(BAD_REQUEST)
-
-            body("size()", equalTo(4))
-            body("fieldName", hasItems("text", "from", "to", "type"))
-            body("errorMessage", hasItems("Text shouldn't be blank", "Email from shouldn't be blank", "Email to shouldn't be blank"))
         }
     }
 
