@@ -4,11 +4,8 @@ import io.quarkus.scheduler.Scheduled
 import io.quarkus.scheduler.Scheduled.ConcurrentExecution.SKIP
 import it.mail.service.mailing.HungMailsResetManager
 import it.mail.service.mailing.UnsentMailProcessor
-import kotlinx.coroutines.runBlocking
 import java.time.Clock
 import javax.inject.Singleton
-
-// todo remove runBlocking in quarkus 2.9
 
 @Singleton
 class HungMailsResetTaskQuarkusTask(
@@ -16,10 +13,8 @@ class HungMailsResetTaskQuarkusTask(
 ) {
 
     @Scheduled(cron = "*/30 * * * * ?", concurrentExecution = SKIP)
-    fun run() {
-        runBlocking {
-            hungMailsResetManager.resetAllHungMails(Clock.systemUTC())
-        }
+    suspend fun run() {
+        hungMailsResetManager.resetAllHungMails(Clock.systemUTC())
     }
 }
 
@@ -29,9 +24,7 @@ class MailSendingTaskQuarkusTask(
 ) {
 
     @Scheduled(cron = "*/10 * * * * ?", concurrentExecution = SKIP)
-    fun run() {
-        runBlocking {
-            mailProcessor.processUnsentMail()
-        }
+    suspend fun run() {
+        mailProcessor.processUnsentMail()
     }
 }
