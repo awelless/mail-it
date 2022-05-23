@@ -2,20 +2,22 @@ package it.mail.service.mailing
 
 import it.mail.domain.MailMessage
 import mu.KLogging
-import java.time.Clock
 
 class HungMailsResetManager(
     private val mailMessageService: MailMessageService,
 ) {
     companion object : KLogging()
 
-    suspend fun resetAllHungMails(clock: Clock) {
+    suspend fun resetAllHungMails() {
         // TODO select in batches
         val hungMails = mailMessageService.getAllHungMessages()
 
         logger.info { "${hungMails.size} hung mails discovered" }
 
-        hungMails.forEach { resetHungMail(it) }
+        // todo parallel ?
+        hungMails.map { resetHungMail(it) }
+
+        logger.info { "Hung mails processing has finished" }
     }
 
     private suspend fun resetHungMail(mail: MailMessage) {

@@ -42,7 +42,7 @@ class MailMessageTypeServiceTest {
             val retries = 11
 
             coEvery { mailMessageTypeRepository.existsOneWithName(name) }.returns(false)
-            coEvery { mailMessageTypeRepository.persist(any<MailMessageType>()) }.returnsArgument(0)
+            coEvery { mailMessageTypeRepository.create(any<MailMessageType>()) }.returnsArgument(0)
 
             val actual = mailMessageTypeService.createNewMailType(name, description, retries)
 
@@ -67,16 +67,14 @@ class MailMessageTypeServiceTest {
         @Test
         fun `when everything is valid - updates`() = runTest {
             val description = "new d"
-            val retries = null
+            val retries = 25
 
+            coEvery { mailMessageTypeRepository.updateDescriptionAndMaxRetriesCount(mailType.id, description, retries) }.returns(1)
             coEvery { mailMessageTypeRepository.findById(mailType.id) }.returns(mailType)
-            coEvery { mailMessageTypeRepository.persist(any()) }.returnsArgument(0)
 
             val actual = mailMessageTypeService.updateMailType(mailType.id, description, retries)
 
             assertEquals(mailType.name, actual.name)
-            assertEquals(description, actual.description)
-            assertEquals(retries, actual.maxRetriesCount)
         }
     }
 }

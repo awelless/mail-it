@@ -17,8 +17,8 @@ repositories {
 }
 
 var dbUtilsVersion = "1.7" // https://mvnrepository.com/artifact/commons-dbutils/commons-dbutils
-val kotlinLoggingVersion = "2.1.21" // https://mvnrepository.com/artifact/io.github.microutils/kotlin-logging
-val mockkVersion = "1.12.3" // https://mvnrepository.com/artifact/io.mockk/mockk
+val kotlinLoggingVersion = "2.1.23" // https://mvnrepository.com/artifact/io.github.microutils/kotlin-logging
+val mockkVersion = "1.12.4" // https://mvnrepository.com/artifact/io.mockk/mockk
 val quarkusVersion: String by project // https://mvnrepository.com/artifact/io.quarkus.platform/quarkus-bom
 val restAssuredKotlinExtensionsVersion = "5.0.1" // https://mvnrepository.com/artifact/io.rest-assured/kotlin-extensions
 

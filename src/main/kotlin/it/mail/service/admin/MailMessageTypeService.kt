@@ -33,39 +33,40 @@ class MailMessageTypeService(
             maxRetriesCount = maxRetriesCount,
         )
 
-        mailMessageTypeRepository.persist(mailType)
+        mailMessageTypeRepository.create(mailType)
 
         logger.info { "Saved MailMessageType: ${mailType.id}" }
 
         return mailType
     }
 
-//    @Transactional // todo transaction doesn't work
     suspend fun updateMailType(id: Long, description: String?, maxRetriesCount: Int?): MailMessageType {
-        val mailType = getById(id)
+        val updatedRows = mailMessageTypeRepository.updateDescriptionAndMaxRetriesCount(
+            id = id,
+            description = description,
+            maxRetriesCount = maxRetriesCount
+        )
 
-        mailType.description = description
-        mailType.maxRetriesCount = maxRetriesCount
+        if (updatedRows == 0) {
+            throw NotFoundException("MailMessageType with id: $id is not found")
+        }
 
-        mailMessageTypeRepository.persist(mailType)
+        logger.info { "Updated MailMessageType: $id" }
 
-        logger.info { "Updated MailMessageType: ${mailType.id}" }
-
-        return mailType
+        return getById(id)
     }
 
-    // @Transactional
     suspend fun deleteMailType(id: Long, force: Boolean) {
-        val mailType = getById(id)
+        val newState = if (force) { FORCE_DELETED } else { DELETED }
 
-        mailType.state = if (force) { FORCE_DELETED } else { DELETED }
-
-        mailMessageTypeRepository.persist(mailType)
+        if (mailMessageTypeRepository.updateState(id, newState) == 0) {
+            throw NotFoundException("MailMessageType with id: $id is not found")
+        }
 
         if (force) {
-            logger.info { "MailMessageType: ${mailType.id} is marked as force deleted" }
+            logger.info { "MailMessageType: $id is marked as force deleted" }
         } else {
-            logger.info { "MailMessageType: ${mailType.id} is marked as deleted" }
+            logger.info { "MailMessageType: $id is marked as deleted" }
         }
     }
 }

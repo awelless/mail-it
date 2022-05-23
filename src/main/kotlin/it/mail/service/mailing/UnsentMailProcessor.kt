@@ -1,5 +1,6 @@
 package it.mail.service.mailing
 
+import kotlinx.coroutines.joinAll
 import mu.KLogging
 
 class UnsentMailProcessor(
@@ -14,6 +15,13 @@ class UnsentMailProcessor(
 
         logger.info { "Processing ${messageIds.size} unsent messages" }
 
-        messageIds.forEach(sendService::sendMail)
+        val jobs = messageIds.map { sendService.sendMail(it) }
+
+        try {
+            jobs.joinAll()
+            logger.info { "Processing of unsent messages has finished" }
+        } catch (e: Exception) {
+            logger.warn { "Processing of unsent messages has finished with exception. Cause message: ${e.message}. Cause: $e" }
+        }
     }
 }

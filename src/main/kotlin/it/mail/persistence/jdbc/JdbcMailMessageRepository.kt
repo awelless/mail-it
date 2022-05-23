@@ -82,7 +82,7 @@ private const val INSERT_SQL = """
    VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"""
 
 private const val UPDATE_STATUS_SQL = "UPDATE mail_message SET status = ? WHERE mail_message_id = ?"
-private const val UPDATE_STATUS_AND_SENDING_START_SQL = "UPDATE mail_message SET status = ?, sending_started_at = ? WHERE mail_message_id = ?"
+private const val UPDATE_STATUS_AND_SENDING_START_SQL = "UPDATE mail_message SET status = ?, sending_started_at = ? WHERE mail_message_id = ? AND status IN (?)"
 private const val UPDATE_STATUS_AND_SENT_AT_SQL = "UPDATE mail_message SET status = ?, sent_at = ? WHERE mail_message_id = ?"
 private const val UPDATE_STATUS_FILED_COUNT_AND_SENDING_START_SQL = "UPDATE mail_message SET status = ?, failed_count = ?, sending_started_at = ? WHERE mail_message_id = ?"
 
@@ -95,7 +95,7 @@ class JdbcMailMessageRepository(
     private val singleMailWithTypeMapper = SingleMailMessageWithTypeResultSetMapper()
     private val multipleMailWithTypeMapper = MultipleMailMessagesWithTypeResultSetMapper()
 
-    override suspend fun findOneById(id: Long): MailMessage? =
+    override suspend fun findOneWithTypeById(id: Long): MailMessage? =
         dataSource.connection.use {
             queryRunner.query(
                 it, FIND_WITH_TYPE_BY_ID_SQL,
@@ -103,20 +103,6 @@ class JdbcMailMessageRepository(
                 id
             )
         }
-
-    override suspend fun findOneWithTypeByIdAndStatus(id: Long, statuses: Collection<MailMessageStatus>): MailMessage? {
-        val statusNames = statuses
-            .map { it.name }
-            .toTypedArray()
-
-        return dataSource.connection.use {
-            queryRunner.query(
-                it, FIND_WITH_TYPE_BY_ID_AND_STATUSES_SQL,
-                singleMailWithTypeMapper,
-                id, it.createArrayOf("VARCHAR", statusNames)
-            )
-        }
-    }
 
     override suspend fun findAllWithTypeByStatusesAndSendingStartedBefore(statuses: Collection<MailMessageStatus>, sendingStartedBefore: Instant): List<MailMessage> {
         val statusNames = statuses
@@ -169,13 +155,23 @@ class JdbcMailMessageRepository(
             )
         }
 
-    override suspend fun updateMessageStatusAndSendingStartedTime(id: Long, status: MailMessageStatus, sendingStartedAt: Instant): Int =
-        dataSource.connection.use {
+    override suspend fun updateMessageStatusAndSendingStartedTimeByIdAndStatusIn(
+        id: Long,
+        statuses: Collection<MailMessageStatus>,
+        status: MailMessageStatus,
+        sendingStartedAt: Instant
+    ): Int {
+        val statusNames = statuses
+            .map { it.name }
+            .toTypedArray()
+
+        return dataSource.connection.use {
             queryRunner.update(
                 it, UPDATE_STATUS_AND_SENDING_START_SQL,
-                status, sendingStartedAt, id
+                status, sendingStartedAt, id, it.createArrayOf("VARCHAR", statusNames)
             )
         }
+    }
 
     override suspend fun updateMessageStatusAndSentTime(id: Long, status: MailMessageStatus, sentAt: Instant): Int =
         dataSource.connection.use {

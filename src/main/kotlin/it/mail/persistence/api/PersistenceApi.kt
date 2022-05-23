@@ -3,14 +3,13 @@ package it.mail.persistence.api
 import it.mail.domain.MailMessage
 import it.mail.domain.MailMessageStatus
 import it.mail.domain.MailMessageType
+import it.mail.domain.MailMessageTypeState
 import it.mail.domain.Slice
 import java.time.Instant
 
 interface MailMessageRepository {
 
-    suspend fun findOneById(id: Long): MailMessage?
-
-    suspend fun findOneWithTypeByIdAndStatus(id: Long, statuses: Collection<MailMessageStatus>): MailMessage?
+    suspend fun findOneWithTypeById(id: Long): MailMessage?
 
     suspend fun findAllWithTypeByStatusesAndSendingStartedBefore(statuses: Collection<MailMessageStatus>, sendingStartedBefore: Instant): List<MailMessage>
 
@@ -20,7 +19,12 @@ interface MailMessageRepository {
 
     suspend fun updateMessageStatus(id: Long, status: MailMessageStatus): Int
 
-    suspend fun updateMessageStatusAndSendingStartedTime(id: Long, status: MailMessageStatus, sendingStartedAt: Instant): Int
+    suspend fun updateMessageStatusAndSendingStartedTimeByIdAndStatusIn(
+        id: Long,
+        statuses: Collection<MailMessageStatus>,
+        status: MailMessageStatus,
+        sendingStartedAt: Instant
+    ): Int
 
     suspend fun updateMessageStatusAndSentTime(id: Long, status: MailMessageStatus, sentAt: Instant): Int
 
@@ -35,6 +39,9 @@ interface MailMessageTypeRepository {
 
     suspend fun existsOneWithName(name: String): Boolean
 
-    // todo replace with separate queries
-    suspend fun persist(mailMessageType: MailMessageType): MailMessageType
+    suspend fun create(mailMessageType: MailMessageType): MailMessageType
+
+    suspend fun updateDescriptionAndMaxRetriesCount(id: Long, description: String?, maxRetriesCount: Int?): Int
+
+    suspend fun updateState(id: Long, state: MailMessageTypeState): Int
 }

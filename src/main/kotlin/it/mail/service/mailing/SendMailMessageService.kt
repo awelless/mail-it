@@ -2,20 +2,17 @@ package it.mail.service.mailing
 
 import it.mail.domain.MailMessageTypeState.FORCE_DELETED
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import mu.KLogging
-import javax.annotation.PreDestroy
 
 class SendMailMessageService(
     private val mailSender: MailSender,
     private val mailMessageService: MailMessageService,
+    private val coroutineScope: CoroutineScope,
 ) {
     companion object : KLogging()
-
-    private val coroutineScope = CoroutineScope(Dispatchers.IO)
 
     fun sendMail(messageId: Long): Job {
         return coroutineScope.launch {
@@ -40,8 +37,9 @@ class SendMailMessageService(
         }
     }
 
-    @PreDestroy
-    internal fun shutDown() {
+    fun stop() {
+        logger.info { "Stopping SendMailMessageService" }
         coroutineScope.cancel()
+        logger.info { "Stopped SendMailMessageService" }
     }
 }

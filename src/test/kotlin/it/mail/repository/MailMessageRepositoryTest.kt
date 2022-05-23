@@ -31,7 +31,7 @@ class MailMessageRepositoryTest {
     fun setUp() {
         runBlocking {
             mailMessageType = MailMessageType(name = "type")
-            mailMessageTypeRepository.persist(mailMessageType)
+            mailMessageTypeRepository.create(mailMessageType)
 
             mailMessage = MailMessage(
                 text = "text",
@@ -47,8 +47,8 @@ class MailMessageRepositoryTest {
     }
 
     @Test
-    fun findOneWithTypeByIdAndStatus_fetchesMailType() = runTest {
-        val actual = mailMessageRepository.findOneWithTypeByIdAndStatus(mailMessage.id, listOf(PENDING))!!
+    fun findOneWithTypeById_fetchesMailType() = runTest {
+        val actual = mailMessageRepository.findOneWithTypeById(mailMessage.id)!!
 
         assertEquals(mailMessage.id, actual.id)
         assertEquals(mailMessage.subject, actual.subject)

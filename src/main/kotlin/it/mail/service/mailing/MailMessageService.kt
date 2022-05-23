@@ -30,19 +30,13 @@ class MailMessageService(
     suspend fun getAllIdsOfPossibleToSentMessages(): List<Long> =
         mailMessageRepository.findAllIdsByStatusIn(possibleToSendMessageStatuses)
 
-    // @Transactional // todo transaction doesn't work
     suspend fun getMessageForSending(messageId: Long): MailMessage {
-        val message = mailMessageRepository.findOneWithTypeByIdAndStatus(messageId, possibleToSendMessageStatuses)
-            ?: throw NotFoundException("MailMessage, id: $messageId for delivery is not found")
-
-        message.apply {
-            status = SENDING
-            sendingStartedAt = Instant.now()
+        if (mailMessageRepository.updateMessageStatusAndSendingStartedTimeByIdAndStatusIn(messageId, possibleToSendMessageStatuses, SENDING, Instant.now()) == 0) {
+            throw NotFoundException("MailMessage, id: $messageId for delivery is not found")
         }
 
-        mailMessageRepository.updateMessageStatusAndSendingStartedTime(messageId, message.status, message.sendingStartedAt!!)
-
-        return message
+        return mailMessageRepository.findOneWithTypeById(messageId)
+            ?: throw NotFoundException("MailMessage, id: $messageId for delivery is not found")
     }
 
     suspend fun processSuccessfulDelivery(mailMessage: MailMessage) {

@@ -15,11 +15,6 @@ import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
-import java.time.Clock
-import java.time.Instant
-import java.time.ZoneOffset.UTC
-import kotlin.time.Duration.Companion.minutes
-import kotlin.time.toJavaDuration
 
 @ExtendWith(MockKExtension::class)
 class HungMailsResetManagerTest {
@@ -45,13 +40,10 @@ class HungMailsResetManagerTest {
     @Test
     fun resetAllHungMails_considersThemAsFailed() = runTest {
         // given
-        val clock = Clock.fixed(Instant.parse("2022-04-21T21:00:00Z"), UTC)
-        val hungMessagesBefore = Instant.now(clock).minus(2.minutes.toJavaDuration())
-
         coEvery { mailMessageService.getAllHungMessages() }.returns(listOf(mail1, mail2))
 
         // when
-        hungMailsResetManager.resetAllHungMails(clock)
+        hungMailsResetManager.resetAllHungMails()
 
         // then
         coVerify { mailMessageService.processFailedDelivery(mail1) }

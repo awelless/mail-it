@@ -4,17 +4,19 @@ import io.quarkus.scheduler.Scheduled
 import io.quarkus.scheduler.Scheduled.ConcurrentExecution.SKIP
 import it.mail.service.mailing.HungMailsResetManager
 import it.mail.service.mailing.UnsentMailProcessor
-import java.time.Clock
 import javax.inject.Singleton
+
+const val EACH_10_SECONDS = "*/10 * * * * ?"
+const val EACH_30_SECONDS = "*/30 * * * * ?"
 
 @Singleton
 class HungMailsResetTaskQuarkusTask(
     private val hungMailsResetManager: HungMailsResetManager,
 ) {
 
-    @Scheduled(cron = "*/30 * * * * ?", concurrentExecution = SKIP)
+    @Scheduled(cron = EACH_30_SECONDS, concurrentExecution = SKIP)
     suspend fun run() {
-        hungMailsResetManager.resetAllHungMails(Clock.systemUTC())
+        hungMailsResetManager.resetAllHungMails()
     }
 }
 
@@ -23,7 +25,7 @@ class MailSendingTaskQuarkusTask(
     private val mailProcessor: UnsentMailProcessor,
 ) {
 
-    @Scheduled(cron = "*/10 * * * * ?", concurrentExecution = SKIP)
+    @Scheduled(cron = EACH_10_SECONDS, concurrentExecution = SKIP)
     suspend fun run() {
         mailProcessor.processUnsentMail()
     }

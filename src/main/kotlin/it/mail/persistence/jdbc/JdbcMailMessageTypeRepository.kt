@@ -1,6 +1,7 @@
 package it.mail.persistence.jdbc
 
 import it.mail.domain.MailMessageType
+import it.mail.domain.MailMessageTypeState
 import it.mail.domain.Slice
 import it.mail.persistence.api.MailMessageTypeRepository
 import it.mail.persistence.common.IdGenerator
@@ -31,7 +32,8 @@ private const val FIND_ALL_SLICED_SQL = """
 
 private const val EXISTS_BY_NAME_SQL = "SELECT 1 FROM mail_message_type WHERE name = ?"
 private const val INSERT_SQL = "INSERT INTO mail_message_type(mail_message_type_id, name, description, max_retries_count, state) VALUES(?, ?, ?, ?, ?)"
-private const val UPDATE_SQL = "UPDATE mail_message_type SET description = ?, max_retries_count = ?, state = ? WHERE mail_message_type_id = ?"
+private const val UPDATE_DESCRIPTION_MAX_RETRIES_COUNT_SQL = "UPDATE mail_message_type SET description = ?, max_retries_count = ? WHERE mail_message_type_id = ?"
+private const val UPDATE_STATE_SQL = "UPDATE mail_message_type SET state = ? WHERE mail_message_type_id = ?"
 
 class JdbcMailMessageTypeRepository(
     private val idGenerator: IdGenerator,
@@ -74,14 +76,7 @@ class JdbcMailMessageTypeRepository(
             )
         }
 
-    override suspend fun persist(mailMessageType: MailMessageType): MailMessageType =
-        if (mailMessageType.isNew()) {
-            create(mailMessageType)
-        } else {
-            update(mailMessageType)
-        }
-
-    private fun create(mailMessageType: MailMessageType): MailMessageType {
+    override suspend fun create(mailMessageType: MailMessageType): MailMessageType {
         val id = idGenerator.generateId()
 
         dataSource.connection.use {
@@ -95,16 +90,21 @@ class JdbcMailMessageTypeRepository(
         return mailMessageType
     }
 
-    private fun update(mailMessageType: MailMessageType): MailMessageType {
+    override suspend fun updateDescriptionAndMaxRetriesCount(id: Long, description: String?, maxRetriesCount: Int?): Int =
         dataSource.connection.use {
             queryRunner.update(
-                it, UPDATE_SQL,
-                mailMessageType.description, mailMessageType.maxRetriesCount, mailMessageType.state.name, mailMessageType.id
+                it, UPDATE_DESCRIPTION_MAX_RETRIES_COUNT_SQL,
+                description, maxRetriesCount, id
             )
         }
 
-        return mailMessageType
-    }
+    override suspend fun updateState(id: Long, state: MailMessageTypeState): Int =
+        dataSource.connection.use {
+            queryRunner.update(
+                it, UPDATE_STATE_SQL,
+                state, id
+            )
+        }
 }
 
 /**
@@ -137,5 +137,3 @@ private class MultipleMailMessageTypesResultSetMapper : ResultSetHandler<List<Ma
         return mailTypes
     }
 }
-
-private fun MailMessageType.isNew() = id == 0L

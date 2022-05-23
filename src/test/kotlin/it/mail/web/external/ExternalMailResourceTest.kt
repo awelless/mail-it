@@ -36,7 +36,7 @@ class ExternalMailResourceTest {
     fun setUp() {
         runBlocking {
             mailType = MailMessageType(name = "DEFAULT")
-            mailMessageTypeRepository.persist(mailType)
+            mailMessageTypeRepository.create(mailType)
         }
     }
 
@@ -61,7 +61,7 @@ class ExternalMailResourceTest {
             path("id")
         }
 
-        val savedMail = mailMessageRepository.findOneById(messageId.toLong())!!
+        val savedMail = mailMessageRepository.findOneWithTypeById(messageId.toLong())!!
         assertEquals(createMailDto.text, savedMail.text)
         assertEquals(createMailDto.subject, savedMail.subject)
         assertEquals(createMailDto.from, savedMail.emailFrom)

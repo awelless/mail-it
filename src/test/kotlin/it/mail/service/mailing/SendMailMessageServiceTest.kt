@@ -4,12 +4,15 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.RelaxedMockK
+import io.mockk.impl.annotations.SpyK
 import io.mockk.junit5.MockKExtension
 import it.mail.domain.MailMessage
 import it.mail.domain.MailMessageType
 import it.mail.domain.MailMessageTypeState.FORCE_DELETED
 import it.mail.test.createMailMessage
 import it.mail.test.createMailMessageType
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -23,6 +26,9 @@ class SendMailMessageServiceTest {
 
     @RelaxedMockK
     lateinit var mailMessageService: MailMessageService
+
+    @SpyK
+    var coroutineScope = CoroutineScope(Dispatchers.Default)
 
     @InjectMockKs
     lateinit var sendService: SendMailMessageService

@@ -50,7 +50,7 @@ class MailMessageTypeResourceTest {
                 description = "desc",
                 maxRetriesCount = 4,
             )
-            mailMessageTypeRepository.persist(mailType)
+            mailMessageTypeRepository.create(mailType)
         }
     }
 
