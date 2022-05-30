@@ -41,7 +41,7 @@ interface MailMessageTypeRepository {
 
     suspend fun create(mailMessageType: MailMessageType): MailMessageType
 
-    suspend fun updateDescriptionAndMaxRetriesCount(id: Long, description: String?, maxRetriesCount: Int?): Int
+    suspend fun update(mailMessageType: MailMessageType): MailMessageType
 
     suspend fun updateState(id: Long, state: MailMessageTypeState): Int
 }

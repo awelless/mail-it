@@ -15,7 +15,7 @@ import it.mail.domain.MailMessageType
 import it.mail.persistence.api.MailMessageRepository
 import it.mail.service.NotFoundException
 import it.mail.test.createMailMessage
-import it.mail.test.createMailMessageType
+import it.mail.test.createPlainMailMessageType
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
@@ -39,7 +39,7 @@ class MailMessageServiceTest {
 
     @BeforeEach
     fun setUp() {
-        mailMessageType = createMailMessageType()
+        mailMessageType = createPlainMailMessageType()
         mailMessage = createMailMessage(mailMessageType)
     }
 

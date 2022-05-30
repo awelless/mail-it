@@ -13,7 +13,7 @@ import it.mail.persistence.api.MailMessageRepository
 import it.mail.persistence.api.MailMessageTypeRepository
 import it.mail.service.ValidationException
 import it.mail.test.createMailMessage
-import it.mail.test.createMailMessageType
+import it.mail.test.createPlainMailMessageType
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
@@ -43,7 +43,7 @@ class ExternalMailMessageServiceTest {
 
     @BeforeEach
     fun setUp() {
-        mailType = createMailMessageType()
+        mailType = createPlainMailMessageType()
     }
 
     @Test

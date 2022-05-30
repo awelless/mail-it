@@ -4,6 +4,7 @@ import io.quarkus.test.junit.QuarkusTest
 import it.mail.domain.MailMessage
 import it.mail.domain.MailMessageStatus.PENDING
 import it.mail.domain.MailMessageType
+import it.mail.domain.PlainTextMailMessageType
 import it.mail.persistence.api.MailMessageRepository
 import it.mail.persistence.api.MailMessageTypeRepository
 import kotlinx.coroutines.runBlocking
@@ -30,7 +31,7 @@ class MailMessageRepositoryTest {
     @BeforeEach
     fun setUp() {
         runBlocking {
-            mailMessageType = MailMessageType(name = "type")
+            mailMessageType = PlainTextMailMessageType(name = "type")
             mailMessageTypeRepository.create(mailMessageType)
 
             mailMessage = MailMessage(

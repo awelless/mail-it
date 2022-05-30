@@ -3,13 +3,16 @@ package it.mail.service.admin
 import io.mockk.coEvery
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
+import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.junit5.MockKExtension
+import io.mockk.verify
 import it.mail.domain.MailMessageType
 import it.mail.persistence.api.MailMessageTypeRepository
 import it.mail.service.ValidationException
-import it.mail.test.createMailMessageType
+import it.mail.service.admin.MailMessageContentType.PLAIN_TEXT
+import it.mail.test.createPlainMailMessageType
 import kotlinx.coroutines.test.runTest
-import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertSame
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -21,6 +24,10 @@ class MailMessageTypeServiceTest {
 
     @MockK
     lateinit var mailMessageTypeRepository: MailMessageTypeRepository
+    @MockK
+    lateinit var mailMessageTypeFactory: MailMessageTypeFactory<MailMessageType>
+    @RelaxedMockK
+    lateinit var mailMessageTypeStateUpdater: MailMessageTypeStateUpdater<MailMessageType>
 
     @InjectMockKs
     lateinit var mailMessageTypeService: MailMessageTypeService
@@ -29,7 +36,7 @@ class MailMessageTypeServiceTest {
 
     @BeforeEach
     fun setUp() {
-        mailType = createMailMessageType()
+        mailType = createPlainMailMessageType()
     }
 
     @Nested
@@ -37,27 +44,37 @@ class MailMessageTypeServiceTest {
 
         @Test
         fun `when everything is valid - creates`() = runTest {
-            val name = "NEW_TYPE"
-            val description = "some desc"
-            val retries = 11
+            // given
+            val command = CreateMailMessageTypeCommand(
+                name = "NEW_TYPE",
+                description = "some desc",
+                maxRetriesCount = 11,
+                contentType = PLAIN_TEXT,
+            )
 
-            coEvery { mailMessageTypeRepository.existsOneWithName(name) }.returns(false)
-            coEvery { mailMessageTypeRepository.create(any<MailMessageType>()) }.returnsArgument(0)
+            val mailType = createPlainMailMessageType()
 
-            val actual = mailMessageTypeService.createNewMailType(name, description, retries)
+            coEvery { mailMessageTypeRepository.existsOneWithName(command.name) }.returns(false)
+            coEvery { mailMessageTypeFactory.create(command) }.returns(mailType)
+            coEvery { mailMessageTypeRepository.create(any()) }.returnsArgument(0)
 
-            assertEquals(name, actual.name)
-            assertEquals(description, actual.description)
-            assertEquals(retries, actual.maxRetriesCount)
+            // when
+            val actual = mailMessageTypeService.createNewMailType(command)
+
+            // then
+            assertSame(mailType, actual)
         }
 
         @Test
         fun `with non unique name - throws exception`() = runTest {
-            val name = "non unique"
+            val command = CreateMailMessageTypeCommand(
+                name = "non unique",
+                contentType = PLAIN_TEXT,
+            )
 
-            coEvery { mailMessageTypeRepository.existsOneWithName(name) }.returns(true)
+            coEvery { mailMessageTypeRepository.existsOneWithName(command.name) }.returns(true)
 
-            assertThrows<ValidationException> { mailMessageTypeService.createNewMailType(name, null, null) }
+            assertThrows<ValidationException> { mailMessageTypeService.createNewMailType(command) }
         }
     }
 
@@ -66,15 +83,25 @@ class MailMessageTypeServiceTest {
 
         @Test
         fun `when everything is valid - updates`() = runTest {
-            val description = "new d"
-            val retries = 25
+            // given
+            val command = UpdateMailMessageTypeCommand(
+                id = mailType.id,
+                description = "new d",
+                maxRetriesCount = 25,
+            )
 
-            coEvery { mailMessageTypeRepository.updateDescriptionAndMaxRetriesCount(mailType.id, description, retries) }.returns(1)
+            val updatedMailType = createPlainMailMessageType()
+
             coEvery { mailMessageTypeRepository.findById(mailType.id) }.returns(mailType)
+            coEvery { mailMessageTypeRepository.update(mailType) }.returns(updatedMailType)
 
-            val actual = mailMessageTypeService.updateMailType(mailType.id, description, retries)
+            // when
+            val actual = mailMessageTypeService.updateMailType(command)
 
-            assertEquals(mailType.name, actual.name)
+            // then
+            assertSame(updatedMailType, actual)
+
+            verify(exactly = 1) { mailMessageTypeStateUpdater.update(mailType, command) }
         }
     }
 }

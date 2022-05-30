@@ -4,7 +4,7 @@ import io.quarkus.mailer.MockMailbox
 import io.quarkus.test.junit.QuarkusTest
 import it.mail.domain.MailMessage
 import it.mail.test.createMailMessage
-import it.mail.test.createMailMessageType
+import it.mail.test.createPlainMailMessageType
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -25,7 +25,7 @@ class MailSenderTest {
 
     @BeforeEach
     fun setUp() {
-        val mailType = createMailMessageType()
+        val mailType = createPlainMailMessageType()
         mailMessage = createMailMessage(mailType)
     }
 

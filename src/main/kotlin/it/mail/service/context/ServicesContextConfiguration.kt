@@ -1,9 +1,18 @@
 package it.mail.service.context
 
 import io.quarkus.mailer.reactive.ReactiveMailer
+import it.mail.domain.MailMessageType
 import it.mail.persistence.api.MailMessageRepository
 import it.mail.persistence.api.MailMessageTypeRepository
+import it.mail.service.admin.HtmlMailMessageTypeFactory
+import it.mail.service.admin.HtmlMailMessageTypeStateUpdater
+import it.mail.service.admin.MailMessageTypeFactory
+import it.mail.service.admin.MailMessageTypeFactoryManager
 import it.mail.service.admin.MailMessageTypeService
+import it.mail.service.admin.MailMessageTypeStateUpdater
+import it.mail.service.admin.MailMessageTypeStateUpdaterManager
+import it.mail.service.admin.PlainTextMailMessageTypeFactory
+import it.mail.service.admin.PlainTextMailMessageTypeStateUpdater
 import it.mail.service.external.ExternalMailMessageService
 import it.mail.service.mailing.HungMailsResetManager
 import it.mail.service.mailing.MailMessageService
@@ -18,7 +27,23 @@ import javax.inject.Singleton
 class AdminServicesContextConfiguration {
 
     @Singleton
-    fun mailMessageTypeService(mailMessageTypeRepository: MailMessageTypeRepository) = MailMessageTypeService(mailMessageTypeRepository)
+    fun mailMessageTypeFactory() = MailMessageTypeFactoryManager(
+        PlainTextMailMessageTypeFactory(),
+        HtmlMailMessageTypeFactory(),
+    )
+
+    @Singleton
+    fun mailMessageTypeStateUpdater() = MailMessageTypeStateUpdaterManager(
+        PlainTextMailMessageTypeStateUpdater(),
+        HtmlMailMessageTypeStateUpdater(),
+    )
+
+    @Singleton
+    fun mailMessageTypeService(
+        mailMessageTypeRepository: MailMessageTypeRepository,
+        mailMessageTypeFactory: MailMessageTypeFactory<MailMessageType>,
+        mailMessageTypeStateUpdated: MailMessageTypeStateUpdater<MailMessageType>,
+    ) = MailMessageTypeService(mailMessageTypeRepository, mailMessageTypeFactory, mailMessageTypeStateUpdated)
 }
 
 class ExternalServicesContextConfiguration {

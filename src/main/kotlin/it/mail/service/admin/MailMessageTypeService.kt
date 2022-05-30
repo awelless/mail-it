@@ -1,5 +1,6 @@
 package it.mail.service.admin
 
+import it.mail.domain.HtmlTemplateEngine
 import it.mail.domain.MailMessageType
 import it.mail.domain.MailMessageTypeState.DELETED
 import it.mail.domain.MailMessageTypeState.FORCE_DELETED
@@ -11,6 +12,8 @@ import mu.KLogging
 
 class MailMessageTypeService(
     private val mailMessageTypeRepository: MailMessageTypeRepository,
+    private val mailMessageTypeFactory: MailMessageTypeFactory<MailMessageType>,
+    private val mailMessageTypeStateUpdater: MailMessageTypeStateUpdater<MailMessageType>,
 ) {
     companion object : KLogging()
 
@@ -21,17 +24,13 @@ class MailMessageTypeService(
     suspend fun getAllSliced(page: Int, size: Int): Slice<MailMessageType> =
         mailMessageTypeRepository.findAllSliced(page, size)
 
-//    @Transactional // todo transaction doesn't work
-    suspend fun createNewMailType(name: String, description: String?, maxRetriesCount: Int?): MailMessageType {
-        if (mailMessageTypeRepository.existsOneWithName(name)) {
-            throw ValidationException("MailMessageType name: $name is not unique")
+    //    @Transactional // todo transaction doesn't work
+    suspend fun createNewMailType(command: CreateMailMessageTypeCommand): MailMessageType {
+        if (mailMessageTypeRepository.existsOneWithName(command.name)) {
+            throw ValidationException("MailMessageType name: ${command.name} is not unique")
         }
 
-        val mailType = MailMessageType(
-            name = name,
-            description = description,
-            maxRetriesCount = maxRetriesCount,
-        )
+        val mailType = mailMessageTypeFactory.create(command)
 
         mailMessageTypeRepository.create(mailType)
 
@@ -40,24 +39,26 @@ class MailMessageTypeService(
         return mailType
     }
 
-    suspend fun updateMailType(id: Long, description: String?, maxRetriesCount: Int?): MailMessageType {
-        val updatedRows = mailMessageTypeRepository.updateDescriptionAndMaxRetriesCount(
-            id = id,
-            description = description,
-            maxRetriesCount = maxRetriesCount
-        )
+    suspend fun updateMailType(command: UpdateMailMessageTypeCommand): MailMessageType {
+        val mailType = getById(command.id)
 
-        if (updatedRows == 0) {
-            throw NotFoundException("MailMessageType with id: $id is not found")
-        }
+        // updates mailType object data
+        mailMessageTypeStateUpdater.update(mailType, command)
 
-        logger.info { "Updated MailMessageType: $id" }
+        // updates mailType in storage
+        val updatedMailType = mailMessageTypeRepository.update(mailType)
 
-        return getById(id)
+        logger.info { "Updated MailMessageType: ${command.id}" }
+
+        return updatedMailType
     }
 
     suspend fun deleteMailType(id: Long, force: Boolean) {
-        val newState = if (force) { FORCE_DELETED } else { DELETED }
+        val newState = if (force) {
+            FORCE_DELETED
+        } else {
+            DELETED
+        }
 
         if (mailMessageTypeRepository.updateState(id, newState) == 0) {
             throw NotFoundException("MailMessageType with id: $id is not found")
@@ -69,4 +70,27 @@ class MailMessageTypeService(
             logger.info { "MailMessageType: $id is marked as deleted" }
         }
     }
+}
+
+class CreateMailMessageTypeCommand(
+    val name: String,
+    val description: String? = null,
+    val maxRetriesCount: Int? = null,
+    val contentType: MailMessageContentType,
+    val templateEngine: HtmlTemplateEngine? = null,
+    val template: String? = null,
+)
+
+class UpdateMailMessageTypeCommand(
+    val id: Long,
+    val description: String?,
+    val maxRetriesCount: Int?,
+    val templateEngine: HtmlTemplateEngine? = null,
+    val template: String? = null,
+)
+
+enum class MailMessageContentType {
+
+    PLAIN_TEXT,
+    HTML,
 }

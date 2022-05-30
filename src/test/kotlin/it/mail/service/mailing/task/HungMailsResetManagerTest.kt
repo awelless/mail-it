@@ -10,7 +10,7 @@ import it.mail.domain.MailMessageStatus.SENDING
 import it.mail.service.mailing.HungMailsResetManager
 import it.mail.service.mailing.MailMessageService
 import it.mail.test.createMailMessage
-import it.mail.test.createMailMessageType
+import it.mail.test.createPlainMailMessageType
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -32,7 +32,7 @@ class HungMailsResetManagerTest {
 
     @BeforeEach
     fun setUp() {
-        val type = createMailMessageType()
+        val type = createPlainMailMessageType()
         mail1 = createMailMessage(type)
         mail2 = createMailMessage(type)
     }

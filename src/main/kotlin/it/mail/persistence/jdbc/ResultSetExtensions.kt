@@ -1,9 +1,14 @@
 package it.mail.persistence.jdbc
 
+import it.mail.domain.HtmlMailMessageType
+import it.mail.domain.HtmlTemplateEngine
 import it.mail.domain.MailMessage
 import it.mail.domain.MailMessageStatus
 import it.mail.domain.MailMessageType
 import it.mail.domain.MailMessageTypeState
+import it.mail.domain.PlainTextMailMessageType
+import it.mail.persistence.jdbc.MailMessageContent.HTML
+import it.mail.persistence.jdbc.MailMessageContent.PLAIN_TEXT
 import java.sql.ResultSet
 import java.time.Instant
 
@@ -30,14 +35,32 @@ internal fun ResultSet.getMailMessageTypeFromRow(): MailMessageType {
     val typeMaxRetriesCount = if (wasNull()) null else typeMaxRetriesCountValue
 
     val typeState = MailMessageTypeState.valueOf(getString("mt_state"))
+    val contentType = MailMessageContent.valueOf(getString("mt_content_type"))
 
-    return MailMessageType(
-        id = typeId,
-        name = typeName,
-        description = typeDescription,
-        maxRetriesCount = typeMaxRetriesCount,
-        state = typeState,
-    )
+    val templateEngineValue = getString("mt_template_engine")
+    val templateEngine = if (wasNull()) null else HtmlTemplateEngine.valueOf(templateEngineValue)
+
+    val templateValue = getString("mt_template")
+    val template = if (wasNull()) null else templateValue
+
+    return when (contentType) {
+        PLAIN_TEXT -> PlainTextMailMessageType(
+            id = typeId,
+            name = typeName,
+            description = typeDescription,
+            maxRetriesCount = typeMaxRetriesCount,
+            state = typeState,
+        )
+        HTML -> HtmlMailMessageType(
+            id = typeId,
+            name = typeName,
+            description = typeDescription,
+            maxRetriesCount = typeMaxRetriesCount,
+            state = typeState,
+            templateEngine = templateEngine!!,
+            template = template!!,
+        )
+    }
 }
 
 internal fun ResultSet.getMailMessageWithTypeFromRow(): MailMessage {

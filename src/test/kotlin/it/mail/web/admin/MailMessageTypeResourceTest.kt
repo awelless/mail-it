@@ -10,6 +10,8 @@ import it.mail.domain.MailMessageType
 import it.mail.domain.MailMessageTypeState.DELETED
 import it.mail.domain.MailMessageTypeState.FORCE_DELETED
 import it.mail.persistence.api.MailMessageTypeRepository
+import it.mail.service.admin.MailMessageContentType
+import it.mail.test.createPlainMailMessageType
 import it.mail.web.DEFAULT_PAGE
 import it.mail.web.DEFAULT_SIZE
 import it.mail.web.PAGE_PARAM
@@ -45,11 +47,7 @@ class MailMessageTypeResourceTest {
     @BeforeEach
     fun setUp() {
         runBlocking {
-            mailType = MailMessageType(
-                name = "DEFAULT",
-                description = "desc",
-                maxRetriesCount = 4,
-            )
+            mailType = createPlainMailMessageType()
             mailMessageTypeRepository.create(mailType)
         }
     }
@@ -117,6 +115,7 @@ class MailMessageTypeResourceTest {
             name = "name",
             description = "yup",
             maxRetriesCount = 1,
+            contentType = MailMessageContentType.PLAIN_TEXT,
         )
 
         val jsonPath = Given {

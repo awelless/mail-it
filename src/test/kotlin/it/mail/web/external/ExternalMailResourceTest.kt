@@ -9,6 +9,7 @@ import io.restassured.module.kotlin.extensions.When
 import it.mail.domain.MailMessageType
 import it.mail.persistence.api.MailMessageRepository
 import it.mail.persistence.api.MailMessageTypeRepository
+import it.mail.test.createPlainMailMessageType
 import it.mail.web.dto.CreateMailDto
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
@@ -35,7 +36,7 @@ class ExternalMailResourceTest {
     @BeforeEach
     fun setUp() {
         runBlocking {
-            mailType = MailMessageType(name = "DEFAULT")
+            mailType = createPlainMailMessageType()
             mailMessageTypeRepository.create(mailType)
         }
     }

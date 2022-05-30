@@ -5,6 +5,9 @@ CREATE TABLE mail_message_type
     description          VARCHAR(1024),
     max_retries_count    INT,
     state                VARCHAR(32)  NOT NULL,
+    content_type         VARCHAR(32)  NOT NULL,
+    template_engine      VARCHAR(64),
+    template             TEXT,
     CONSTRAINT uk_mail_message_type_name UNIQUE (name)
 );
 

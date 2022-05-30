@@ -10,7 +10,7 @@ import it.mail.domain.MailMessage
 import it.mail.domain.MailMessageType
 import it.mail.domain.MailMessageTypeState.FORCE_DELETED
 import it.mail.test.createMailMessage
-import it.mail.test.createMailMessageType
+import it.mail.test.createPlainMailMessageType
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.test.runTest
@@ -38,7 +38,7 @@ class SendMailMessageServiceTest {
 
     @BeforeEach
     fun setUp() {
-        mailMessageType = createMailMessageType()
+        mailMessageType = createPlainMailMessageType()
         mailMessage = createMailMessage(mailMessageType)
     }
 
