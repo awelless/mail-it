@@ -4,6 +4,7 @@ import it.mail.persistence.common.IdGenerator
 import it.mail.persistence.common.LocalCounterIdGenerator
 import it.mail.persistence.jdbc.JdbcMailMessageRepository
 import it.mail.persistence.jdbc.JdbcMailMessageTypeRepository
+import it.mail.persistence.serialization.KryoMailMessageDataSerializer
 import it.mail.persistence.serialization.MailMessageDataSerializer
 import org.apache.commons.dbutils.QueryRunner
 import javax.inject.Singleton
@@ -29,6 +30,12 @@ class RepositoriesConfiguration(
     fun mailMessageTypeRepository() = JdbcMailMessageTypeRepository(idGenerator, dataSource, queryRunner)
 
     @Singleton
-    fun mailMessageRepository(dataSerializer: MailMessageDataSerializer) =
+    internal fun mailMessageRepository(dataSerializer: MailMessageDataSerializer) =
         JdbcMailMessageRepository(idGenerator, dataSource, queryRunner, dataSerializer)
+}
+
+class SerializationConfiguration {
+
+    @Singleton
+    internal fun kryoMailMessageDataSerializer() = KryoMailMessageDataSerializer()
 }

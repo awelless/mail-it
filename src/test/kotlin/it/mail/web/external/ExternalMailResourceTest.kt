@@ -16,6 +16,7 @@ import kotlinx.coroutines.test.runTest
 import org.jboss.resteasy.reactive.RestResponse.StatusCode.ACCEPTED
 import org.jboss.resteasy.reactive.RestResponse.StatusCode.BAD_REQUEST
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import javax.inject.Inject
@@ -65,6 +66,38 @@ class ExternalMailResourceTest {
 
         val savedMail = mailMessageRepository.findOneWithTypeById(messageId.toLong())!!
         assertEquals(createMailDto.text, savedMail.text)
+        assertNull(savedMail.data)
+        assertEquals(createMailDto.subject, savedMail.subject)
+        assertEquals(createMailDto.from, savedMail.emailFrom)
+        assertEquals(createMailDto.to, savedMail.emailTo)
+        assertEquals(mailType, savedMail.type)
+    }
+
+    @Test
+    fun `sendMail with template data in message - saves mail to db`() = runTest {
+        val createMailDto = CreateMailDto(
+            text = null,
+            data = mapOf("oranges" to 2.39, "apples" to 0.99),
+            subject = "Purchase receipt",
+            from = "yoshito@gmail.com",
+            to = "makise@gmail.com",
+            typeId = mailType.id,
+        )
+
+        val messageId: Int = Given {
+            contentType(JSON)
+            body(createMailDto)
+        } When {
+            post(baseUrl)
+        } Then {
+            statusCode(ACCEPTED)
+        } Extract {
+            path("id")
+        }
+
+        val savedMail = mailMessageRepository.findOneWithTypeById(messageId.toLong())!!
+        assertNull(savedMail.text)
+        assertEquals(createMailDto.data, savedMail.data)
         assertEquals(createMailDto.subject, savedMail.subject)
         assertEquals(createMailDto.from, savedMail.emailFrom)
         assertEquals(createMailDto.to, savedMail.emailTo)

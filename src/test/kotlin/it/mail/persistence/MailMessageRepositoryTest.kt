@@ -1,4 +1,4 @@
-package it.mail.repository
+package it.mail.persistence
 
 import io.quarkus.test.junit.QuarkusTest
 import it.mail.core.model.MailMessage

@@ -85,7 +85,7 @@ private const val UPDATE_STATUS_AND_SENDING_START_SQL = "UPDATE mail_message SET
 private const val UPDATE_STATUS_AND_SENT_AT_SQL = "UPDATE mail_message SET status = ?, sent_at = ? WHERE mail_message_id = ?"
 private const val UPDATE_STATUS_FILED_COUNT_AND_SENDING_START_SQL = "UPDATE mail_message SET status = ?, failed_count = ?, sending_started_at = ? WHERE mail_message_id = ?"
 
-class JdbcMailMessageRepository(
+internal class JdbcMailMessageRepository(
     private val idGenerator: IdGenerator,
     private val dataSource: DataSource,
     private val queryRunner: QueryRunner,
