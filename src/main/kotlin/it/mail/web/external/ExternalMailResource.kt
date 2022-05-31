@@ -16,7 +16,7 @@ class ExternalMailResource(
     @ResponseStatus(ACCEPTED)
     @POST
     suspend fun sendMail(dto: CreateMailDto): IdDto {
-        val savedMail = mailMessageService.createNewMail(dto.text, dto.subject, dto.from, dto.to, dto.typeId)
+        val savedMail = mailMessageService.createNewMail(dto.text, dto.data, dto.subject, dto.from, dto.to, dto.typeId)
         return IdDto(savedMail.id)
     }
 }

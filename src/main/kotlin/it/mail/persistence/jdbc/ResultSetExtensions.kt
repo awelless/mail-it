@@ -9,6 +9,7 @@ import it.mail.core.model.MailMessageTypeState
 import it.mail.core.model.PlainTextMailMessageType
 import it.mail.persistence.jdbc.MailMessageContent.HTML
 import it.mail.persistence.jdbc.MailMessageContent.PLAIN_TEXT
+import it.mail.persistence.serialization.MailMessageDataSerializer
 import java.sql.ResultSet
 import java.time.Instant
 
@@ -63,9 +64,20 @@ internal fun ResultSet.getMailMessageTypeFromRow(): MailMessageType {
     }
 }
 
-internal fun ResultSet.getMailMessageWithTypeFromRow(): MailMessage {
+internal fun ResultSet.getMailMessageWithTypeFromRow(dataSerializer: MailMessageDataSerializer): MailMessage {
     val id = getLong("m_mail_message_id")
-    val text = getString("m_text")
+
+    val textValue = getString("m_text")
+    val text = if (wasNull()) null else textValue
+
+    val dataBlobValue = getBlob("m_data")
+    val dataBlob = if (wasNull()) null else dataBlobValue
+    val dataBytes = dataBlob?.binaryStream?.use {
+        it.readBytes()
+    }
+
+    val data = dataSerializer.read(dataBytes)
+
     val subject = getString("m_subject")
     val emailFrom = getString("m_email_from")
     val emailTo = getString("m_email_to")
@@ -83,6 +95,7 @@ internal fun ResultSet.getMailMessageWithTypeFromRow(): MailMessage {
     return MailMessage(
         id = id,
         text = text,
+        data = data,
         subject = subject,
         emailFrom = emailFrom,
         emailTo = emailTo,

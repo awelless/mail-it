@@ -15,14 +15,15 @@ class ExternalMailMessageService(
 ) {
     companion object : KLogging()
 
-    suspend fun createNewMail(text: String, subject: String?, emailFrom: String?, emailTo: String, mailMessageTypeId: Long): MailMessage {
-        validateBeforeCreate(text, emailFrom, emailTo)
-
+    suspend fun createNewMail(text: String?, data: Map<String, Any?>?, subject: String?, emailFrom: String?, emailTo: String, mailMessageTypeId: Long): MailMessage {
         val messageType = mailMessageTypeRepository.findById(mailMessageTypeId)
             ?: throw ValidationException("Invalid type: $mailMessageTypeId is passed")
 
+        validateBeforeCreate(emailFrom, emailTo)
+
         val message = MailMessage(
             text = text,
+            data = data,
             subject = subject,
             emailFrom = emailFrom,
             emailTo = emailTo,
@@ -38,11 +39,7 @@ class ExternalMailMessageService(
         return message
     }
 
-    private fun validateBeforeCreate(text: String, emailFrom: String?, emailTo: String) {
-        if (text.isEmpty()) {
-            throw ValidationException("text shouldn't be empty")
-        }
-
+    private fun validateBeforeCreate(emailFrom: String?, emailTo: String) {
         if (emailFrom?.isEmail() == false) {
             throw ValidationException("emailFrom is incorrect")
         }

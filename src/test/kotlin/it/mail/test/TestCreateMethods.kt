@@ -33,6 +33,7 @@ fun createMailMessage(messageType: MailMessageType): MailMessage =
     MailMessage(
         id = COUNTER.incrementAndGet(),
         text = "text",
+        data = emptyMap(),
         subject = null,
         emailFrom = "email@from.com",
         emailTo = "email@to.com",

@@ -14,7 +14,8 @@ CREATE TABLE mail_message_type
 CREATE TABLE mail_message
 (
     mail_message_id      BIGINT PRIMARY KEY,
-    text                 VARCHAR(2048) NOT NULL,
+    text                 TEXT,
+    data                 BLOB,
     subject              VARCHAR(256),
     email_from           VARCHAR(256),
     email_to             VARCHAR(256)  NOT NULL,

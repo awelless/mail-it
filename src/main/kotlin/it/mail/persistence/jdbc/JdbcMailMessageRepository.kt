@@ -4,6 +4,7 @@ import it.mail.core.model.MailMessage
 import it.mail.core.model.MailMessageStatus
 import it.mail.persistence.api.MailMessageRepository
 import it.mail.persistence.common.IdGenerator
+import it.mail.persistence.serialization.MailMessageDataSerializer
 import org.apache.commons.dbutils.QueryRunner
 import org.apache.commons.dbutils.ResultSetHandler
 import java.sql.ResultSet
@@ -13,6 +14,7 @@ import javax.sql.DataSource
 private const val FIND_WITH_TYPE_BY_ID_SQL = """
     SELECT m.mail_message_id m_mail_message_id,
            m.text m_text,
+           m.data m_data,
            m.subject m_subject,
            m.email_from m_email_from,
            m.email_to m_email_to,
@@ -37,6 +39,7 @@ private const val FIND_WITH_TYPE_BY_ID_SQL = """
 private const val FIND_WITH_TYPE_BY_SENDING_STARTED_BEFORE_AND_STATUSES_SQL = """
     SELECT m.mail_message_id m_mail_message_id,
            m.text m_text,
+           m.data m_data,
            m.subject m_subject,
            m.email_from m_email_from,
            m.email_to m_email_to,
@@ -62,8 +65,20 @@ private const val FIND_WITH_TYPE_BY_SENDING_STARTED_BEFORE_AND_STATUSES_SQL = ""
 private const val FIND_IDS_BY_STATUSES_SQL = "SELECT mail_message_id FROM mail_message WHERE status IN (?)"
 
 private const val INSERT_SQL = """
-   INSERT INTO mail_message(mail_message_id, text, subject, email_from, email_to, mail_message_type_id, created_at, sending_started_at, sent_at, status, failed_count)
-   VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"""
+   INSERT INTO mail_message(
+        mail_message_id,
+        text,
+        data,
+        subject,
+        email_from,
+        email_to,
+        mail_message_type_id,
+        created_at,
+        sending_started_at,
+        sent_at,
+        status,
+        failed_count)
+   VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"""
 
 private const val UPDATE_STATUS_SQL = "UPDATE mail_message SET status = ? WHERE mail_message_id = ?"
 private const val UPDATE_STATUS_AND_SENDING_START_SQL = "UPDATE mail_message SET status = ?, sending_started_at = ? WHERE mail_message_id = ? AND status IN (?)"
@@ -74,10 +89,11 @@ class JdbcMailMessageRepository(
     private val idGenerator: IdGenerator,
     private val dataSource: DataSource,
     private val queryRunner: QueryRunner,
+    private val dataSerializer: MailMessageDataSerializer,
 ) : MailMessageRepository {
 
-    private val singleMailWithTypeMapper = SingleMailMessageWithTypeResultSetMapper()
-    private val multipleMailWithTypeMapper = MultipleMailMessagesWithTypeResultSetMapper()
+    private val singleMailWithTypeMapper = SingleMailMessageWithTypeResultSetMapper(dataSerializer)
+    private val multipleMailWithTypeMapper = MultipleMailMessagesWithTypeResultSetMapper(dataSerializer)
 
     override suspend fun findOneWithTypeById(id: Long): MailMessage? =
         dataSource.connection.use {
@@ -118,11 +134,15 @@ class JdbcMailMessageRepository(
 
     override suspend fun create(mailMessage: MailMessage): MailMessage {
         val id = idGenerator.generateId()
+        val data = dataSerializer.write(mailMessage.data)
 
         dataSource.connection.use {
+            val dataBlob = it.createBlob()
+            dataBlob.setBytes(1, data)
+
             queryRunner.update(
                 it, INSERT_SQL,
-                id, mailMessage.text, mailMessage.subject, mailMessage.emailFrom, mailMessage.emailTo, mailMessage.type.id,
+                id, mailMessage.text, dataBlob, mailMessage.subject, mailMessage.emailFrom, mailMessage.emailTo, mailMessage.type.id,
                 mailMessage.createdAt, mailMessage.sendingStartedAt, mailMessage.sentAt, mailMessage.status.name, mailMessage.failedCount
             )
         }
@@ -177,11 +197,13 @@ class JdbcMailMessageRepository(
 /**
  * Used to extract single mail with type. Thread safe
  */
-private class SingleMailMessageWithTypeResultSetMapper : ResultSetHandler<MailMessage?> {
+private class SingleMailMessageWithTypeResultSetMapper(
+    private val dataSerializer: MailMessageDataSerializer,
+) : ResultSetHandler<MailMessage?> {
 
     override fun handle(rs: ResultSet?): MailMessage? =
         if (rs?.next() == true) {
-            rs.getMailMessageWithTypeFromRow()
+            rs.getMailMessageWithTypeFromRow(dataSerializer)
         } else {
             null
         }
@@ -190,7 +212,9 @@ private class SingleMailMessageWithTypeResultSetMapper : ResultSetHandler<MailMe
 /**
  * Used to extract list of mails with type. Thread safe
  */
-private class MultipleMailMessagesWithTypeResultSetMapper : ResultSetHandler<List<MailMessage>> {
+private class MultipleMailMessagesWithTypeResultSetMapper(
+    private val dataSerializer: MailMessageDataSerializer,
+) : ResultSetHandler<List<MailMessage>> {
 
     override fun handle(rs: ResultSet?): List<MailMessage> {
         if (rs == null) {
@@ -199,7 +223,7 @@ private class MultipleMailMessagesWithTypeResultSetMapper : ResultSetHandler<Lis
 
         val mailTypes = ArrayList<MailMessage>()
         while (rs.next()) {
-            mailTypes.add(rs.getMailMessageWithTypeFromRow())
+            mailTypes.add(rs.getMailMessageWithTypeFromRow(dataSerializer))
         }
         return mailTypes
     }

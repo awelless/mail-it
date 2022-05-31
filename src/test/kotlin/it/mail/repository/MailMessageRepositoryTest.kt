@@ -36,6 +36,7 @@ class MailMessageRepositoryTest {
 
             mailMessage = MailMessage(
                 text = "text",
+                data = emptyMap(),
                 subject = null,
                 emailFrom = "email@from.com",
                 emailTo = "email@to.com",
@@ -70,6 +71,7 @@ class MailMessageRepositoryTest {
         // given
         val message2 = MailMessage(
             text = "text2",
+            data = emptyMap(),
             subject = null,
             emailFrom = "email@from.com",
             emailTo = "email@to.com",

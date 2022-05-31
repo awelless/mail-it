@@ -45,6 +45,7 @@ class ExternalMailResourceTest {
     fun `sendMail with valid message - saves mail to db`() = runTest {
         val createMailDto = CreateMailDto(
             text = "Hello. How are you?",
+            data = null,
             subject = "Greeting",
             from = "yoshito@gmail.com",
             to = "makise@gmail.com",
@@ -92,6 +93,7 @@ class ExternalMailResourceTest {
     fun `sendMail with invalid message type - returns 400`() {
         val createMailDto = CreateMailDto(
             text = "Hello. How are you?",
+            data = null,
             subject = "Greeting",
             from = "yoshito@gmail.com",
             to = "makise@gmail.com",

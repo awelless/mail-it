@@ -50,6 +50,7 @@ class ExternalMailMessageServiceTest {
     fun `createNewMail - when everything is correct - creates`() = runTest {
         // given
         val text = "Some message"
+        val data = mapOf("name" to "john")
         val subject = "subject"
         val from = "from@gmail.com"
         val to = "to@mail.com"
@@ -58,7 +59,7 @@ class ExternalMailMessageServiceTest {
         coEvery { mailMessageRepository.create(capture(mailMessageSlot)) }.returns(createMailMessage(mailType))
 
         // when
-        mailMessageService.createNewMail(text, subject, from, to, mailType.id)
+        mailMessageService.createNewMail(text, data, subject, from, to, mailType.id)
 
         // then
         coVerify(exactly = 1) { mailMessageRepository.create(any()) }
@@ -78,7 +79,7 @@ class ExternalMailMessageServiceTest {
         coEvery { mailMessageTypeRepository.findById(mailTypeId) }.returns(null)
 
         assertThrows<ValidationException> {
-            mailMessageService.createNewMail("1", "sub", "em@gmail.com", "aa@gm.co", mailTypeId)
+            mailMessageService.createNewMail("1", emptyMap(), "sub", "em@gmail.com", "aa@gm.co", mailTypeId)
         }
 
         coVerify(exactly = 0) { mailMessageRepository.create(any()) }
@@ -86,9 +87,14 @@ class ExternalMailMessageServiceTest {
 
     @ParameterizedTest
     @MethodSource("invalidDataForCreation")
-    fun `createNewMail - with invalid data - throws exception`(text: String, subject: String?, emailFrom: String?, emailTo: String, expectedMessage: String) = runTest {
+    fun `createNewMail - with invalid data - throws exception`(
+        subject: String?,
+        emailFrom: String?,
+        emailTo: String,
+        expectedMessage: String
+    ) = runTest {
         val exception = assertThrows<ValidationException> {
-            mailMessageService.createNewMail(text, subject, emailFrom, emailTo, 1)
+            mailMessageService.createNewMail("123", emptyMap(), subject, emailFrom, emailTo, 1)
         }
 
         assertEquals(expectedMessage, exception.message)
@@ -99,10 +105,9 @@ class ExternalMailMessageServiceTest {
     companion object {
         @JvmStatic
         private fun invalidDataForCreation(): List<Arguments> = listOf(
-            arguments("", "subject", "to-email@gmail.com", "email@gmail.com", "text shouldn't be empty"),
-            arguments("text", "subject", "email.email.com", "email@gmail.com", "emailFrom is incorrect"),
-            arguments("text", "subject", "email@email.com", "", "emailTo shouldn't be blank"),
-            arguments("text", "subject", null, "email.email.com", "emailTo is incorrect"),
+            arguments("subject", "email.email.com", "email@gmail.com", "emailFrom is incorrect"),
+            arguments("subject", "email@email.com", "", "emailTo shouldn't be blank"),
+            arguments("subject", null, "email.email.com", "emailTo is incorrect"),
         )
     }
 }

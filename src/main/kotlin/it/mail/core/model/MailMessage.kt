@@ -6,7 +6,15 @@ data class MailMessage(
 
     var id: Long = 0,
 
-    val text: String,
+    /**
+     * Text that is used for [PlainTextMailMessageType]
+     */
+    val text: String?,
+
+    /**
+     * Data that is substituted in the template in [HtmlMailMessageType]
+     */
+    val data: Map<String, Any?>?,
 
     val subject: String?,
 
