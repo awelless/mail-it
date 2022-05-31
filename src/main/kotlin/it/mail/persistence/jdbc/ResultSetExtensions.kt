@@ -29,11 +29,9 @@ internal fun ResultSet.getMailMessageTypeFromRow(): MailMessageType {
     val typeId = getLong("mt_mail_message_type_id")
     val typeName = getString("mt_name")
 
-    val typeDescriptionValue = getString("mt_description")
-    val typeDescription = if (wasNull()) null else typeDescriptionValue
+    val typeDescription = getString("mt_description")
 
-    val typeMaxRetriesCountValue = getInt("mt_max_retries_count")
-    val typeMaxRetriesCount = if (wasNull()) null else typeMaxRetriesCountValue
+    val typeMaxRetriesCount = getNullableInt("mt_max_retries_count")
 
     val typeState = MailMessageTypeState.valueOf(getString("mt_state"))
     val contentType = MailMessageContent.valueOf(getString("mt_content_type"))
@@ -41,8 +39,7 @@ internal fun ResultSet.getMailMessageTypeFromRow(): MailMessageType {
     val templateEngineValue = getString("mt_template_engine")
     val templateEngine = if (wasNull()) null else HtmlTemplateEngine.valueOf(templateEngineValue)
 
-    val templateValue = getString("mt_template")
-    val template = if (wasNull()) null else templateValue
+    val template = getString("mt_template")
 
     return when (contentType) {
         PLAIN_TEXT -> PlainTextMailMessageType(
@@ -67,11 +64,9 @@ internal fun ResultSet.getMailMessageTypeFromRow(): MailMessageType {
 internal fun ResultSet.getMailMessageWithTypeFromRow(dataSerializer: MailMessageDataSerializer): MailMessage {
     val id = getLong("m_mail_message_id")
 
-    val textValue = getString("m_text")
-    val text = if (wasNull()) null else textValue
+    val text = getString("m_text")
 
-    val dataBlobValue = getBlob("m_data")
-    val dataBlob = if (wasNull()) null else dataBlobValue
+    val dataBlob = getBlob("m_data")
     val dataBytes = dataBlob?.binaryStream?.use {
         it.readBytes()
     }
@@ -83,11 +78,9 @@ internal fun ResultSet.getMailMessageWithTypeFromRow(dataSerializer: MailMessage
     val emailTo = getString("m_email_to")
     val createdAt = getObject("m_created_at", Instant::class.java)
 
-    val sendingStartedAtValue = getObject("m_sending_started_at", Instant::class.java)
-    val sendingStartedAt = if (wasNull()) null else sendingStartedAtValue
+    val sendingStartedAt = getObject("m_sending_started_at", Instant::class.java)
 
-    val sentAtValue = getObject("m_sent_at", Instant::class.java)
-    val sentAt = if (wasNull()) null else sentAtValue
+    val sentAt = getObject("m_sent_at", Instant::class.java)
 
     val status = MailMessageStatus.valueOf(getString("m_status"))
     val failedCount = getInt("m_failed_count")
@@ -106,4 +99,9 @@ internal fun ResultSet.getMailMessageWithTypeFromRow(dataSerializer: MailMessage
         status = status,
         failedCount = failedCount,
     )
+}
+
+private fun ResultSet.getNullableInt(columnLabel: String): Int? {
+    val value = getInt(columnLabel)
+    return if (wasNull()) null else value
 }
