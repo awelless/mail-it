@@ -1,11 +1,11 @@
 package it.mail.web.admin
 
-import it.mail.domain.HtmlMailMessageType
-import it.mail.domain.MailMessageType
-import it.mail.domain.PlainTextMailMessageType
-import it.mail.service.admin.MailMessageContentType
-import it.mail.service.admin.MailMessageContentType.HTML
-import it.mail.service.admin.MailMessageContentType.PLAIN_TEXT
+import it.mail.core.admin.MailMessageContentType
+import it.mail.core.admin.MailMessageContentType.HTML
+import it.mail.core.admin.MailMessageContentType.PLAIN_TEXT
+import it.mail.core.model.HtmlMailMessageType
+import it.mail.core.model.MailMessageType
+import it.mail.core.model.PlainTextMailMessageType
 import it.mail.web.dto.PagedMailMessageTypeResponseDto
 import it.mail.web.dto.SingleMailMessageTypeResponseDto
 import javax.inject.Singleton

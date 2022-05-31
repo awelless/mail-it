@@ -1,10 +1,10 @@
 package it.mail.persistence.jdbc
 
-import it.mail.domain.HtmlMailMessageType
-import it.mail.domain.MailMessageType
-import it.mail.domain.MailMessageTypeState
-import it.mail.domain.PlainTextMailMessageType
-import it.mail.domain.Slice
+import it.mail.core.model.HtmlMailMessageType
+import it.mail.core.model.MailMessageType
+import it.mail.core.model.MailMessageTypeState
+import it.mail.core.model.PlainTextMailMessageType
+import it.mail.core.model.Slice
 import it.mail.persistence.api.MailMessageTypeRepository
 import it.mail.persistence.api.PersistenceException
 import it.mail.persistence.common.IdGenerator

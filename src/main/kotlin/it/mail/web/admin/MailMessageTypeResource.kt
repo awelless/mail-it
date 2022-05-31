@@ -1,9 +1,9 @@
 package it.mail.web.admin
 
-import it.mail.domain.Slice
-import it.mail.service.admin.CreateMailMessageTypeCommand
-import it.mail.service.admin.MailMessageTypeService
-import it.mail.service.admin.UpdateMailMessageTypeCommand
+import it.mail.core.admin.CreateMailMessageTypeCommand
+import it.mail.core.admin.MailMessageTypeService
+import it.mail.core.admin.UpdateMailMessageTypeCommand
+import it.mail.core.model.Slice
 import it.mail.web.DEFAULT_PAGE
 import it.mail.web.DEFAULT_SIZE
 import it.mail.web.PAGE_PARAM

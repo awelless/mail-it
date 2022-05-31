@@ -1,10 +1,10 @@
 package it.mail.repository
 
 import io.quarkus.test.junit.QuarkusTest
-import it.mail.domain.MailMessage
-import it.mail.domain.MailMessageStatus.PENDING
-import it.mail.domain.MailMessageType
-import it.mail.domain.PlainTextMailMessageType
+import it.mail.core.model.MailMessage
+import it.mail.core.model.MailMessageStatus.PENDING
+import it.mail.core.model.MailMessageType
+import it.mail.core.model.PlainTextMailMessageType
 import it.mail.persistence.api.MailMessageRepository
 import it.mail.persistence.api.MailMessageTypeRepository
 import kotlinx.coroutines.runBlocking

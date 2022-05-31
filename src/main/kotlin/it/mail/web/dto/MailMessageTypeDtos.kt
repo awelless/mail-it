@@ -1,7 +1,7 @@
 package it.mail.web.dto
 
-import it.mail.domain.HtmlTemplateEngine
-import it.mail.service.admin.MailMessageContentType
+import it.mail.core.admin.MailMessageContentType
+import it.mail.core.model.HtmlTemplateEngine
 
 data class PagedMailMessageTypeResponseDto(
     val id: Long,

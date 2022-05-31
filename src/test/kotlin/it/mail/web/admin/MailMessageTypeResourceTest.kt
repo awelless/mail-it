@@ -6,11 +6,11 @@ import io.restassured.module.kotlin.extensions.Extract
 import io.restassured.module.kotlin.extensions.Given
 import io.restassured.module.kotlin.extensions.Then
 import io.restassured.module.kotlin.extensions.When
-import it.mail.domain.MailMessageType
-import it.mail.domain.MailMessageTypeState.DELETED
-import it.mail.domain.MailMessageTypeState.FORCE_DELETED
+import it.mail.core.admin.MailMessageContentType
+import it.mail.core.model.MailMessageType
+import it.mail.core.model.MailMessageTypeState.DELETED
+import it.mail.core.model.MailMessageTypeState.FORCE_DELETED
 import it.mail.persistence.api.MailMessageTypeRepository
-import it.mail.service.admin.MailMessageContentType
 import it.mail.test.createPlainMailMessageType
 import it.mail.web.DEFAULT_PAGE
 import it.mail.web.DEFAULT_SIZE

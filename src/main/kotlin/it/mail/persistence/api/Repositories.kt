@@ -1,10 +1,10 @@
 package it.mail.persistence.api
 
-import it.mail.domain.MailMessage
-import it.mail.domain.MailMessageStatus
-import it.mail.domain.MailMessageType
-import it.mail.domain.MailMessageTypeState
-import it.mail.domain.Slice
+import it.mail.core.model.MailMessage
+import it.mail.core.model.MailMessageStatus
+import it.mail.core.model.MailMessageType
+import it.mail.core.model.MailMessageTypeState
+import it.mail.core.model.Slice
 import java.time.Instant
 
 interface MailMessageRepository {

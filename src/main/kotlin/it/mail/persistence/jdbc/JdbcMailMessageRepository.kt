@@ -1,7 +1,7 @@
 package it.mail.persistence.jdbc
 
-import it.mail.domain.MailMessage
-import it.mail.domain.MailMessageStatus
+import it.mail.core.model.MailMessage
+import it.mail.core.model.MailMessageStatus
 import it.mail.persistence.api.MailMessageRepository
 import it.mail.persistence.common.IdGenerator
 import org.apache.commons.dbutils.QueryRunner

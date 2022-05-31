@@ -1,6 +1,6 @@
 package it.mail.web.external
 
-import it.mail.service.external.ExternalMailMessageService
+import it.mail.core.external.ExternalMailMessageService
 import it.mail.web.dto.CreateMailDto
 import it.mail.web.dto.IdDto
 import org.jboss.resteasy.reactive.ResponseStatus
