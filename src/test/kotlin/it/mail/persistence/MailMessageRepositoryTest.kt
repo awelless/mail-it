@@ -33,6 +33,7 @@ class MailMessageRepositoryTest {
         runBlocking {
             mailMessageType = createPlainMailMessageType()
             mailMessageTypeRepository.create(mailMessageType)
+            mailMessageType = mailMessageTypeRepository.findByName(mailMessageType.name)!! // to get actual datetime values
 
             mailMessage = MailMessage(
                 text = "text",
@@ -44,7 +45,8 @@ class MailMessageRepositoryTest {
                 createdAt = Instant.now(),
                 status = PENDING,
             )
-            mailMessageRepository.create(mailMessage)
+            val createdMailMessageType = mailMessageRepository.create(mailMessage)
+            mailMessage = mailMessageRepository.findOneWithTypeById(createdMailMessageType.id)!! // to get actual datetime values
         }
     }
 
@@ -56,7 +58,7 @@ class MailMessageRepositoryTest {
         assertEquals(mailMessage.subject, actual.subject)
         assertEquals(mailMessage.emailFrom, actual.emailFrom)
         assertEquals(mailMessage.emailTo, actual.emailTo)
-        assertEquals(mailMessage.createdAt.epochSecond, actual.createdAt.epochSecond)
+        assertEquals(mailMessage.createdAt, actual.createdAt)
         assertEquals(mailMessage.status, actual.status)
 
         // mailMessageType is fetched too

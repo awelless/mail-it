@@ -11,11 +11,18 @@ import it.mail.core.admin.MailMessageTypeStateUpdaterManager
 import it.mail.core.admin.PlainTextMailMessageTypeFactory
 import it.mail.core.admin.PlainTextMailMessageTypeStateUpdater
 import it.mail.core.external.ExternalMailMessageService
+import it.mail.core.mailing.HtmlMailFactory
 import it.mail.core.mailing.HungMailsResetManager
+import it.mail.core.mailing.MailFactory
+import it.mail.core.mailing.MailFactoryManager
 import it.mail.core.mailing.MailMessageService
 import it.mail.core.mailing.MailSender
+import it.mail.core.mailing.PlainTextMailFactory
 import it.mail.core.mailing.SendMailMessageService
 import it.mail.core.mailing.UnsentMailProcessor
+import it.mail.core.mailing.templates.TemplateProcessor
+import it.mail.core.mailing.templates.TemplateProcessorManager
+import it.mail.core.mailing.templates.none.NoneTemplateProcessor
 import it.mail.core.model.MailMessageType
 import it.mail.persistence.api.MailMessageRepository
 import it.mail.persistence.api.MailMessageTypeRepository
@@ -65,9 +72,10 @@ class MailingContextConfiguration {
 
     @Singleton
     fun sendMailMessageService(
+        mailFactory: MailFactory,
         mailSender: MailSender,
         mailMessageService: MailMessageService,
-    ) = SendMailMessageService(mailSender, mailMessageService, CoroutineScope(Dispatchers.IO))
+    ) = SendMailMessageService(mailFactory, mailSender, mailMessageService, CoroutineScope(Dispatchers.IO))
 
     fun stopSendMailMessageService(@Disposes mailMessageService: SendMailMessageService) {
         mailMessageService.stop()
@@ -81,4 +89,15 @@ class MailingContextConfiguration {
         mailMessageService: MailMessageService,
         sendService: SendMailMessageService,
     ) = UnsentMailProcessor(mailMessageService, sendService)
+
+    @Singleton
+    fun mailFactory(templateProcessor: TemplateProcessor) = MailFactoryManager(
+        PlainTextMailFactory(),
+        HtmlMailFactory(templateProcessor),
+    )
+
+    @Singleton
+    fun templateProcessor() = TemplateProcessorManager(
+        NoneTemplateProcessor(),
+    )
 }

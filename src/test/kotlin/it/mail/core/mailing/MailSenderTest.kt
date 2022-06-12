@@ -1,14 +1,11 @@
 package it.mail.core.mailing
 
+import io.quarkus.mailer.Mail
 import io.quarkus.mailer.MockMailbox
 import io.quarkus.test.junit.QuarkusTest
-import it.mail.core.model.MailMessage
-import it.mail.test.createMailMessage
-import it.mail.test.createPlainMailMessageType
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import javax.inject.Inject
 
@@ -21,14 +18,6 @@ class MailSenderTest {
     @Inject
     lateinit var mailSender: MailSender
 
-    lateinit var mailMessage: MailMessage
-
-    @BeforeEach
-    fun setUp() {
-        val mailType = createPlainMailMessageType()
-        mailMessage = createMailMessage(mailType)
-    }
-
     @AfterEach
     fun tearDown() {
         mockMailbox.clear()
@@ -36,17 +25,20 @@ class MailSenderTest {
 
     @Test
     fun send_sends() = runTest {
+        // given
+        val mail = Mail.withText("email@to.com", "subject", "some text")
+
         // when
-        mailSender.send(mailMessage)
-        val sentMails = mockMailbox.getMessagesSentTo(mailMessage.emailTo)
+        mailSender.send(mail)
+        val sentMails = mockMailbox.getMessagesSentTo(mail.to[0])
         val sentMail = sentMails[0]
 
         // then
         assertEquals(1, sentMails.size)
 
-        assertEquals(mailMessage.text, sentMail.text)
-        assertEquals(mailMessage.subject, sentMail.subject)
-        assertEquals(listOf(mailMessage.emailTo), sentMail.to)
-        assertEquals(mailMessage.emailFrom, sentMail.from)
+        assertEquals(mail.text, sentMail.text)
+        assertEquals(mail.subject, sentMail.subject)
+        assertEquals(mail.to, sentMail.to)
+        assertEquals(mail.from, sentMail.from)
     }
 }

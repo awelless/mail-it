@@ -39,6 +39,7 @@ class ExternalMailResourceTest {
         runBlocking {
             mailType = createPlainMailMessageType()
             mailMessageTypeRepository.create(mailType)
+            mailType = mailMessageTypeRepository.findByName(mailType.name)!! // to get actual datetime values
         }
     }
 

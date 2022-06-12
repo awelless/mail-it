@@ -8,6 +8,7 @@ import kotlinx.coroutines.launch
 import mu.KLogging
 
 class SendMailMessageService(
+    private val mailFactory: MailFactory,
     private val mailSender: MailSender,
     private val mailMessageService: MailMessageService,
     private val coroutineScope: CoroutineScope,
@@ -29,7 +30,10 @@ class SendMailMessageService(
         }
 
         try {
-            mailSender.send(message)
+            val mail = mailFactory.create(message)
+            mailSender.send(mail)
+            logger.debug { "Successfully sent message: ${message.id}" }
+
             mailMessageService.processSuccessfulDelivery(message)
         } catch (e: Exception) {
             logger.warn(e) { "Failed to send message: ${message.id}. Cause: ${e.message}" }
