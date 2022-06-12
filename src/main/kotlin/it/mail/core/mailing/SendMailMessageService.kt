@@ -12,7 +12,7 @@ class SendMailMessageService(
     private val mailSender: MailSender,
     private val mailMessageService: MailMessageService,
     private val coroutineScope: CoroutineScope,
-) {
+) : AutoCloseable {
     companion object : KLogging()
 
     fun sendMail(messageId: Long): Job {
@@ -41,7 +41,7 @@ class SendMailMessageService(
         }
     }
 
-    fun stop() {
+    override fun close() {
         logger.info { "Stopping SendMailMessageService" }
         coroutineScope.cancel()
         logger.info { "Stopped SendMailMessageService" }

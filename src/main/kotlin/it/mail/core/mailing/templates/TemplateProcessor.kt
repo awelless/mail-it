@@ -1,5 +1,6 @@
 package it.mail.core.mailing.templates
 
+import it.mail.core.mailing.templates.freemarker.FreemarkerTemplateProcessor
 import it.mail.core.mailing.templates.none.NoneTemplateProcessor
 import it.mail.core.model.HtmlMailMessageType
 import it.mail.core.model.HtmlTemplateEngine.FREEMARKER
@@ -15,11 +16,12 @@ interface TemplateProcessor {
 
 class TemplateProcessorManager(
     private val noneTemplateProcessor: NoneTemplateProcessor,
+    private val freemarkerTemplateProcessor: FreemarkerTemplateProcessor,
 ) : TemplateProcessor {
 
     override fun process(mailMessageType: HtmlMailMessageType, data: Map<String, Any?>): String =
         when (mailMessageType.templateEngine) {
             NONE -> noneTemplateProcessor.process(mailMessageType, data)
-            FREEMARKER -> throw Exception("Freemarker template engine is not supported yet")
+            FREEMARKER -> freemarkerTemplateProcessor.process(mailMessageType, data)
         }
 }

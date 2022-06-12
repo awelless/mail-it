@@ -16,12 +16,13 @@ repositories {
     mavenLocal()
 }
 
-var dbUtilsVersion = "1.7" // https://mvnrepository.com/artifact/commons-dbutils/commons-dbutils
+val dbUtilsVersion = "1.7" // https://mvnrepository.com/artifact/commons-dbutils/commons-dbutils
+val freemarkerVersion = "2.3.31" // https://mvnrepository.com/artifact/org.freemarker/freemarker
 val kotlinLoggingVersion = "2.1.23" // https://mvnrepository.com/artifact/io.github.microutils/kotlin-logging
 val kryoVersion = "5.3.0" // https://mvnrepository.com/artifact/com.esotericsoftware/kryo
 val mockkVersion = "1.12.4" // https://mvnrepository.com/artifact/io.mockk/mockk
 val quarkusVersion: String by project // https://mvnrepository.com/artifact/io.quarkus.platform/quarkus-bom
-val restAssuredKotlinExtensionsVersion = "5.0.1" // https://mvnrepository.com/artifact/io.rest-assured/kotlin-extensions
+val restAssuredKotlinExtensionsVersion = "5.1.0" // https://mvnrepository.com/artifact/io.rest-assured/kotlin-extensions
 
 dependencies {
     implementation(enforcedPlatform("io.quarkus.platform:quarkus-bom:$quarkusVersion"))
@@ -42,6 +43,8 @@ dependencies {
     implementation("io.quarkus:quarkus-resteasy-reactive-jackson")
 
     implementation("io.smallrye.reactive:mutiny-kotlin")
+
+    implementation("org.freemarker:freemarker:$freemarkerVersion")
 
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")

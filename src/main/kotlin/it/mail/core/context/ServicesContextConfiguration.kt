@@ -22,6 +22,9 @@ import it.mail.core.mailing.SendMailMessageService
 import it.mail.core.mailing.UnsentMailProcessor
 import it.mail.core.mailing.templates.TemplateProcessor
 import it.mail.core.mailing.templates.TemplateProcessorManager
+import it.mail.core.mailing.templates.freemarker.Configuration
+import it.mail.core.mailing.templates.freemarker.FreemarkerTemplateProcessor
+import it.mail.core.mailing.templates.freemarker.RepositoryTemplateLoader
 import it.mail.core.mailing.templates.none.NoneTemplateProcessor
 import it.mail.core.model.MailMessageType
 import it.mail.persistence.api.MailMessageRepository
@@ -78,7 +81,7 @@ class MailingContextConfiguration {
     ) = SendMailMessageService(mailFactory, mailSender, mailMessageService, CoroutineScope(Dispatchers.IO))
 
     fun stopSendMailMessageService(@Disposes mailMessageService: SendMailMessageService) {
-        mailMessageService.stop()
+        mailMessageService.close()
     }
 
     @Singleton
@@ -97,7 +100,15 @@ class MailingContextConfiguration {
     )
 
     @Singleton
-    fun templateProcessor() = TemplateProcessorManager(
+    fun templateProcessorManager(mailMessageTypeRepository: MailMessageTypeRepository) = TemplateProcessorManager(
         NoneTemplateProcessor(),
+        FreemarkerTemplateProcessor(mailMessageTypeRepository),
     )
+
+    private fun FreemarkerTemplateProcessor(mailMessageTypeRepository: MailMessageTypeRepository): FreemarkerTemplateProcessor {
+        val templateLoader = RepositoryTemplateLoader(mailMessageTypeRepository)
+        val configuration = Configuration(templateLoader)
+
+        return FreemarkerTemplateProcessor(configuration)
+    }
 }

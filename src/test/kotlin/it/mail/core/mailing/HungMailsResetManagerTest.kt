@@ -1,12 +1,10 @@
-package it.mail.core.mailing.task
+package it.mail.core.mailing
 
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.junit5.MockKExtension
-import it.mail.core.mailing.HungMailsResetManager
-import it.mail.core.mailing.MailMessageService
 import it.mail.core.model.MailMessage
 import it.mail.core.model.MailMessageStatus.SENDING
 import it.mail.test.createMailMessage
