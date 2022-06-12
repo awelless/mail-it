@@ -13,6 +13,7 @@ import it.mail.persistence.jdbc.MailMessageContent.PLAIN_TEXT
 import org.apache.commons.dbutils.QueryRunner
 import org.apache.commons.dbutils.ResultSetHandler
 import java.sql.ResultSet
+import java.time.Instant
 import javax.sql.DataSource
 
 private const val FIND_BY_ID_SQL = """
@@ -21,12 +22,27 @@ private const val FIND_BY_ID_SQL = """
            description mt_description,
            max_retries_count mt_max_retries_count,
            state mt_state,
+           created_at mt_created_at,
+           updated_at mt_updated_at,
            content_type mt_content_type,
            template_engine mt_template_engine,
            template mt_template
       FROM mail_message_type
-     WHERE mail_message_type_id = ?
-"""
+     WHERE mail_message_type_id = ?"""
+
+private const val FIND_BY_NAME_SQL = """
+    SELECT mail_message_type_id mt_mail_message_type_id,
+           name mt_name,
+           description mt_description,
+           max_retries_count mt_max_retries_count,
+           state mt_state,
+           created_at mt_created_at,
+           updated_at mt_updated_at,
+           content_type mt_content_type,
+           template_engine mt_template_engine,
+           template mt_template
+      FROM mail_message_type
+     WHERE name = ?"""
 
 private const val FIND_ALL_SLICED_SQL = """
     SELECT mail_message_type_id mt_mail_message_type_id,
@@ -34,12 +50,13 @@ private const val FIND_ALL_SLICED_SQL = """
            description mt_description,
            max_retries_count mt_max_retries_count,
            state mt_state,
+           created_at mt_created_at,
+           updated_at mt_updated_at,
            content_type mt_content_type,
            template_engine mt_template_engine,
            template mt_template
       FROM mail_message_type
-     LIMIT ? OFFSET ?
-"""
+     LIMIT ? OFFSET ?"""
 
 private const val EXISTS_BY_NAME_SQL = "SELECT 1 FROM mail_message_type WHERE name = ?"
 
@@ -50,20 +67,27 @@ private const val INSERT_SQL = """
         description,
         max_retries_count,
         state,
+        created_at,
+        updated_at,
         content_type,
         template_engine,
         template)
-    VALUES(?, ?, ?, ?, ?, ?, ?, ?)"""
+    VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"""
 
 private const val UPDATE_SQL = """
     UPDATE mail_message_type SET
         description = ?,
         max_retries_count = ?,
+        updated_at = ?,
         template_engine = ?,
         template = ?
     WHERE mail_message_type_id = ?"""
 
-private const val UPDATE_STATE_SQL = "UPDATE mail_message_type SET state = ? WHERE mail_message_type_id = ?"
+private const val UPDATE_STATE_SQL = """
+    UPDATE mail_message_type SET
+        state = ?,
+        updated_at = ?
+    WHERE mail_message_type_id = ?"""
 
 class JdbcMailMessageTypeRepository(
     private val idGenerator: IdGenerator,
@@ -80,6 +104,15 @@ class JdbcMailMessageTypeRepository(
                 it, FIND_BY_ID_SQL,
                 singleItemMapper,
                 id
+            )
+        }
+
+    override suspend fun findByName(name: String): MailMessageType? =
+        dataSource.connection.use {
+            queryRunner.query(
+                it, FIND_BY_NAME_SQL,
+                singleItemMapper,
+                name
             )
         }
 
@@ -117,6 +150,8 @@ class JdbcMailMessageTypeRepository(
                 mailMessageType.description,
                 mailMessageType.maxRetriesCount,
                 mailMessageType.state.name,
+                mailMessageType.createdAt,
+                mailMessageType.updatedAt,
                 mailMessageType.contentType,
                 (mailMessageType as? HtmlMailMessageType)?.templateEngine,
                 (mailMessageType as? HtmlMailMessageType)?.template,
@@ -133,6 +168,7 @@ class JdbcMailMessageTypeRepository(
                 it, UPDATE_SQL,
                 mailMessageType.description,
                 mailMessageType.maxRetriesCount,
+                mailMessageType.updatedAt,
                 (mailMessageType as? HtmlMailMessageType)?.templateEngine,
                 (mailMessageType as? HtmlMailMessageType)?.template,
                 mailMessageType.id,
@@ -146,11 +182,13 @@ class JdbcMailMessageTypeRepository(
         return mailMessageType
     }
 
-    override suspend fun updateState(id: Long, state: MailMessageTypeState): Int =
+    override suspend fun updateState(id: Long, state: MailMessageTypeState, updatedAt: Instant): Int =
         dataSource.connection.use {
             queryRunner.update(
                 it, UPDATE_STATE_SQL,
-                state, id
+                state,
+                updatedAt,
+                id
             )
         }
 

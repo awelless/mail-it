@@ -17,6 +17,8 @@ fun createPlainMailMessageType(): PlainTextMailMessageType =
         name = "DEFAULT",
         description = "Some description",
         maxRetriesCount = 111,
+        createdAt = Instant.now(),
+        updatedAt = Instant.now(),
     )
 
 fun createHtmlMailMessageType(): HtmlMailMessageType =
@@ -24,9 +26,11 @@ fun createHtmlMailMessageType(): HtmlMailMessageType =
         id = COUNTER.incrementAndGet(),
         name = "DEFAULT",
         description = "Some description",
+        createdAt = Instant.now(),
+        updatedAt = Instant.now(),
         maxRetriesCount = 111,
         templateEngine = NONE,
-        template = "<html></html>"
+        template = "<html></html>",
     )
 
 fun createMailMessage(messageType: MailMessageType): MailMessage =

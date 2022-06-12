@@ -4,6 +4,7 @@ import it.mail.core.ValidationException
 import it.mail.core.model.HtmlMailMessageType
 import it.mail.core.model.MailMessageType
 import it.mail.core.model.PlainTextMailMessageType
+import java.time.Instant
 
 interface MailMessageTypeStateUpdater<T : MailMessageType> {
 
@@ -29,6 +30,7 @@ class PlainTextMailMessageTypeStateUpdater : MailMessageTypeStateUpdater<PlainTe
         mailType.apply {
             description = command.description
             maxRetriesCount = command.maxRetriesCount
+            updatedAt = Instant.now()
         }
     }
 }
@@ -47,6 +49,7 @@ class HtmlMailMessageTypeStateUpdater : MailMessageTypeStateUpdater<HtmlMailMess
         mailType.apply {
             description = command.description
             maxRetriesCount = command.maxRetriesCount
+            updatedAt = Instant.now()
             templateEngine = command.templateEngine
             template = command.template
         }

@@ -9,6 +9,7 @@ import it.mail.core.model.MailMessageTypeState.FORCE_DELETED
 import it.mail.core.model.Slice
 import it.mail.persistence.api.MailMessageTypeRepository
 import mu.KLogging
+import java.time.Instant
 
 class MailMessageTypeService(
     private val mailMessageTypeRepository: MailMessageTypeRepository,
@@ -60,7 +61,7 @@ class MailMessageTypeService(
             DELETED
         }
 
-        if (mailMessageTypeRepository.updateState(id, newState) == 0) {
+        if (mailMessageTypeRepository.updateState(id, newState, Instant.now()) == 0) {
             throw NotFoundException("MailMessageType with id: $id is not found")
         }
 

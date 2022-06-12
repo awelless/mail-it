@@ -28,13 +28,14 @@ private const val FIND_WITH_TYPE_BY_ID_SQL = """
            mt.description mt_description,
            mt.max_retries_count mt_max_retries_count,
            mt.state mt_state,
+           mt.created_at mt_created_at,
+           mt.updated_at mt_updated_at,
            mt.content_type mt_content_type,
            mt.template_engine mt_template_engine,
            mt.template mt_template
     FROM mail_message m
     INNER JOIN mail_message_type mt ON m.mail_message_type_id = mt.mail_message_type_id
-    WHERE m.mail_message_id = ?
-"""
+    WHERE m.mail_message_id = ?"""
 
 private const val FIND_WITH_TYPE_BY_SENDING_STARTED_BEFORE_AND_STATUSES_SQL = """
     SELECT m.mail_message_id m_mail_message_id,
@@ -53,14 +54,15 @@ private const val FIND_WITH_TYPE_BY_SENDING_STARTED_BEFORE_AND_STATUSES_SQL = ""
            mt.description mt_description,
            mt.max_retries_count mt_max_retries_count,
            mt.state mt_state,
+           mt.created_at mt_created_at,
+           mt.updated_at mt_updated_at,
            mt.content_type mt_content_type,
            mt.template_engine mt_template_engine,
            mt.template mt_template
     FROM mail_message m
     INNER JOIN mail_message_type mt ON m.mail_message_type_id = mt.mail_message_type_id
     WHERE m.sending_started_at < ?
-      AND m.status IN (?)
-"""
+      AND m.status IN (?)"""
 
 private const val FIND_IDS_BY_STATUSES_SQL = "SELECT mail_message_id FROM mail_message WHERE status IN (?)"
 

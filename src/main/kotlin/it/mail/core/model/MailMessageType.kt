@@ -1,5 +1,7 @@
 package it.mail.core.model
 
+import java.time.Instant
+
 /**
  * Type of [MailMessage]. Contains general info for all mails of one type
  */
@@ -23,6 +25,10 @@ sealed class MailMessageType(
     open var maxRetriesCount: Int?,
 
     open var state: MailMessageTypeState,
+
+    open val createdAt: Instant,
+
+    open var updatedAt: Instant,
 )
 
 enum class MailMessageTypeState {
@@ -42,8 +48,10 @@ data class PlainTextMailMessageType(
     override var description: String? = null,
     override var maxRetriesCount: Int? = null,
     override var state: MailMessageTypeState = MailMessageTypeState.ENABLED,
+    override val createdAt: Instant,
+    override var updatedAt: Instant,
 
-) : MailMessageType(id, name, description, maxRetriesCount, state)
+) : MailMessageType(id, name, description, maxRetriesCount, state, createdAt, updatedAt)
 
 /**
  * [MailMessageType] for "html" messages
@@ -55,6 +63,8 @@ data class HtmlMailMessageType(
     override var description: String? = null,
     override var maxRetriesCount: Int? = null,
     override var state: MailMessageTypeState = MailMessageTypeState.ENABLED,
+    override val createdAt: Instant,
+    override var updatedAt: Instant,
 
     var templateEngine: HtmlTemplateEngine,
 
@@ -63,7 +73,7 @@ data class HtmlMailMessageType(
      */
     var template: String,
 
-) : MailMessageType(id, name, description, maxRetriesCount, state)
+) : MailMessageType(id, name, description, maxRetriesCount, state, createdAt, updatedAt)
 
 enum class HtmlTemplateEngine {
 

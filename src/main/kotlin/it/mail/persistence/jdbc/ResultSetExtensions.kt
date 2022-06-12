@@ -34,6 +34,10 @@ internal fun ResultSet.getMailMessageTypeFromRow(): MailMessageType {
     val typeMaxRetriesCount = getNullableInt("mt_max_retries_count")
 
     val typeState = MailMessageTypeState.valueOf(getString("mt_state"))
+
+    val createdAt = getObject("mt_created_at", Instant::class.java)
+    val updatedAt = getObject("mt_updated_at", Instant::class.java)
+
     val contentType = MailMessageContent.valueOf(getString("mt_content_type"))
 
     val templateEngineValue = getString("mt_template_engine")
@@ -48,6 +52,8 @@ internal fun ResultSet.getMailMessageTypeFromRow(): MailMessageType {
             description = typeDescription,
             maxRetriesCount = typeMaxRetriesCount,
             state = typeState,
+            createdAt = createdAt,
+            updatedAt = updatedAt,
         )
         HTML -> HtmlMailMessageType(
             id = typeId,
@@ -55,6 +61,8 @@ internal fun ResultSet.getMailMessageTypeFromRow(): MailMessageType {
             description = typeDescription,
             maxRetriesCount = typeMaxRetriesCount,
             state = typeState,
+            createdAt = createdAt,
+            updatedAt = updatedAt,
             templateEngine = templateEngine!!,
             template = template!!,
         )

@@ -35,6 +35,8 @@ interface MailMessageTypeRepository {
 
     suspend fun findById(id: Long): MailMessageType?
 
+    suspend fun findByName(name: String): MailMessageType?
+
     suspend fun findAllSliced(page: Int, size: Int): Slice<MailMessageType>
 
     suspend fun existsOneWithName(name: String): Boolean
@@ -43,5 +45,5 @@ interface MailMessageTypeRepository {
 
     suspend fun update(mailMessageType: MailMessageType): MailMessageType
 
-    suspend fun updateState(id: Long, state: MailMessageTypeState): Int
+    suspend fun updateState(id: Long, state: MailMessageTypeState, updatedAt: Instant): Int
 }

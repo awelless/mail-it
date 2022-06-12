@@ -6,6 +6,7 @@ import it.mail.core.admin.MailMessageContentType.PLAIN_TEXT
 import it.mail.core.model.HtmlMailMessageType
 import it.mail.core.model.MailMessageType
 import it.mail.core.model.PlainTextMailMessageType
+import java.time.Instant
 
 interface MailMessageTypeFactory<T : MailMessageType> {
 
@@ -26,12 +27,17 @@ class MailMessageTypeFactoryManager(
 
 class PlainTextMailMessageTypeFactory : MailMessageTypeFactory<PlainTextMailMessageType> {
 
-    override fun create(command: CreateMailMessageTypeCommand) =
-        PlainTextMailMessageType(
+    override fun create(command: CreateMailMessageTypeCommand): PlainTextMailMessageType {
+        val now = Instant.now()
+
+        return PlainTextMailMessageType(
             name = command.name,
             description = command.description,
             maxRetriesCount = command.maxRetriesCount,
+            createdAt = now,
+            updatedAt = now,
         )
+    }
 }
 
 class HtmlMailMessageTypeFactory : MailMessageTypeFactory<HtmlMailMessageType> {
@@ -45,10 +51,14 @@ class HtmlMailMessageTypeFactory : MailMessageTypeFactory<HtmlMailMessageType> {
             throw ValidationException("No template is specified for html mail message type")
         }
 
+        val now = Instant.now()
+
         return HtmlMailMessageType(
             name = command.name,
             description = command.description,
             maxRetriesCount = command.maxRetriesCount,
+            createdAt = now,
+            updatedAt = now,
             templateEngine = command.templateEngine,
             template = command.template,
         )

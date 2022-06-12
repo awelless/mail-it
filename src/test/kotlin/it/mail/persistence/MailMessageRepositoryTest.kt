@@ -4,9 +4,9 @@ import io.quarkus.test.junit.QuarkusTest
 import it.mail.core.model.MailMessage
 import it.mail.core.model.MailMessageStatus.PENDING
 import it.mail.core.model.MailMessageType
-import it.mail.core.model.PlainTextMailMessageType
 import it.mail.persistence.api.MailMessageRepository
 import it.mail.persistence.api.MailMessageTypeRepository
+import it.mail.test.createPlainMailMessageType
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -31,7 +31,7 @@ class MailMessageRepositoryTest {
     @BeforeEach
     fun setUp() {
         runBlocking {
-            mailMessageType = PlainTextMailMessageType(name = "type")
+            mailMessageType = createPlainMailMessageType()
             mailMessageTypeRepository.create(mailMessageType)
 
             mailMessage = MailMessage(
@@ -64,6 +64,8 @@ class MailMessageRepositoryTest {
         assertEquals(mailMessageType.name, actual.type.name)
         assertEquals(mailMessageType.description, actual.type.description)
         assertEquals(mailMessageType.maxRetriesCount, actual.type.maxRetriesCount)
+        assertEquals(mailMessageType.createdAt, actual.type.createdAt)
+        assertEquals(mailMessageType.updatedAt, actual.type.updatedAt)
     }
 
     @Test
