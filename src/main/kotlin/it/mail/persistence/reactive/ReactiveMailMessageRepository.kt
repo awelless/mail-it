@@ -1,15 +1,18 @@
-package it.mail.persistence.jdbc
+package it.mail.persistence.reactive.postgresql
 
+import io.smallrye.mutiny.Multi
+import io.smallrye.mutiny.coroutines.awaitSuspending
+import io.vertx.mutiny.sqlclient.SqlClient
+import io.vertx.mutiny.sqlclient.Tuple
 import it.mail.core.model.MailMessage
 import it.mail.core.model.MailMessageStatus
 import it.mail.persistence.api.MailMessageRepository
 import it.mail.persistence.common.IdGenerator
 import it.mail.persistence.common.serialization.MailMessageDataSerializer
-import org.apache.commons.dbutils.QueryRunner
-import org.apache.commons.dbutils.ResultSetHandler
-import java.sql.ResultSet
+import it.mail.persistence.reactive.getMailMessageWithTypeFromRow
 import java.time.Instant
-import javax.sql.DataSource
+
+// todo unify queries
 
 private const val FIND_WITH_TYPE_BY_ID_SQL = """
     SELECT m.mail_message_id m_mail_message_id,
@@ -35,7 +38,7 @@ private const val FIND_WITH_TYPE_BY_ID_SQL = """
            mt.template mt_template
     FROM mail_message m
     INNER JOIN mail_message_type mt ON m.mail_message_type_id = mt.mail_message_type_id
-    WHERE m.mail_message_id = ?"""
+    WHERE m.mail_message_id = $1"""
 
 private const val FIND_WITH_TYPE_BY_SENDING_STARTED_BEFORE_AND_STATUSES_SQL = """
     SELECT m.mail_message_id m_mail_message_id,
@@ -61,10 +64,10 @@ private const val FIND_WITH_TYPE_BY_SENDING_STARTED_BEFORE_AND_STATUSES_SQL = ""
            mt.template mt_template
     FROM mail_message m
     INNER JOIN mail_message_type mt ON m.mail_message_type_id = mt.mail_message_type_id
-    WHERE m.sending_started_at < ?
-      AND m.status IN (?)"""
+    WHERE m.sending_started_at < ?1
+      AND m.status IN (?2)"""
 
-private const val FIND_IDS_BY_STATUSES_SQL = "SELECT mail_message_id FROM mail_message WHERE status IN (?)"
+private const val FIND_IDS_BY_STATUSES_SQL = "SELECT mail_message_id FROM mail_message WHERE status IN ($1)"
 
 private const val INSERT_SQL = """
    INSERT INTO mail_message(
@@ -80,44 +83,35 @@ private const val INSERT_SQL = """
         sent_at,
         status,
         failed_count)
-   VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"""
+   VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)"""
 
-private const val UPDATE_STATUS_SQL = "UPDATE mail_message SET status = ? WHERE mail_message_id = ?"
-private const val UPDATE_STATUS_AND_SENDING_START_SQL = "UPDATE mail_message SET status = ?, sending_started_at = ? WHERE mail_message_id = ? AND status IN (?)"
-private const val UPDATE_STATUS_AND_SENT_AT_SQL = "UPDATE mail_message SET status = ?, sent_at = ? WHERE mail_message_id = ?"
+private const val UPDATE_STATUS_SQL = "UPDATE mail_message SET status = $1 WHERE mail_message_id = $2"
+private const val UPDATE_STATUS_AND_SENDING_START_SQL = "UPDATE mail_message SET status = $1, sending_started_at = $2 WHERE mail_message_id = $3 AND status IN ($4)"
+private const val UPDATE_STATUS_AND_SENT_AT_SQL = "UPDATE mail_message SET status = $1, sent_at = $2 WHERE mail_message_id = $3"
 private const val UPDATE_STATUS_FILED_COUNT_AND_SENDING_START_SQL = "UPDATE mail_message SET status = ?, failed_count = ?, sending_started_at = ? WHERE mail_message_id = ?"
 
-internal class JdbcMailMessageRepository(
+internal class ReactiveMailMessageRepository(
     private val idGenerator: IdGenerator,
-    private val dataSource: DataSource,
-    private val queryRunner: QueryRunner,
+    private val client: SqlClient,
     private val dataSerializer: MailMessageDataSerializer,
 ) : MailMessageRepository {
 
-    private val singleMailWithTypeMapper = SingleMailMessageWithTypeResultSetMapper(dataSerializer)
-    private val multipleMailWithTypeMapper = MultipleMailMessagesWithTypeResultSetMapper(dataSerializer)
-
     override suspend fun findOneWithTypeById(id: Long): MailMessage? =
-        dataSource.connection.use {
-            queryRunner.query(
-                it, FIND_WITH_TYPE_BY_ID_SQL,
-                singleMailWithTypeMapper,
-                id
-            )
-        }
+        client.preparedQuery(FIND_WITH_TYPE_BY_ID_SQL).execute(Tuple.of(id))
+            .onItem().transform { it.iterator() }
+            .onItem().transform { if (it.hasNext()) it.next().getMailMessageWithTypeFromRow(dataSerializer) else null }
+            .awaitSuspending()
 
     override suspend fun findAllWithTypeByStatusesAndSendingStartedBefore(statuses: Collection<MailMessageStatus>, sendingStartedBefore: Instant): List<MailMessage> {
         val statusNames = statuses
             .map { it.name }
             .toTypedArray()
 
-        return dataSource.connection.use {
-            queryRunner.query(
-                it, FIND_WITH_TYPE_BY_SENDING_STARTED_BEFORE_AND_STATUSES_SQL,
-                multipleMailWithTypeMapper,
-                sendingStartedBefore, it.createArrayOf("VARCHAR", statusNames)
-            )
-        }
+        return client.preparedQuery(FIND_WITH_TYPE_BY_SENDING_STARTED_BEFORE_AND_STATUSES_SQL).execute(Tuple.of(sendingStartedBefore, statusNames))
+            .onItem().transformToMulti { Multi.createFrom().iterable(it) }
+            .onItem().transform { it.getMailMessageWithTypeFromRow(dataSerializer) }
+            .collect().asList()
+            .awaitSuspending()
     }
 
     override suspend fun findAllIdsByStatusIn(statuses: Collection<MailMessageStatus>): List<Long> {
@@ -125,41 +119,43 @@ internal class JdbcMailMessageRepository(
             .map { it.name }
             .toTypedArray()
 
-        return dataSource.connection.use {
-            queryRunner.query(
-                it, FIND_IDS_BY_STATUSES_SQL,
-                IDS_MAPPER,
-                it.createArrayOf("VARCHAR", statusNames)
-            )
-        }
+        return client.preparedQuery(FIND_IDS_BY_STATUSES_SQL).execute(Tuple.of(statusNames))
+            .onItem().transformToMulti { Multi.createFrom().iterable(it) }
+            .onItem().transform { it.getLong("mail_message_id") }
+            .collect().asList()
+            .awaitSuspending()
     }
 
     override suspend fun create(mailMessage: MailMessage): MailMessage {
         val id = idGenerator.generateId()
         val data = dataSerializer.write(mailMessage.data)
 
-        dataSource.connection.use {
-            val dataBlob = it.createBlob()
-            dataBlob.setBytes(1, data)
+        val argumentsArray = arrayOf(
+            id,
+            mailMessage.text,
+            data,
+            mailMessage.subject,
+            mailMessage.emailFrom,
+            mailMessage.emailTo,
+            mailMessage.type.id,
+            mailMessage.createdAt,
+            mailMessage.sendingStartedAt,
+            mailMessage.sentAt,
+            mailMessage.status.name,
+            mailMessage.failedCount,
+        )
 
-            queryRunner.update(
-                it, INSERT_SQL,
-                id, mailMessage.text, dataBlob, mailMessage.subject, mailMessage.emailFrom, mailMessage.emailTo, mailMessage.type.id,
-                mailMessage.createdAt, mailMessage.sendingStartedAt, mailMessage.sentAt, mailMessage.status.name, mailMessage.failedCount
-            )
-        }
+        client.preparedQuery(INSERT_SQL).execute(Tuple.from(argumentsArray))
+            .awaitSuspending()
 
         mailMessage.id = id
         return mailMessage
     }
 
     override suspend fun updateMessageStatus(id: Long, status: MailMessageStatus): Int =
-        dataSource.connection.use {
-            queryRunner.update(
-                it, UPDATE_STATUS_SQL,
-                status, id
-            )
-        }
+        client.preparedQuery(UPDATE_STATUS_SQL).execute(Tuple.of(status, id))
+            .onItem().transform { it.rowCount() }
+            .awaitSuspending()
 
     override suspend fun updateMessageStatusAndSendingStartedTimeByIdAndStatusIn(
         id: Long,
@@ -171,62 +167,18 @@ internal class JdbcMailMessageRepository(
             .map { it.name }
             .toTypedArray()
 
-        return dataSource.connection.use {
-            queryRunner.update(
-                it, UPDATE_STATUS_AND_SENDING_START_SQL,
-                status, sendingStartedAt, id, it.createArrayOf("VARCHAR", statusNames)
-            )
-        }
+        return client.preparedQuery(UPDATE_STATUS_AND_SENDING_START_SQL).execute(Tuple.of(status, sendingStartedAt, id, statusNames))
+            .onItem().transform { it.rowCount() }
+            .awaitSuspending()
     }
 
     override suspend fun updateMessageStatusAndSentTime(id: Long, status: MailMessageStatus, sentAt: Instant): Int =
-        dataSource.connection.use {
-            queryRunner.update(
-                it, UPDATE_STATUS_AND_SENT_AT_SQL,
-                status, sentAt, id
-            )
-        }
+        client.preparedQuery(UPDATE_STATUS_AND_SENT_AT_SQL).execute(Tuple.of(status, sentAt, id))
+            .onItem().transform { it.rowCount() }
+            .awaitSuspending()
 
     override suspend fun updateMessageStatusFailedCountAndSendingStartedTime(id: Long, status: MailMessageStatus, failedCount: Int, sendingStartedAt: Instant?): Int =
-        dataSource.connection.use {
-            queryRunner.update(
-                it, UPDATE_STATUS_FILED_COUNT_AND_SENDING_START_SQL,
-                status, failedCount, sendingStartedAt, id
-            )
-        }
-}
-
-/**
- * Used to extract single mail with type. Thread safe
- */
-private class SingleMailMessageWithTypeResultSetMapper(
-    private val dataSerializer: MailMessageDataSerializer,
-) : ResultSetHandler<MailMessage?> {
-
-    override fun handle(rs: ResultSet?): MailMessage? =
-        if (rs?.next() == true) {
-            rs.getMailMessageWithTypeFromRow(dataSerializer)
-        } else {
-            null
-        }
-}
-
-/**
- * Used to extract list of mails with type. Thread safe
- */
-private class MultipleMailMessagesWithTypeResultSetMapper(
-    private val dataSerializer: MailMessageDataSerializer,
-) : ResultSetHandler<List<MailMessage>> {
-
-    override fun handle(rs: ResultSet?): List<MailMessage> {
-        if (rs == null) {
-            return ArrayList()
-        }
-
-        val mailTypes = ArrayList<MailMessage>()
-        while (rs.next()) {
-            mailTypes.add(rs.getMailMessageWithTypeFromRow(dataSerializer))
-        }
-        return mailTypes
-    }
+        client.preparedQuery(UPDATE_STATUS_FILED_COUNT_AND_SENDING_START_SQL).execute(Tuple.of(status, failedCount, sendingStartedAt, id))
+            .onItem().transform { it.rowCount() }
+            .awaitSuspending()
 }

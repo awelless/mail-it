@@ -1,4 +1,4 @@
-package it.mail.persistence.serialization
+package it.mail.persistence.common.serialization
 
 import io.quarkus.test.junit.QuarkusIntegrationTest
 

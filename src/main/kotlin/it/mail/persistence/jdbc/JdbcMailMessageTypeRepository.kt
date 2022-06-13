@@ -89,7 +89,7 @@ private const val UPDATE_STATE_SQL = """
         updated_at = ?
     WHERE mail_message_type_id = ?"""
 
-class JdbcMailMessageTypeRepository(
+internal class JdbcMailMessageTypeRepository(
     private val idGenerator: IdGenerator,
     private val dataSource: DataSource,
     private val queryRunner: QueryRunner,

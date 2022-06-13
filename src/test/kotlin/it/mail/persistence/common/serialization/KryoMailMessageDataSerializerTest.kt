@@ -1,4 +1,4 @@
-package it.mail.persistence.serialization
+package it.mail.persistence.common.serialization
 
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.params.ParameterizedTest

@@ -1,4 +1,4 @@
-package it.mail.persistence.serialization
+package it.mail.persistence.common.serialization
 
 import com.esotericsoftware.kryo.Kryo
 import com.esotericsoftware.kryo.io.Input
