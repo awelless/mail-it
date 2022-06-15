@@ -8,6 +8,7 @@ import it.mail.core.model.HtmlMailMessageType
 import it.mail.core.model.HtmlTemplateEngine.FREEMARKER
 import it.mail.test.assertHtmlEquals
 import it.mail.test.createHtmlMailMessageType
+import it.mail.test.readResource
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -33,7 +34,7 @@ open class FreemarkerTemplateProcessorTest {
     @Test
     fun `process valid template - creates html`() {
         // given
-        templateLoader.putTemplate(mailMessageType.name, FREEMARKER_TEST_TEMPLATE_PATH.readResourceText())
+        templateLoader.putTemplate(mailMessageType.name, FREEMARKER_TEST_TEMPLATE_PATH.readResource())
 
         // data in forms of maps and lists only
         val data = mapOf(
@@ -66,13 +67,13 @@ open class FreemarkerTemplateProcessorTest {
         val actual = templateProcessor.process(mailMessageType, data)
 
         // then
-        assertHtmlEquals(EXPECTED_HTML_PATH.readResourceText(), actual)
+        assertHtmlEquals(EXPECTED_HTML_PATH.readResource(), actual)
     }
 
     @Test
     fun `process valid template with excess data - creates html`() {
         // given
-        templateLoader.putTemplate(mailMessageType.name, FREEMARKER_TEST_TEMPLATE_PATH.readResourceText())
+        templateLoader.putTemplate(mailMessageType.name, FREEMARKER_TEST_TEMPLATE_PATH.readResource())
 
         // data in forms of maps and lists only
         val data = mapOf(
@@ -107,13 +108,13 @@ open class FreemarkerTemplateProcessorTest {
         val actual = templateProcessor.process(mailMessageType, data)
 
         // then
-        assertHtmlEquals(EXPECTED_HTML_PATH.readResourceText(), actual)
+        assertHtmlEquals(EXPECTED_HTML_PATH.readResource(), actual)
     }
 
     @Test
     fun `process valid template when some data is not present - throws exception`() {
         // given
-        templateLoader.putTemplate(mailMessageType.name, FREEMARKER_TEST_TEMPLATE_PATH.readResourceText())
+        templateLoader.putTemplate(mailMessageType.name, FREEMARKER_TEST_TEMPLATE_PATH.readResource())
 
         val data = mapOf(
             "title" to "Created html",
@@ -131,14 +132,9 @@ open class FreemarkerTemplateProcessorTest {
     @Test
     fun `template is invalid - throws exception`() {
         // given
-        templateLoader.putTemplate(mailMessageType.name, FREEMARKER_INVALID_TEMPLATE_PATH.readResourceText())
+        templateLoader.putTemplate(mailMessageType.name, FREEMARKER_INVALID_TEMPLATE_PATH.readResource())
 
         // when
         assertThrows<ParseException> { templateProcessor.process(mailMessageType, emptyMap()) }
-    }
-
-    private fun String.readResourceText(): String {
-        return FreemarkerTemplateProcessorTest::class.java.classLoader.getResource(this)?.readText()
-            ?: throw Exception("Resource: $this is not found")
     }
 }
