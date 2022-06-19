@@ -1,4 +1,4 @@
-package it.mail.core.mailing
+package it.mail.core.quarkus.mailing
 
 import io.quarkus.mailer.Mail
 import it.mail.core.mailing.templates.TemplateProcessor

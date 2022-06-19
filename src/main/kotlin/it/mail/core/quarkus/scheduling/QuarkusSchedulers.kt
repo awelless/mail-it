@@ -1,4 +1,4 @@
-package it.mail.core.context.scheduling
+package it.mail.core.quarkus.scheduling
 
 import io.quarkus.scheduler.Scheduled
 import io.quarkus.scheduler.Scheduled.ConcurrentExecution.SKIP

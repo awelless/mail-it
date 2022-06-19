@@ -2,12 +2,10 @@ package it.mail.core.mailing
 
 import io.mockk.coEvery
 import io.mockk.coVerify
-import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.impl.annotations.SpyK
 import io.mockk.junit5.MockKExtension
-import io.quarkus.mailer.Mail
 import it.mail.core.model.MailMessage
 import it.mail.core.model.MailMessageType
 import it.mail.core.model.MailMessageTypeState.FORCE_DELETED
@@ -22,9 +20,6 @@ import org.junit.jupiter.api.extension.ExtendWith
 
 @ExtendWith(MockKExtension::class)
 class SendMailMessageServiceTest {
-
-    @RelaxedMockK
-    lateinit var mailFactory: MailFactory
 
     @RelaxedMockK
     lateinit var mailSender: MailSender
@@ -50,16 +45,13 @@ class SendMailMessageServiceTest {
     @Test
     fun sendMail_withSuccess() = runTest {
         // given
-        val mail = Mail.withText(mailMessage.emailTo, mailMessage.subject, mailMessage.text)
-
-        every { mailFactory.create(mailMessage) }.returns(mail)
         coEvery { mailMessageService.getMessageForSending(mailMessage.id) }.returns(mailMessage)
 
         // when
         sendService.sendMail(mailMessage.id).join()
 
         // then
-        coVerify(exactly = 1) { mailSender.send(mail) }
+        coVerify(exactly = 1) { mailSender.send(mailMessage) }
         coVerify(exactly = 1) { mailMessageService.processSuccessfulDelivery(mailMessage) }
     }
 

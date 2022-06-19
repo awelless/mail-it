@@ -1,4 +1,4 @@
-package it.mail.core.mailing
+package it.mail.core.quarkus.mailing
 
 import io.quarkus.mailer.Mail
 import io.quarkus.mailer.MockMailbox
@@ -10,13 +10,13 @@ import org.junit.jupiter.api.Test
 import javax.inject.Inject
 
 @QuarkusTest
-class MailSenderTest {
+class QuarkusMailSenderTest {
 
     @Inject
     lateinit var mockMailbox: MockMailbox
 
     @Inject
-    lateinit var mailSender: MailSender
+    lateinit var mailSender: QuarkusMailSender
 
     @AfterEach
     fun tearDown() {

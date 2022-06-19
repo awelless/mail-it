@@ -8,7 +8,6 @@ import kotlinx.coroutines.launch
 import mu.KLogging
 
 class SendMailMessageService(
-    private val mailFactory: MailFactory,
     private val mailSender: MailSender,
     private val mailMessageService: MailMessageService,
     private val coroutineScope: CoroutineScope,
@@ -30,8 +29,7 @@ class SendMailMessageService(
         }
 
         try {
-            val mail = mailFactory.create(message)
-            mailSender.send(mail)
+            mailSender.send(message)
             logger.debug { "Successfully sent message: ${message.id}" }
 
             mailMessageService.processSuccessfulDelivery(message)

@@ -1,19 +1,8 @@
 package it.mail.core.mailing
 
-import io.quarkus.mailer.Mail
-import io.quarkus.mailer.reactive.ReactiveMailer
-import io.smallrye.mutiny.coroutines.awaitSuspending
-import mu.KLogging
+import it.mail.core.model.MailMessage
 
-/**
- * Kotlin coroutine wrapper for [ReactiveMailer]
- */
-class MailSender(
-    private val mailer: ReactiveMailer,
-) {
-    companion object : KLogging()
+interface MailSender {
 
-    suspend fun send(mail: Mail) {
-        mailer.send(mail).awaitSuspending()
-    }
+    suspend fun send(message: MailMessage)
 }
