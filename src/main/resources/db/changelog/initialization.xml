@@ -7,22 +7,30 @@
 
     <changeSet id="1" author="Aliaksei Shcharbaty">
         <comment>Create mail_message_type table</comment>
-        <sql>
-            CREATE TABLE mail_message_type
-            (
-                mail_message_type_id BIGINT PRIMARY KEY,
-                name                 VARCHAR(128) NOT NULL,
-                description          VARCHAR(1024),
-                max_retries_count    INT,
-                state                VARCHAR(32)  NOT NULL,
-                created_at           TIMESTAMP    NOT NULL,
-                updated_at           TIMESTAMP    NOT NULL,
-                content_type         VARCHAR(32)  NOT NULL,
-                template_engine      VARCHAR(64),
-                template             TEXT,
-                CONSTRAINT uk_mail_message_type_name UNIQUE (name)
-            );
-        </sql>
+        <createTable tableName="mail_message_type">
+                <column name="mail_message_type_id" type="bigint">
+                    <constraints primaryKey="true"/>
+                </column>
+                <column name="name" type="varchar(128)">
+                    <constraints nullable="false" unique="true" uniqueConstraintName="uk_mail_message_type_name"/>
+                </column>
+                <column name="description" type="varchar(1024)"/>
+                <column name="max_retries_count" type="int"/>
+                <column name="state" type="varchar(32)">
+                    <constraints nullable="false"/>
+                </column>
+                <column name="created_at" type="timestamp">
+                    <constraints nullable="false"/>
+                </column>
+                <column name="updated_at" type="timestamp">
+                    <constraints nullable="false"/>
+                </column>
+                <column name="content_type" type="varchar(32)">
+                    <constraints nullable="false"/>
+                </column>
+                <column name="template_engine" type="varchar(64)"/>
+                <column name="template" type="text"/>
+        </createTable>
         <rollback>
             DROP TABLE IF EXISTS mail_message_type;
         </rollback>
@@ -30,24 +38,33 @@
 
     <changeSet id="2" author="Aliaksei Shcharbaty">
         <comment>Create mail_message table</comment>
-        <sql>
-            CREATE TABLE mail_message
-            (
-                mail_message_id      BIGINT PRIMARY KEY,
-                text                 TEXT,
-                data                 BLOB,
-                subject              VARCHAR(256),
-                email_from           VARCHAR(256),
-                email_to             VARCHAR(256) NOT NULL,
-                mail_message_type_id BIGINT       NOT NULL,
-                created_at           TIMESTAMP    NOT NULL,
-                sending_started_at   TIMESTAMP,
-                sent_at              TIMESTAMP,
-                status               VARCHAR(32)  NOT NULL,
-                failed_count         INT          NOT NULL,
-                CONSTRAINT fk_mailmessage_mailmessagetype FOREIGN KEY (mail_message_type_id) REFERENCES mail_message_type (mail_message_type_id)
-            );
-        </sql>
+        <createTable tableName="mail_message">
+            <column name="mail_message_id" type="bigint">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="text" type="text"/>
+            <column name="data" type="${blob_type}"/>
+            <column name="subject" type="varchar(256)"/>
+            <column name="email_from" type="varchar(256)"/>
+            <column name="email_to" type="varchar(256)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="mail_message_type_id" type="bigint">
+                <constraints nullable="false" foreignKeyName="fk_mailmessage_mailmessagetype" references="mail_message_type(mail_message_type_id)"/>
+            </column>
+            <column name="created_at" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="sending_started_at" type="timestamp"/>
+            <column name="sent_at" type="timestamp"/>
+            <column name="status" type="varchar(32)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="failed_count" type="int">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
         <rollback>
             DROP TABLE IF EXISTS mail_message;
         </rollback>
