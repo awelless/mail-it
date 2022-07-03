@@ -36,3 +36,7 @@ nb-configuration.xml
 .env
 
 out/
+
+# Client app libs and artifacts
+client/node_modules/
+client/dist/
