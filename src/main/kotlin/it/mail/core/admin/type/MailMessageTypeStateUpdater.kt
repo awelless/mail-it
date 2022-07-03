@@ -1,4 +1,4 @@
-package it.mail.core.admin
+package it.mail.core.admin.type
 
 import it.mail.core.ValidationException
 import it.mail.core.model.HtmlMailMessageType

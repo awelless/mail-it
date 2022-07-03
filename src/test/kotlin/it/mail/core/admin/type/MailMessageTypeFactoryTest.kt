@@ -1,9 +1,9 @@
-package it.mail.core.admin
+package it.mail.core.admin.type
 
 import io.mockk.junit5.MockKExtension
 import it.mail.core.ValidationException
-import it.mail.core.admin.MailMessageContentType.HTML
-import it.mail.core.admin.MailMessageContentType.PLAIN_TEXT
+import it.mail.core.admin.type.MailMessageContentType.HTML
+import it.mail.core.admin.type.MailMessageContentType.PLAIN_TEXT
 import it.mail.core.model.HtmlMailMessageType
 import it.mail.core.model.HtmlTemplateEngine.FREEMARKER
 import it.mail.core.model.PlainTextMailMessageType

@@ -6,6 +6,7 @@ import io.vertx.mutiny.sqlclient.SqlClient
 import io.vertx.mutiny.sqlclient.Tuple
 import it.mail.core.model.MailMessage
 import it.mail.core.model.MailMessageStatus
+import it.mail.core.model.Slice
 import it.mail.persistence.api.MailMessageRepository
 import it.mail.persistence.common.IdGenerator
 import it.mail.persistence.common.serialization.MailMessageDataSerializer
@@ -70,6 +71,33 @@ private const val FIND_WITH_TYPE_BY_SENDING_STARTED_BEFORE_AND_STATUSES_SQL = ""
 
 private const val FIND_IDS_BY_STATUSES_SQL = "SELECT mail_message_id FROM mail_message WHERE status = ANY($1)"
 
+private const val FIND_ALL_SLICED_SQL = """
+    SELECT m.mail_message_id m_mail_message_id,
+           m.text m_text,
+           m.data m_data,
+           m.subject m_subject,
+           m.email_from m_email_from,
+           m.email_to m_email_to,
+           m.created_at m_created_at,
+           m.sending_started_at m_sending_started_at,
+           m.sent_at m_sent_at,
+           m.status m_status,
+           m.failed_count m_failed_count,
+           mt.mail_message_type_id mt_mail_message_type_id,
+           mt.name mt_name,
+           mt.description mt_description,
+           mt.max_retries_count mt_max_retries_count,
+           mt.state mt_state,
+           mt.created_at mt_created_at,
+           mt.updated_at mt_updated_at,
+           mt.content_type mt_content_type,
+           mt.template_engine mt_template_engine,
+           mt.template mt_template
+     FROM mail_message m
+    INNER JOIN mail_message_type mt ON m.mail_message_type_id = mt.mail_message_type_id
+    ORDER BY m_mail_message_id DESC
+    LIMIT $1 OFFSET $2"""
+
 private const val INSERT_SQL = """
    INSERT INTO mail_message(
         mail_message_id,
@@ -124,6 +152,17 @@ internal class ReactiveMailMessageRepository(
             .onItem().transformToMulti { Multi.createFrom().iterable(it) }
             .onItem().transform { it.getLong("mail_message_id") }
             .collect().asList()
+            .awaitSuspending()
+    }
+
+    override suspend fun findAllSlicedDescendingIdSorted(page: Int, size: Int): Slice<MailMessage> {
+        val offset = page * size
+
+        return client.preparedQuery(FIND_ALL_SLICED_SQL).execute(Tuple.of(size, offset))
+            .onItem().transformToMulti { Multi.createFrom().iterable(it) }
+            .onItem().transform { it.getMailMessageWithTypeFromRow(dataSerializer) }
+            .collect().asList()
+            .onItem().transform { Slice(it, page, size) }
             .awaitSuspending()
     }
 

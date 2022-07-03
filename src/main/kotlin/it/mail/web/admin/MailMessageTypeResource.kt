@@ -1,8 +1,8 @@
 package it.mail.web.admin
 
-import it.mail.core.admin.CreateMailMessageTypeCommand
-import it.mail.core.admin.MailMessageTypeService
-import it.mail.core.admin.UpdateMailMessageTypeCommand
+import it.mail.core.admin.type.CreateMailMessageTypeCommand
+import it.mail.core.admin.type.MailMessageTypeService
+import it.mail.core.admin.type.UpdateMailMessageTypeCommand
 import it.mail.core.model.Slice
 import it.mail.web.DEFAULT_PAGE
 import it.mail.web.DEFAULT_SIZE
@@ -23,7 +23,7 @@ import javax.ws.rs.Path
 import javax.ws.rs.PathParam
 import javax.ws.rs.QueryParam
 
-@Path("/admin/mail/type")
+@Path("/admin/mails/types")
 class MailMessageTypeResource(
     private val mailMessageTypeService: MailMessageTypeService,
     private val mailMessageTypeDtoMapper: ResponseMailMessageTypeDtoMapper,

@@ -22,7 +22,7 @@ val kotlinLoggingVersion = "2.1.23" // https://mvnrepository.com/artifact/io.git
 val kryoVersion = "5.3.0" // https://mvnrepository.com/artifact/com.esotericsoftware/kryo
 val mockkVersion = "1.12.4" // https://mvnrepository.com/artifact/io.mockk/mockk
 val quarkusVersion: String by project // https://mvnrepository.com/artifact/io.quarkus.platform/quarkus-bom
-val restAssuredKotlinExtensionsVersion = "5.1.0" // https://mvnrepository.com/artifact/io.rest-assured/kotlin-extensions
+val restAssuredKotlinExtensionsVersion = "5.1.1" // https://mvnrepository.com/artifact/io.rest-assured/kotlin-extensions
 
 dependencies {
     implementation(enforcedPlatform("io.quarkus.platform:quarkus-bom:$quarkusVersion"))

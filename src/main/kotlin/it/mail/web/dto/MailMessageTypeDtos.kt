@@ -1,6 +1,6 @@
 package it.mail.web.dto
 
-import it.mail.core.admin.MailMessageContentType
+import it.mail.core.admin.type.MailMessageContentType
 import it.mail.core.model.HtmlTemplateEngine
 
 data class PagedMailMessageTypeResponseDto(

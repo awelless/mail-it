@@ -1,15 +1,16 @@
 package it.mail.core.quarkus
 
 import io.quarkus.mailer.reactive.ReactiveMailer
-import it.mail.core.admin.HtmlMailMessageTypeFactory
-import it.mail.core.admin.HtmlMailMessageTypeStateUpdater
-import it.mail.core.admin.MailMessageTypeFactory
-import it.mail.core.admin.MailMessageTypeFactoryManager
-import it.mail.core.admin.MailMessageTypeService
-import it.mail.core.admin.MailMessageTypeStateUpdater
-import it.mail.core.admin.MailMessageTypeStateUpdaterManager
-import it.mail.core.admin.PlainTextMailMessageTypeFactory
-import it.mail.core.admin.PlainTextMailMessageTypeStateUpdater
+import it.mail.core.admin.mail.AdminMailMessageService
+import it.mail.core.admin.type.HtmlMailMessageTypeFactory
+import it.mail.core.admin.type.HtmlMailMessageTypeStateUpdater
+import it.mail.core.admin.type.MailMessageTypeFactory
+import it.mail.core.admin.type.MailMessageTypeFactoryManager
+import it.mail.core.admin.type.MailMessageTypeService
+import it.mail.core.admin.type.MailMessageTypeStateUpdater
+import it.mail.core.admin.type.MailMessageTypeStateUpdaterManager
+import it.mail.core.admin.type.PlainTextMailMessageTypeFactory
+import it.mail.core.admin.type.PlainTextMailMessageTypeStateUpdater
 import it.mail.core.external.ExternalMailMessageService
 import it.mail.core.mailing.HungMailsResetManager
 import it.mail.core.mailing.MailMessageService
@@ -56,6 +57,9 @@ class AdminServicesContextConfiguration {
         mailMessageTypeFactory: MailMessageTypeFactory<MailMessageType>,
         mailMessageTypeStateUpdated: MailMessageTypeStateUpdater<MailMessageType>,
     ) = MailMessageTypeService(mailMessageTypeRepository, mailMessageTypeFactory, mailMessageTypeStateUpdated)
+
+    @Singleton
+    fun adminMailMessageService(mailMessageRepository: MailMessageRepository) = AdminMailMessageService(mailMessageRepository)
 }
 
 class ExternalServicesContextConfiguration {

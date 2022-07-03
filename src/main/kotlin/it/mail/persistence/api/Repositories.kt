@@ -15,6 +15,8 @@ interface MailMessageRepository {
 
     suspend fun findAllIdsByStatusIn(statuses: Collection<MailMessageStatus>): List<Long>
 
+    suspend fun findAllSlicedDescendingIdSorted(page: Int, size: Int): Slice<MailMessage>
+
     suspend fun create(mailMessage: MailMessage): MailMessage
 
     suspend fun updateMessageStatus(id: Long, status: MailMessageStatus): Int

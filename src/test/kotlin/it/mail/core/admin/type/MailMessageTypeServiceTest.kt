@@ -1,4 +1,4 @@
-package it.mail.core.admin
+package it.mail.core.admin.type
 
 import io.mockk.coEvery
 import io.mockk.impl.annotations.InjectMockKs
@@ -7,7 +7,7 @@ import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.verify
 import it.mail.core.ValidationException
-import it.mail.core.admin.MailMessageContentType.PLAIN_TEXT
+import it.mail.core.admin.type.MailMessageContentType.PLAIN_TEXT
 import it.mail.core.model.MailMessageType
 import it.mail.persistence.api.MailMessageTypeRepository
 import it.mail.test.createPlainMailMessageType
