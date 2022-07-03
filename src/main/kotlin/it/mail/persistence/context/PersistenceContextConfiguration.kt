@@ -1,6 +1,6 @@
 package it.mail.persistence.context
 
-import io.vertx.mutiny.sqlclient.SqlClient
+import io.vertx.mutiny.pgclient.PgPool
 import it.mail.persistence.common.IdGenerator
 import it.mail.persistence.common.LocalCounterIdGenerator
 import it.mail.persistence.common.serialization.KryoMailMessageDataSerializer
@@ -32,7 +32,7 @@ internal class RepositoriesConfiguration(
     private val idGenerator: IdGenerator,
     private val queryRunner: QueryRunner,
     private val dataSource: Provider<DataSource>,
-    private val client: Provider<SqlClient>,
+    private val client: Provider<PgPool>,
     private val databaseConfig: DatabaseConfig,
 ) {
 

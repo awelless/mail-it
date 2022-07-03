@@ -12,6 +12,7 @@ import it.mail.core.model.Slice
 import it.mail.persistence.api.MailMessageTypeRepository
 import it.mail.persistence.api.PersistenceException
 import it.mail.persistence.common.IdGenerator
+import it.mail.persistence.common.toLocalDateTime
 import it.mail.persistence.reactive.MailMessageContent.HTML
 import it.mail.persistence.reactive.MailMessageContent.PLAIN_TEXT
 import java.time.Instant
@@ -133,8 +134,8 @@ internal class ReactiveMailMessageTypeRepository(
             mailMessageType.description,
             mailMessageType.maxRetriesCount,
             mailMessageType.state.name,
-            mailMessageType.createdAt,
-            mailMessageType.updatedAt,
+            mailMessageType.createdAt.toLocalDateTime(),
+            mailMessageType.updatedAt.toLocalDateTime(),
             mailMessageType.contentType,
             (mailMessageType as? HtmlMailMessageType)?.templateEngine,
             (mailMessageType as? HtmlMailMessageType)?.template,
@@ -151,7 +152,7 @@ internal class ReactiveMailMessageTypeRepository(
         val arguments = arrayOf(
             mailMessageType.description,
             mailMessageType.maxRetriesCount,
-            mailMessageType.updatedAt,
+            mailMessageType.updatedAt.toLocalDateTime(),
             (mailMessageType as? HtmlMailMessageType)?.templateEngine,
             (mailMessageType as? HtmlMailMessageType)?.template,
             mailMessageType.id,

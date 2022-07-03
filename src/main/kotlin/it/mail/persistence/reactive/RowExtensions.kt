@@ -12,7 +12,7 @@ import it.mail.persistence.common.serialization.MailMessageDataSerializer
 import it.mail.persistence.jdbc.MailMessageContent
 import it.mail.persistence.jdbc.MailMessageContent.HTML
 import it.mail.persistence.jdbc.MailMessageContent.PLAIN_TEXT
-import java.time.Instant
+import java.time.ZoneOffset.UTC
 
 /*
  * All these extensions require appropriate column names.
@@ -36,8 +36,8 @@ internal fun Row.getMailMessageTypeFromRow(): MailMessageType {
 
     val typeState = MailMessageTypeState.valueOf(getString("mt_state"))
 
-    val createdAt = getInstant("mt_created_at")
-    val updatedAt = getInstant("mt_updated_at")
+    val createdAt = getLocalDateTime("mt_created_at").toInstant(UTC)
+    val updatedAt = getLocalDateTime("mt_updated_at").toInstant(UTC)
 
     val contentType = MailMessageContent.valueOf(getString("mt_content_type"))
 
@@ -79,11 +79,11 @@ internal fun Row.getMailMessageWithTypeFromRow(dataSerializer: MailMessageDataSe
     val subject = getString("m_subject")
     val emailFrom = getString("m_email_from")
     val emailTo = getString("m_email_to")
-    val createdAt = getInstant("m_created_at")
+    val createdAt = getLocalDateTime("m_created_at").toInstant(UTC)
 
-    val sendingStartedAt = getInstant("m_sending_started_at")
+    val sendingStartedAt = getLocalDateTime("m_sending_started_at")?.toInstant(UTC)
 
-    val sentAt = getInstant("m_sent_at")
+    val sentAt = getLocalDateTime("m_sent_at")?.toInstant(UTC)
 
     val status = MailMessageStatus.valueOf(getString("m_status"))
     val failedCount = getInteger("m_failed_count")
@@ -103,5 +103,3 @@ internal fun Row.getMailMessageWithTypeFromRow(dataSerializer: MailMessageDataSe
         failedCount = failedCount,
     )
 }
-
-private fun Row.getInstant(column: String) = Instant.from(getTemporal(column))

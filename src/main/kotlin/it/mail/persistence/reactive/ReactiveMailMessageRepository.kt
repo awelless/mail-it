@@ -9,6 +9,7 @@ import it.mail.core.model.MailMessageStatus
 import it.mail.persistence.api.MailMessageRepository
 import it.mail.persistence.common.IdGenerator
 import it.mail.persistence.common.serialization.MailMessageDataSerializer
+import it.mail.persistence.common.toLocalDateTime
 import it.mail.persistence.reactive.getMailMessageWithTypeFromRow
 import java.time.Instant
 
@@ -67,7 +68,7 @@ private const val FIND_WITH_TYPE_BY_SENDING_STARTED_BEFORE_AND_STATUSES_SQL = ""
     WHERE m.sending_started_at < ?1
       AND m.status IN (?2)"""
 
-private const val FIND_IDS_BY_STATUSES_SQL = "SELECT mail_message_id FROM mail_message WHERE status IN ($1)"
+private const val FIND_IDS_BY_STATUSES_SQL = "SELECT mail_message_id FROM mail_message WHERE status = ANY($1)"
 
 private const val INSERT_SQL = """
    INSERT INTO mail_message(
@@ -138,9 +139,9 @@ internal class ReactiveMailMessageRepository(
             mailMessage.emailFrom,
             mailMessage.emailTo,
             mailMessage.type.id,
-            mailMessage.createdAt,
-            mailMessage.sendingStartedAt,
-            mailMessage.sentAt,
+            mailMessage.createdAt.toLocalDateTime(),
+            mailMessage.sendingStartedAt?.toLocalDateTime(),
+            mailMessage.sentAt?.toLocalDateTime(),
             mailMessage.status.name,
             mailMessage.failedCount,
         )
