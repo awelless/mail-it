@@ -21,3 +21,7 @@ pluginManagement {
 }
 
 rootProject.name = "mail-it"
+
+include(
+    "core",
+)
