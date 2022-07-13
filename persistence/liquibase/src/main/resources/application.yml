@@ -1,0 +1,4 @@
+quarkus:
+  liquibase:
+    change-log: db/changelog/master.xml
+    migrate-at-start: true
