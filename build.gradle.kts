@@ -30,32 +30,21 @@ subprojects {
     group = "it.mail"
     version = "0.1.0"
 
-    val dbUtilsVersion = "1.7" // https://mvnrepository.com/artifact/commons-dbutils/commons-dbutils
-    val freemarkerVersion = "2.3.31" // https://mvnrepository.com/artifact/org.freemarker/freemarker
     val kotlinLoggingVersion = "2.1.23" // https://mvnrepository.com/artifact/io.github.microutils/kotlin-logging
-    val kryoVersion = "5.3.0" // https://mvnrepository.com/artifact/com.esotericsoftware/kryo
     val quarkusVersion: String by project // https://mvnrepository.com/artifact/io.quarkus.platform/quarkus-bom
 
     dependencies {
         implementation(enforcedPlatform("io.quarkus.platform:quarkus-bom:$quarkusVersion"))
 
-        implementation("com.esotericsoftware:kryo:$kryoVersion")
-
-        implementation("commons-dbutils:commons-dbutils:$dbUtilsVersion")
         implementation("io.github.microutils:kotlin-logging-jvm:$kotlinLoggingVersion")
 
         implementation("io.quarkus:quarkus-arc")
         implementation("io.quarkus:quarkus-config-yaml")
         implementation("io.quarkus:quarkus-kotlin")
-        implementation("io.quarkus:quarkus-liquibase")
-        implementation("io.quarkus:quarkus-mailer")
-        implementation("io.quarkus:quarkus-quartz")
         implementation("io.quarkus:quarkus-resteasy-reactive")
         implementation("io.quarkus:quarkus-resteasy-reactive-jackson")
 
         implementation("io.smallrye.reactive:mutiny-kotlin")
-
-        implementation("org.freemarker:freemarker:$freemarkerVersion")
 
         implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
         implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")

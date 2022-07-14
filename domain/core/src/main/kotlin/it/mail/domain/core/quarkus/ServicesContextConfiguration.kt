@@ -1,17 +1,17 @@
 package it.mail.domain.core.quarkus
 
 import io.quarkus.mailer.reactive.ReactiveMailer
-import it.mail.domain.core.admin.mail.AdminMailMessageService
+import it.mail.domain.core.admin.mail.AdminMailMessageServiceImpl
 import it.mail.domain.core.admin.type.HtmlMailMessageTypeFactory
 import it.mail.domain.core.admin.type.HtmlMailMessageTypeStateUpdater
 import it.mail.domain.core.admin.type.MailMessageTypeFactory
 import it.mail.domain.core.admin.type.MailMessageTypeFactoryManager
-import it.mail.domain.core.admin.type.MailMessageTypeService
+import it.mail.domain.core.admin.type.MailMessageTypeServiceImpl
 import it.mail.domain.core.admin.type.MailMessageTypeStateUpdater
 import it.mail.domain.core.admin.type.MailMessageTypeStateUpdaterManager
 import it.mail.domain.core.admin.type.PlainTextMailMessageTypeFactory
 import it.mail.domain.core.admin.type.PlainTextMailMessageTypeStateUpdater
-import it.mail.domain.core.external.ExternalMailMessageService
+import it.mail.domain.core.external.ExternalMailMessageServiceImpl
 import it.mail.domain.core.mailing.HungMailsResetManager
 import it.mail.domain.core.mailing.MailMessageService
 import it.mail.domain.core.mailing.MailSender
@@ -56,10 +56,10 @@ class AdminServicesContextConfiguration {
         mailMessageTypeRepository: MailMessageTypeRepository,
         mailMessageTypeFactory: MailMessageTypeFactory<MailMessageType>,
         mailMessageTypeStateUpdated: MailMessageTypeStateUpdater<MailMessageType>,
-    ) = MailMessageTypeService(mailMessageTypeRepository, mailMessageTypeFactory, mailMessageTypeStateUpdated)
+    ) = MailMessageTypeServiceImpl(mailMessageTypeRepository, mailMessageTypeFactory, mailMessageTypeStateUpdated)
 
     @Singleton
-    fun adminMailMessageService(mailMessageRepository: MailMessageRepository) = AdminMailMessageService(mailMessageRepository)
+    fun adminMailMessageService(mailMessageRepository: MailMessageRepository) = AdminMailMessageServiceImpl(mailMessageRepository)
 }
 
 class ExternalServicesContextConfiguration {
@@ -68,7 +68,7 @@ class ExternalServicesContextConfiguration {
     fun externalMailMessageService(
         mailMessageRepository: MailMessageRepository,
         mailMessageTypeRepository: MailMessageTypeRepository,
-    ) = ExternalMailMessageService(mailMessageRepository, mailMessageTypeRepository)
+    ) = ExternalMailMessageServiceImpl(mailMessageRepository, mailMessageTypeRepository)
 }
 
 class MailingContextConfiguration {

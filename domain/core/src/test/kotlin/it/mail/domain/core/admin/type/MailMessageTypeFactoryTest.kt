@@ -1,12 +1,13 @@
 package it.mail.domain.core.admin.type
 
 import io.mockk.junit5.MockKExtension
-import it.mail.domain.core.ValidationException
-import it.mail.domain.core.admin.type.MailMessageContentType.HTML
-import it.mail.domain.core.admin.type.MailMessageContentType.PLAIN_TEXT
+import it.mail.domain.admin.api.type.CreateMailMessageTypeCommand
+import it.mail.domain.admin.api.type.MailMessageContentType.HTML
+import it.mail.domain.admin.api.type.MailMessageContentType.PLAIN_TEXT
 import it.mail.domain.model.HtmlMailMessageType
 import it.mail.domain.model.HtmlTemplateEngine.FREEMARKER
 import it.mail.domain.model.PlainTextMailMessageType
+import it.mail.exception.ValidationException
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -85,7 +86,7 @@ class MailMessageTypeFactoryTest {
             )
 
             // when
-            val exception = assertThrows<it.mail.domain.core.ValidationException> { mailMessageTypeFactory.create(command) }
+            val exception = assertThrows<ValidationException> { mailMessageTypeFactory.create(command) }
 
             // then
             assertEquals("No template engine is specified for html mail message type", exception.message)
@@ -104,7 +105,7 @@ class MailMessageTypeFactoryTest {
             )
 
             // when
-            val exception = assertThrows<it.mail.domain.core.ValidationException> { mailMessageTypeFactory.create(command) }
+            val exception = assertThrows<ValidationException> { mailMessageTypeFactory.create(command) }
 
             // then
             assertEquals("No template is specified for html mail message type", exception.message)

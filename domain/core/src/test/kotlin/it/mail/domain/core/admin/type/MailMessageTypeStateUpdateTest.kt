@@ -1,11 +1,12 @@
 package it.mail.domain.core.admin.type
 
 import io.mockk.junit5.MockKExtension
-import it.mail.domain.core.ValidationException
+import it.mail.domain.admin.api.type.UpdateMailMessageTypeCommand
 import it.mail.domain.model.HtmlMailMessageType
 import it.mail.domain.model.HtmlTemplateEngine.FREEMARKER
 import it.mail.domain.model.HtmlTemplateEngine.NONE
 import it.mail.domain.model.PlainTextMailMessageType
+import it.mail.exception.ValidationException
 import it.mail.test.createHtmlMailMessageType
 import it.mail.test.createPlainMailMessageType
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -94,7 +95,7 @@ class MailMessageTypeStateUpdateTest {
             )
 
             // when
-            val exception = assertThrows<it.mail.domain.core.ValidationException> { mailMessageTypeFactory.update(mailType, command) }
+            val exception = assertThrows<ValidationException> { mailMessageTypeFactory.update(mailType, command) }
 
             // then
             assertEquals("No template engine is specified for html mail message type", exception.message)
@@ -112,7 +113,7 @@ class MailMessageTypeStateUpdateTest {
             )
 
             // when
-            val exception = assertThrows<it.mail.domain.core.ValidationException> { mailMessageTypeFactory.update(mailType, command) }
+            val exception = assertThrows<ValidationException> { mailMessageTypeFactory.update(mailType, command) }
 
             // then
             assertEquals("No template is specified for html mail message type", exception.message)

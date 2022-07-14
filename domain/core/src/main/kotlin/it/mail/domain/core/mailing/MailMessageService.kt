@@ -1,6 +1,5 @@
 package it.mail.domain.core.mailing
 
-import it.mail.domain.core.NotFoundException
 import it.mail.domain.model.MailMessage
 import it.mail.domain.model.MailMessageStatus.CANCELED
 import it.mail.domain.model.MailMessageStatus.FAILED
@@ -8,6 +7,7 @@ import it.mail.domain.model.MailMessageStatus.PENDING
 import it.mail.domain.model.MailMessageStatus.RETRY
 import it.mail.domain.model.MailMessageStatus.SENDING
 import it.mail.domain.model.MailMessageStatus.SENT
+import it.mail.exception.NotFoundException
 import it.mail.persistence.api.MailMessageRepository
 import mu.KLogging
 import java.time.Instant
@@ -32,11 +32,11 @@ class MailMessageService(
 
     suspend fun getMessageForSending(messageId: Long): MailMessage {
         if (mailMessageRepository.updateMessageStatusAndSendingStartedTimeByIdAndStatusIn(messageId, possibleToSendMessageStatuses, SENDING, Instant.now()) == 0) {
-            throw it.mail.domain.core.NotFoundException("MailMessage, id: $messageId for delivery is not found")
+            throw NotFoundException("MailMessage, id: $messageId for delivery is not found")
         }
 
         return mailMessageRepository.findOneWithTypeById(messageId)
-            ?: throw it.mail.domain.core.NotFoundException("MailMessage, id: $messageId for delivery is not found")
+            ?: throw NotFoundException("MailMessage, id: $messageId for delivery is not found")
     }
 
     suspend fun processSuccessfulDelivery(mailMessage: MailMessage) {

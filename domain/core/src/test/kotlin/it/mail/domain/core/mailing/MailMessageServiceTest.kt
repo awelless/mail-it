@@ -5,7 +5,6 @@ import io.mockk.coVerify
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.junit5.MockKExtension
-import it.mail.domain.core.NotFoundException
 import it.mail.domain.model.MailMessage
 import it.mail.domain.model.MailMessageStatus.FAILED
 import it.mail.domain.model.MailMessageStatus.PENDING
@@ -13,6 +12,7 @@ import it.mail.domain.model.MailMessageStatus.RETRY
 import it.mail.domain.model.MailMessageStatus.SENDING
 import it.mail.domain.model.MailMessageStatus.SENT
 import it.mail.domain.model.MailMessageType
+import it.mail.exception.NotFoundException
 import it.mail.persistence.api.MailMessageRepository
 import it.mail.test.createMailMessage
 import it.mail.test.createPlainMailMessageType
@@ -57,7 +57,7 @@ class MailMessageServiceTest {
     fun getMessageForSending_notFoundForMarking_marksStatusSending() = runTest {
         coEvery { mailMessageRepository.updateMessageStatusAndSendingStartedTimeByIdAndStatusIn(mailMessage.id, possibleToSendMessageStatuses, SENDING, any()) }.returns(0)
 
-        assertThrows<it.mail.domain.core.NotFoundException> { mailMessageService.getMessageForSending(mailMessage.id) }
+        assertThrows<NotFoundException> { mailMessageService.getMessageForSending(mailMessage.id) }
     }
 
     @Test

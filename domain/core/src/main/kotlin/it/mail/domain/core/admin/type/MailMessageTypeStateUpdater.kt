@@ -1,9 +1,10 @@
 package it.mail.domain.core.admin.type
 
-import it.mail.domain.core.ValidationException
+import it.mail.domain.admin.api.type.UpdateMailMessageTypeCommand
 import it.mail.domain.model.HtmlMailMessageType
 import it.mail.domain.model.MailMessageType
 import it.mail.domain.model.PlainTextMailMessageType
+import it.mail.exception.ValidationException
 import java.time.Instant
 
 interface MailMessageTypeStateUpdater<T : MailMessageType> {
@@ -38,20 +39,23 @@ class PlainTextMailMessageTypeStateUpdater : MailMessageTypeStateUpdater<PlainTe
 class HtmlMailMessageTypeStateUpdater : MailMessageTypeStateUpdater<HtmlMailMessageType> {
 
     override fun update(mailType: HtmlMailMessageType, command: UpdateMailMessageTypeCommand) {
-        if (command.templateEngine == null) {
-            throw it.mail.domain.core.ValidationException("No template engine is specified for html mail message type")
+        val templateEngine = command.templateEngine
+        val template = command.template
+
+        if (templateEngine == null) {
+            throw ValidationException("No template engine is specified for html mail message type")
         }
 
-        if (command.template == null) {
-            throw it.mail.domain.core.ValidationException("No template is specified for html mail message type")
+        if (template == null) {
+            throw ValidationException("No template is specified for html mail message type")
         }
 
         mailType.apply {
             description = command.description
             maxRetriesCount = command.maxRetriesCount
             updatedAt = Instant.now()
-            templateEngine = command.templateEngine
-            template = command.template
+            this.templateEngine = templateEngine
+            this.template = template
         }
     }
 }

@@ -1,10 +1,12 @@
 package it.mail.domain.core.admin.type
 
-import it.mail.domain.core.admin.type.MailMessageContentType.HTML
-import it.mail.domain.core.admin.type.MailMessageContentType.PLAIN_TEXT
+import it.mail.domain.admin.api.type.CreateMailMessageTypeCommand
+import it.mail.domain.admin.api.type.MailMessageContentType.HTML
+import it.mail.domain.admin.api.type.MailMessageContentType.PLAIN_TEXT
 import it.mail.domain.model.HtmlMailMessageType
 import it.mail.domain.model.MailMessageType
 import it.mail.domain.model.PlainTextMailMessageType
+import it.mail.exception.ValidationException
 import java.time.Instant
 
 interface MailMessageTypeFactory<T : MailMessageType> {
@@ -42,12 +44,15 @@ class PlainTextMailMessageTypeFactory : MailMessageTypeFactory<PlainTextMailMess
 class HtmlMailMessageTypeFactory : MailMessageTypeFactory<HtmlMailMessageType> {
 
     override fun create(command: CreateMailMessageTypeCommand): HtmlMailMessageType {
-        if (command.templateEngine == null) {
-            throw it.mail.domain.core.ValidationException("No template engine is specified for html mail message type")
+        val templateEngine = command.templateEngine
+        val template = command.template
+
+        if (templateEngine == null) {
+            throw ValidationException("No template engine is specified for html mail message type")
         }
 
-        if (command.template == null) {
-            throw it.mail.domain.core.ValidationException("No template is specified for html mail message type")
+        if (template == null) {
+            throw ValidationException("No template is specified for html mail message type")
         }
 
         val now = Instant.now()
@@ -58,8 +63,8 @@ class HtmlMailMessageTypeFactory : MailMessageTypeFactory<HtmlMailMessageType> {
             maxRetriesCount = command.maxRetriesCount,
             createdAt = now,
             updatedAt = now,
-            templateEngine = command.templateEngine,
-            template = command.template,
+            templateEngine = templateEngine,
+            template = template,
         )
     }
 }

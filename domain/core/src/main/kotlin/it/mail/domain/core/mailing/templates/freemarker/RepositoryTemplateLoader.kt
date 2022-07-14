@@ -4,6 +4,7 @@ import freemarker.cache.TemplateLoader
 import it.mail.domain.core.mailing.templates.InvalidTemplateEngineException
 import it.mail.domain.model.HtmlMailMessageType
 import it.mail.domain.model.HtmlTemplateEngine.FREEMARKER
+import it.mail.exception.NotFoundException
 import it.mail.persistence.api.MailMessageTypeRepository
 import kotlinx.coroutines.runBlocking
 import java.io.StringReader
@@ -14,7 +15,7 @@ class RepositoryTemplateLoader(
 
     override fun findTemplateSource(name: String): Any {
         val mailMessageType = runBlocking { mailMessageTypeRepository.findByName(name) }
-            ?: throw it.mail.domain.core.NotFoundException("MailMessageType: $name is not found")
+            ?: throw NotFoundException("MailMessageType: $name is not found")
 
         val htmlMailMessageType = (mailMessageType as? HtmlMailMessageType)
             ?: throw InvalidTemplateEngineException("MailMessageType: $name is not for html messages")

@@ -6,9 +6,12 @@ import io.mockk.impl.annotations.MockK
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.verify
-import it.mail.domain.core.ValidationException
-import it.mail.domain.core.admin.type.MailMessageContentType.PLAIN_TEXT
+import it.mail.domain.admin.api.type.CreateMailMessageTypeCommand
+import it.mail.domain.admin.api.type.MailMessageContentType
+import it.mail.domain.admin.api.type.MailMessageContentType.PLAIN_TEXT
+import it.mail.domain.admin.api.type.UpdateMailMessageTypeCommand
 import it.mail.domain.model.MailMessageType
+import it.mail.exception.ValidationException
 import it.mail.persistence.api.MailMessageTypeRepository
 import it.mail.test.createPlainMailMessageType
 import kotlinx.coroutines.test.runTest
@@ -30,7 +33,7 @@ class MailMessageTypeServiceTest {
     lateinit var mailMessageTypeStateUpdater: MailMessageTypeStateUpdater<MailMessageType>
 
     @InjectMockKs
-    lateinit var mailMessageTypeService: MailMessageTypeService
+    lateinit var mailMessageTypeService: MailMessageTypeServiceImpl
 
     lateinit var mailType: MailMessageType
 
@@ -49,7 +52,7 @@ class MailMessageTypeServiceTest {
                 name = "NEW_TYPE",
                 description = "some desc",
                 maxRetriesCount = 11,
-                contentType = PLAIN_TEXT,
+                contentType = MailMessageContentType.PLAIN_TEXT,
             )
 
             val mailType = createPlainMailMessageType()
@@ -69,12 +72,12 @@ class MailMessageTypeServiceTest {
         fun `with non unique name - throws exception`() = runTest {
             val command = CreateMailMessageTypeCommand(
                 name = "non unique",
-                contentType = PLAIN_TEXT,
+                contentType = MailMessageContentType.PLAIN_TEXT,
             )
 
             coEvery { mailMessageTypeRepository.existsOneWithName(command.name) }.returns(true)
 
-            assertThrows<it.mail.domain.core.ValidationException> { mailMessageTypeService.createNewMailType(command) }
+            assertThrows<ValidationException> { mailMessageTypeService.createNewMailType(command) }
         }
     }
 
