@@ -13,4 +13,6 @@ dependencies {
     testImplementation(project(":domain:admin-api"))
     testImplementation(project(":domain:external-api"))
     testImplementation(project(":persistence:api"))
+
+    testImplementation("io.quarkus:quarkus-resteasy-reactive")
 }

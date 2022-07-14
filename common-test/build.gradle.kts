@@ -1,5 +1,5 @@
-val mockkVersion = "1.12.4" // https://mvnrepository.com/artifact/io.mockk/mockk
-val restAssuredKotlinExtensionsVersion = "5.1.1" // https://mvnrepository.com/artifact/io.rest-assured/kotlin-extensions
+val mockkVersion: String by project
+val restAssuredKotlinExtensionsVersion: String by project
 
 dependencies {
     api(project(":domain:model"))

@@ -1,8 +1,8 @@
 pluginManagement {
-    val jandexPluginVersion = "0.12.0" // https://plugins.gradle.org/plugin/org.kordamp.gradle.jandex
+    val jandexPluginVersion: String by settings
     val kotlinVersion: String by settings
     val quarkusVersion: String by settings
-    val spotlessVersion = "6.3.0"
+    val spotlessVersion: String by settings
 
     repositories {
         mavenCentral()

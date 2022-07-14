@@ -1,4 +1,4 @@
-val freemarkerVersion = "2.3.31" // https://mvnrepository.com/artifact/org.freemarker/freemarker
+val freemarkerVersion: String by project
 
 dependencies {
     implementation(project(":common-exception"))
@@ -9,6 +9,8 @@ dependencies {
 
     implementation("io.quarkus:quarkus-mailer")
     implementation("io.quarkus:quarkus-quartz")
+
+    implementation("io.smallrye.reactive:mutiny-kotlin")
 
     implementation("org.freemarker:freemarker:$freemarkerVersion")
 
