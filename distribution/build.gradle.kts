@@ -3,15 +3,10 @@ apply {
 }
 
 dependencies {
-    implementation(project(":admin-client"))
-
-    implementation(project(":connector:http"))
-
-    implementation(project(":domain:core"))
-
-    // decide persistence module during build
-    implementation(project(":persistence:h2"))
-//    implementation(project(":persistence:postgresql"))
+    implementation(project(":domain:core")) // core implementation
+    implementation(project(":admin-client")) // admin web-ui implementation
+    implementation(project(":connector:http")) // connectors implementation
+    databaseProviderImplementation()
 
     testImplementation(project(":common-test"))
     testImplementation(project(":domain:admin-api"))
@@ -19,4 +14,23 @@ dependencies {
     testImplementation(project(":persistence:api"))
 
     testImplementation("io.quarkus:quarkus-resteasy-reactive")
+}
+
+/**
+ * Resolves database provider dependency, depending on property passed for task
+ */
+fun DependencyHandler.databaseProviderImplementation(): Dependency? {
+    // database provider names should be the same as modules in :persistence
+    val supportedDatabaseProviders = setOf("h2", "postgresql")
+    val databaseProviderProperty = "databaseProvider"
+
+    val databaseProvider = project.properties[databaseProviderProperty] as? String ?: "h2" // h2 is a default value
+
+    logger.info("Selected database provider: $databaseProvider")
+
+    if (!supportedDatabaseProviders.contains(databaseProvider)) {
+        throw GradleException("Invalid \"databaseProvider\" property \"$databaseProvider\" is set. Supported values: $supportedDatabaseProviders")
+    }
+
+    return implementation(project(":persistence:$databaseProvider"))
 }
