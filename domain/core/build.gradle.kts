@@ -1,3 +1,7 @@
+apply {
+    plugin("io.quarkus")
+}
+
 val freemarkerVersion: String by project
 
 dependencies {

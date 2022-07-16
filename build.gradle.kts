@@ -4,7 +4,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     kotlin("jvm")
-    kotlin("plugin.allopen") apply false
+    kotlin("plugin.allopen")
 
     id("io.quarkus") apply false
 
@@ -16,7 +16,7 @@ plugins {
 subprojects {
     apply {
         plugin("org.jetbrains.kotlin.jvm")
-        plugin("io.quarkus")
+        plugin("org.jetbrains.kotlin.plugin.allopen")
         plugin("com.diffplug.spotless")
         plugin("org.kordamp.gradle.jandex")
     }
@@ -53,6 +53,10 @@ subprojects {
     tasks.withType<KotlinCompile> {
         kotlinOptions.jvmTarget = JavaVersion.VERSION_11.toString()
         kotlinOptions.javaParameters = true
+    }
+
+    allOpen {
+        annotation("javax.ws.rs.Path")
     }
 
     configure<SpotlessExtension> {

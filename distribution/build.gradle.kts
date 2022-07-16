@@ -1,3 +1,7 @@
+apply {
+    plugin("io.quarkus")
+}
+
 dependencies {
     implementation(project(":admin-client"))
 

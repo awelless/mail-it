@@ -87,7 +87,6 @@ class MailingContextConfiguration {
 
     @Singleton
     fun sendMailMessageService(
-        mailFactory: MailFactory,
         mailSender: MailSender,
         mailMessageService: MailMessageService,
     ) = SendMailMessageService(mailSender, mailMessageService, CoroutineScope(Dispatchers.IO))
