@@ -1,3 +1,7 @@
+apply {
+    plugin("io.quarkus")
+}
+
 dependencies {
     implementation(project(":persistence:api"))
     implementation(project(":persistence:common"))
