@@ -1,23 +1,43 @@
 package it.mail.domain.core.mailing
 
 import it.mail.domain.model.MailMessage
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.currentCoroutineContext
 import mu.KLogging
 
 class HungMailsResetManager(
     private val mailMessageService: MailMessageService,
 ) {
-    companion object : KLogging()
+    companion object : KLogging() {
+        const val BATCH_SIZE = 200
+    }
 
     suspend fun resetAllHungMails() {
-        // TODO select in batches
-        val hungMails = mailMessageService.getAllHungMessages()
+        logger.info { "Hung mails processing has started" }
+
+        resetBatchOfHungMails() // recursive method
+
+        logger.info { "Hung mails processing has finished" }
+    }
+
+    private tailrec suspend fun resetBatchOfHungMails() {
+        val hungMails = mailMessageService.getHungMessages(BATCH_SIZE)
 
         logger.info { "${hungMails.size} hung mails discovered" }
 
-        // todo parallel ?
-        hungMails.map { resetHungMail(it) }
+        val hungMailResetTasks = with(CoroutineScope(currentCoroutineContext())) {
+            hungMails.map { async { resetHungMail(it) } }
+        }
 
-        logger.info { "Hung mails processing has finished" }
+        hungMailResetTasks.awaitAll()
+
+        logger.info { "${hungMails.size} hung mails ware processed" }
+
+        if (hungMails.size >= BATCH_SIZE) { // if batch is full, there can be more hung items
+            resetBatchOfHungMails() // tail call
+        }
     }
 
     private suspend fun resetHungMail(mail: MailMessage) {

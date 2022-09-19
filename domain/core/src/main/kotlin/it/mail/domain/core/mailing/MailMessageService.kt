@@ -24,8 +24,8 @@ class MailMessageService(
 
     private val possibleToSendMessageStatuses = listOf(PENDING, RETRY)
 
-    suspend fun getAllHungMessages(): List<MailMessage> =
-        mailMessageRepository.findAllWithTypeByStatusesAndSendingStartedBefore(hungMessageStatuses, Instant.now().minus(hungMessageDuration))
+    suspend fun getHungMessages(maxListSize: Int): List<MailMessage> =
+        mailMessageRepository.findAllWithTypeByStatusesAndSendingStartedBefore(hungMessageStatuses, Instant.now().minus(hungMessageDuration), maxListSize)
 
     suspend fun getAllIdsOfPossibleToSentMessages(): List<Long> =
         mailMessageRepository.findAllIdsByStatusIn(possibleToSendMessageStatuses)

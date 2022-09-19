@@ -9,7 +9,7 @@ interface MailMessageRepository {
 
     suspend fun findOneWithTypeById(id: Long): MailMessage?
 
-    suspend fun findAllWithTypeByStatusesAndSendingStartedBefore(statuses: Collection<MailMessageStatus>, sendingStartedBefore: Instant): List<MailMessage>
+    suspend fun findAllWithTypeByStatusesAndSendingStartedBefore(statuses: Collection<MailMessageStatus>, sendingStartedBefore: Instant, maxListSize: Int): List<MailMessage>
 
     suspend fun findAllIdsByStatusIn(statuses: Collection<MailMessageStatus>): List<Long>
 

@@ -66,7 +66,8 @@ private const val FIND_WITH_TYPE_BY_SENDING_STARTED_BEFORE_AND_STATUSES_SQL = ""
     FROM mail_message m
     INNER JOIN mail_message_type mt ON m.mail_message_type_id = mt.mail_message_type_id
     WHERE m.sending_started_at < $1
-      AND m.status = ANY($2)"""
+      AND m.status = ANY($2)
+    LIMIT $3"""
 
 private const val FIND_IDS_BY_STATUSES_SQL = "SELECT mail_message_id FROM mail_message WHERE status = ANY($1)"
 
@@ -130,12 +131,12 @@ class ReactiveMailMessageRepository(
             .onItem().transform { if (it.hasNext()) it.next().getMailMessageWithTypeFromRow(dataSerializer) else null }
             .awaitSuspending()
 
-    override suspend fun findAllWithTypeByStatusesAndSendingStartedBefore(statuses: Collection<MailMessageStatus>, sendingStartedBefore: Instant): List<MailMessage> {
+    override suspend fun findAllWithTypeByStatusesAndSendingStartedBefore(statuses: Collection<MailMessageStatus>, sendingStartedBefore: Instant, maxListSize: Int): List<MailMessage> {
         val statusNames = statuses
             .map { it.name }
             .toTypedArray()
 
-        return client.preparedQuery(FIND_WITH_TYPE_BY_SENDING_STARTED_BEFORE_AND_STATUSES_SQL).execute(Tuple.of(sendingStartedBefore.toLocalDateTime(), statusNames))
+        return client.preparedQuery(FIND_WITH_TYPE_BY_SENDING_STARTED_BEFORE_AND_STATUSES_SQL).execute(Tuple.of(sendingStartedBefore.toLocalDateTime(), statusNames, maxListSize))
             .onItem().transformToMulti { Multi.createFrom().iterable(it) }
             .onItem().transform { it.getMailMessageWithTypeFromRow(dataSerializer) }
             .collect().asList()
