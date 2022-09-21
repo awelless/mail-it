@@ -13,6 +13,7 @@ import it.mail.persistence.api.MailMessageTypeRepository
 import it.mail.test.createPlainMailMessageType
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
+import org.hamcrest.Matchers.equalTo
 import org.jboss.resteasy.reactive.RestResponse.StatusCode.ACCEPTED
 import org.jboss.resteasy.reactive.RestResponse.StatusCode.BAD_REQUEST
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -141,8 +142,8 @@ class HttpConnectorTest {
             post(baseUrl)
         } Then {
             statusCode(BAD_REQUEST)
-        } Extract {
-            assertEquals("Invalid type: ${createMailDto.mailMessageTypeId} is passed", body().asString())
+
+            body("errorMessage", equalTo("Invalid type: ${createMailDto.mailMessageTypeId} is passed"))
         }
     }
 }
