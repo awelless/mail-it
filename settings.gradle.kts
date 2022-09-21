@@ -2,7 +2,7 @@ pluginManagement {
     val jandexPluginVersion: String by settings
     val kotlinVersion: String by settings
     val quarkusVersion: String by settings
-    val spotlessVersion: String by settings
+    val ktlintVersion: String by settings
 
     repositories {
         mavenCentral()
@@ -17,7 +17,7 @@ pluginManagement {
 
         id("io.quarkus") version quarkusVersion
 
-        id("com.diffplug.spotless") version spotlessVersion
+        id("org.jlleitschuh.gradle.ktlint") version ktlintVersion
 
         id("org.kordamp.gradle.jandex") version jandexPluginVersion
     }

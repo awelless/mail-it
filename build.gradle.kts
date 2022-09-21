@@ -1,5 +1,3 @@
-import com.diffplug.gradle.spotless.SpotlessExtension
-import com.diffplug.spotless.LineEnding
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -8,7 +6,7 @@ plugins {
 
     id("io.quarkus") apply false
 
-    id("com.diffplug.spotless")
+    id("org.jlleitschuh.gradle.ktlint") apply false
 
     id("org.kordamp.gradle.jandex") apply false
 }
@@ -17,7 +15,7 @@ subprojects {
     apply {
         plugin("org.jetbrains.kotlin.jvm")
         plugin("org.jetbrains.kotlin.plugin.allopen")
-        plugin("com.diffplug.spotless")
+        plugin("org.jlleitschuh.gradle.ktlint")
         plugin("org.kordamp.gradle.jandex")
     }
 
@@ -57,36 +55,6 @@ subprojects {
 
     allOpen {
         annotation("javax.ws.rs.Path")
-    }
-
-    configure<SpotlessExtension> {
-        kotlin {
-            lineEndings = LineEnding.UNIX
-            encoding("UTF-8")
-            endWithNewline()
-            trimTrailingWhitespace()
-
-            ktlint()
-        }
-
-        kotlinGradle {
-            lineEndings = LineEnding.UNIX
-            encoding("UTF-8")
-            endWithNewline()
-            trimTrailingWhitespace()
-
-            ktlint()
-        }
-
-        format("misc") {
-            target(".gitignore", "**/*.yml", "**/*.xml")
-            targetExclude(".gradle/**", ".idea/**", "build/**")
-
-            lineEndings = LineEnding.UNIX
-            encoding("UTF-8")
-            endWithNewline()
-            trimTrailingWhitespace()
-        }
     }
 }
 
