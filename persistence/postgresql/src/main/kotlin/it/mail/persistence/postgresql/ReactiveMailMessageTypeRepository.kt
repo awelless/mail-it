@@ -4,11 +4,13 @@ import io.smallrye.mutiny.Multi
 import io.smallrye.mutiny.coroutines.awaitSuspending
 import io.vertx.mutiny.pgclient.PgPool
 import io.vertx.mutiny.sqlclient.Tuple
+import io.vertx.pgclient.PgException
 import it.mail.domain.model.HtmlMailMessageType
 import it.mail.domain.model.MailMessageType
 import it.mail.domain.model.MailMessageTypeState
 import it.mail.domain.model.PlainTextMailMessageType
 import it.mail.domain.model.Slice
+import it.mail.persistence.api.DuplicateUniqueKeyException
 import it.mail.persistence.api.MailMessageTypeRepository
 import it.mail.persistence.api.PersistenceException
 import it.mail.persistence.common.IdGenerator
@@ -59,8 +61,6 @@ private const val FIND_ALL_SLICED_SQL = """
            template mt_template
       FROM mail_message_type
      LIMIT $1 OFFSET $2"""
-
-private const val EXISTS_BY_NAME_SQL = "SELECT 1 FROM mail_message_type WHERE name = $1"
 
 private const val INSERT_SQL = """
     INSERT INTO mail_message_type(
@@ -119,11 +119,6 @@ class ReactiveMailMessageTypeRepository(
             .awaitSuspending()
     }
 
-    override suspend fun existsOneWithName(name: String): Boolean =
-        client.preparedQuery(EXISTS_BY_NAME_SQL).execute(Tuple.of(name))
-            .onItem().transform { it.rowCount() > 0 }
-            .awaitSuspending()
-
     override suspend fun create(mailMessageType: MailMessageType): MailMessageType {
         val id = idGenerator.generateId()
 
@@ -141,6 +136,9 @@ class ReactiveMailMessageTypeRepository(
         )
 
         client.preparedQuery(INSERT_SQL).execute(Tuple.from(argumentsArray))
+            .onFailure(PgException::class.java).transform {
+                if ((it as? PgException)?.code == "23505") DuplicateUniqueKeyException(it.message, it) else it
+            }
             .awaitSuspending()
 
         mailMessageType.id = id

@@ -8,10 +8,10 @@ import io.mockk.junit5.MockKExtension
 import io.mockk.verify
 import it.mail.domain.admin.api.type.CreateMailMessageTypeCommand
 import it.mail.domain.admin.api.type.MailMessageContentType
-import it.mail.domain.admin.api.type.MailMessageContentType.PLAIN_TEXT
 import it.mail.domain.admin.api.type.UpdateMailMessageTypeCommand
 import it.mail.domain.model.MailMessageType
 import it.mail.exception.ValidationException
+import it.mail.persistence.api.DuplicateUniqueKeyException
 import it.mail.persistence.api.MailMessageTypeRepository
 import it.mail.test.createPlainMailMessageType
 import kotlinx.coroutines.test.runTest
@@ -57,7 +57,6 @@ class MailMessageTypeServiceTest {
 
             val mailType = createPlainMailMessageType()
 
-            coEvery { mailMessageTypeRepository.existsOneWithName(command.name) }.returns(false)
             coEvery { mailMessageTypeFactory.create(command) }.returns(mailType)
             coEvery { mailMessageTypeRepository.create(any()) }.returnsArgument(0)
 
@@ -75,7 +74,8 @@ class MailMessageTypeServiceTest {
                 contentType = MailMessageContentType.PLAIN_TEXT,
             )
 
-            coEvery { mailMessageTypeRepository.existsOneWithName(command.name) }.returns(true)
+            coEvery { mailMessageTypeFactory.create(command) } returns mailType
+            coEvery { mailMessageTypeRepository.create(any()) } throws DuplicateUniqueKeyException(null, null)
 
             assertThrows<ValidationException> { mailMessageTypeService.createNewMailType(command) }
         }

@@ -13,8 +13,6 @@ interface MailMessageTypeRepository {
 
     suspend fun findAllSliced(page: Int, size: Int): Slice<MailMessageType>
 
-    suspend fun existsOneWithName(name: String): Boolean
-
     suspend fun create(mailMessageType: MailMessageType): MailMessageType
 
     suspend fun update(mailMessageType: MailMessageType): MailMessageType

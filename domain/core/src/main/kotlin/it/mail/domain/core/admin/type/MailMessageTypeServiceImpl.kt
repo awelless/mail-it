@@ -9,6 +9,7 @@ import it.mail.domain.model.MailMessageTypeState.FORCE_DELETED
 import it.mail.domain.model.Slice
 import it.mail.exception.NotFoundException
 import it.mail.exception.ValidationException
+import it.mail.persistence.api.DuplicateUniqueKeyException
 import it.mail.persistence.api.MailMessageTypeRepository
 import mu.KLogging
 import java.time.Instant
@@ -27,15 +28,14 @@ class MailMessageTypeServiceImpl(
     override suspend fun getAllSliced(page: Int, size: Int): Slice<MailMessageType> =
         mailMessageTypeRepository.findAllSliced(page, size)
 
-    //    @Transactional // todo transaction doesn't work
     override suspend fun createNewMailType(command: CreateMailMessageTypeCommand): MailMessageType {
-        if (mailMessageTypeRepository.existsOneWithName(command.name)) {
-            throw ValidationException("MailMessageType name: ${command.name} is not unique")
-        }
-
         val mailType = mailMessageTypeFactory.create(command)
 
-        mailMessageTypeRepository.create(mailType)
+        try {
+            mailMessageTypeRepository.create(mailType)
+        } catch (e: DuplicateUniqueKeyException) {
+            throw ValidationException("MailMessageType name: ${command.name} is not unique", e)
+        }
 
         logger.info { "Saved MailMessageType: ${mailType.id}" }
 

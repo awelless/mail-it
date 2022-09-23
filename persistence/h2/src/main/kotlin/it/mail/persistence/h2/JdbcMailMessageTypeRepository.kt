@@ -5,6 +5,7 @@ import it.mail.domain.model.MailMessageType
 import it.mail.domain.model.MailMessageTypeState
 import it.mail.domain.model.PlainTextMailMessageType
 import it.mail.domain.model.Slice
+import it.mail.persistence.api.DuplicateUniqueKeyException
 import it.mail.persistence.api.MailMessageTypeRepository
 import it.mail.persistence.api.PersistenceException
 import it.mail.persistence.common.IdGenerator
@@ -12,7 +13,9 @@ import it.mail.persistence.h2.MailMessageContent.HTML
 import it.mail.persistence.h2.MailMessageContent.PLAIN_TEXT
 import org.apache.commons.dbutils.QueryRunner
 import org.apache.commons.dbutils.ResultSetHandler
+import org.h2.api.ErrorCode
 import java.sql.ResultSet
+import java.sql.SQLException
 import java.time.Instant
 import javax.sql.DataSource
 
@@ -57,8 +60,6 @@ private const val FIND_ALL_SLICED_SQL = """
            template mt_template
       FROM mail_message_type
      LIMIT ? OFFSET ?"""
-
-private const val EXISTS_BY_NAME_SQL = "SELECT 1 FROM mail_message_type WHERE name = ?"
 
 private const val INSERT_SQL = """
     INSERT INTO mail_message_type(
@@ -130,32 +131,32 @@ class JdbcMailMessageTypeRepository(
         return Slice(content, page, size)
     }
 
-    override suspend fun existsOneWithName(name: String): Boolean =
-        dataSource.connection.use {
-            queryRunner.query(
-                it, EXISTS_BY_NAME_SQL,
-                EXISTS_QUERY_MAPPER,
-                name
-            )
-        }
-
     override suspend fun create(mailMessageType: MailMessageType): MailMessageType {
         val id = idGenerator.generateId()
 
-        dataSource.connection.use {
-            queryRunner.update(
-                it, INSERT_SQL,
-                id,
-                mailMessageType.name,
-                mailMessageType.description,
-                mailMessageType.maxRetriesCount,
-                mailMessageType.state.name,
-                mailMessageType.createdAt,
-                mailMessageType.updatedAt,
-                mailMessageType.contentType,
-                (mailMessageType as? HtmlMailMessageType)?.templateEngine,
-                (mailMessageType as? HtmlMailMessageType)?.template,
-            )
+        try {
+            dataSource.connection.use {
+                queryRunner.update(
+                    it, INSERT_SQL,
+                    id,
+                    mailMessageType.name,
+                    mailMessageType.description,
+                    mailMessageType.maxRetriesCount,
+                    mailMessageType.state.name,
+                    mailMessageType.createdAt,
+                    mailMessageType.updatedAt,
+                    mailMessageType.contentType,
+                    (mailMessageType as? HtmlMailMessageType)?.templateEngine,
+                    (mailMessageType as? HtmlMailMessageType)?.template,
+                )
+            }
+        } catch (e: SQLException) {
+            // replace with custom exception handler?
+            throw if (e.errorCode == ErrorCode.DUPLICATE_KEY_1) {
+                DuplicateUniqueKeyException(e.message, e)
+            } else {
+                e
+            }
         }
 
         mailMessageType.id = id
