@@ -8,6 +8,8 @@ dependencies {
     databaseProviderImplementation()
     connectorsImplementation()
 
+    implementation("io.quarkus:quarkus-smallrye-health")
+
     testImplementation(project(":common-test"))
     testImplementation(project(":domain:admin-api"))
     testImplementation(project(":domain:external-api"))
