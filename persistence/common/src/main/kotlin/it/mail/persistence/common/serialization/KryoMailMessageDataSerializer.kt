@@ -6,11 +6,16 @@ import com.esotericsoftware.kryo.io.Output
 import java.io.ByteArrayOutputStream
 
 fun KryoMailMessageDataSerializer(): KryoMailMessageDataSerializer {
-    val kryo = Kryo()
+    val kryo = Kryo().apply {
 
-    // todo replace with registrations
-    // this kryo instance is used only in data serializer
-    kryo.isRegistrationRequired = false
+        register(Map::class.java)
+        register(emptyMap<Nothing, Nothing>()::class.java)
+        register(mapOf(null to null)::class.java)
+        register(LinkedHashMap::class.java)
+
+        register(List::class.java)
+        register(listOf(null, null, null)::class.java)
+    }
 
     return KryoMailMessageDataSerializer(kryo)
 }
