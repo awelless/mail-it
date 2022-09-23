@@ -1,4 +1,4 @@
 dependencies {
     api(project(":common-test"))
-    api(project(":persistence:api"))
+    api(project(":domain:persistence-api"))
 }

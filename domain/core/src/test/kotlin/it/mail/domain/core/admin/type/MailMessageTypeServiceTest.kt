@@ -1,6 +1,7 @@
 package it.mail.domain.core.admin.type
 
 import io.mockk.coEvery
+import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
 import io.mockk.impl.annotations.RelaxedMockK
@@ -57,8 +58,8 @@ class MailMessageTypeServiceTest {
 
             val mailType = createPlainMailMessageType()
 
-            coEvery { mailMessageTypeFactory.create(command) }.returns(mailType)
-            coEvery { mailMessageTypeRepository.create(any()) }.returnsArgument(0)
+            every { mailMessageTypeFactory.create(command) } returns mailType
+            coEvery { mailMessageTypeRepository.create(any()) } returnsArgument 0
 
             // when
             val actual = mailMessageTypeService.createNewMailType(command)
@@ -74,7 +75,7 @@ class MailMessageTypeServiceTest {
                 contentType = MailMessageContentType.PLAIN_TEXT,
             )
 
-            coEvery { mailMessageTypeFactory.create(command) } returns mailType
+            every { mailMessageTypeFactory.create(command) } returns mailType
             coEvery { mailMessageTypeRepository.create(any()) } throws DuplicateUniqueKeyException(null, null)
 
             assertThrows<ValidationException> { mailMessageTypeService.createNewMailType(command) }

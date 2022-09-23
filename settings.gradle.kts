@@ -27,15 +27,15 @@ rootProject.name = "mail-it"
 
 include(
     "admin-client",
-    "common-exception",
     "common-test",
     "connector:http",
     "distribution",
     "domain:admin-api",
     "domain:core",
+    "domain:exception",
     "domain:external-api",
     "domain:model",
-    "persistence:api",
+    "domain:persistence-api",
     "persistence:common",
     "persistence:h2",
     "persistence:liquibase",

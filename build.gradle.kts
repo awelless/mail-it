@@ -2,7 +2,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     kotlin("jvm")
-    kotlin("plugin.allopen")
+    kotlin("plugin.allopen") apply false
 
     id("io.quarkus") apply false
 
@@ -14,7 +14,6 @@ plugins {
 subprojects {
     apply {
         plugin("org.jetbrains.kotlin.jvm")
-        plugin("org.jetbrains.kotlin.plugin.allopen")
         plugin("org.jlleitschuh.gradle.ktlint")
         plugin("org.kordamp.gradle.jandex")
     }
@@ -52,13 +51,9 @@ subprojects {
         kotlinOptions.jvmTarget = JavaVersion.VERSION_11.toString()
         kotlinOptions.javaParameters = true
     }
-
-    allOpen {
-        annotation("javax.ws.rs.Path")
-    }
 }
 
-task("copyGitHooks", Copy::class) {
+task("setUpGitHooks", Copy::class) {
     from("git")
     into(".git/hooks")
 }

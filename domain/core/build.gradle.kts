@@ -1,15 +1,11 @@
-apply {
-    plugin("io.quarkus")
-}
-
 val freemarkerVersion: String by project
 
 dependencies {
-    implementation(project(":common-exception"))
+    implementation(project(":domain:exception"))
     implementation(project(":domain:admin-api"))
     implementation(project(":domain:external-api"))
     implementation(project(":domain:model"))
-    implementation(project(":persistence:api"))
+    implementation(project(":domain:persistence-api"))
 
     implementation("io.quarkus:quarkus-mailer")
     implementation("io.quarkus:quarkus-quartz")
@@ -19,4 +15,8 @@ dependencies {
     implementation("org.freemarker:freemarker:$freemarkerVersion")
 
     testImplementation(project(":common-test"))
+}
+
+tasks.withType<Test> {
+    useJUnitPlatform()
 }
