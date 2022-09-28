@@ -1,7 +1,7 @@
 package it.mail.persistence.h2.quarkus
 
-import it.mail.persistence.common.IdGenerator
-import it.mail.persistence.common.LocalCounterIdGenerator
+import it.mail.persistence.common.id.IdGenerator
+import it.mail.persistence.common.id.InMemoryIdGenerator
 import it.mail.persistence.common.serialization.KryoMailMessageDataSerializer
 import it.mail.persistence.common.serialization.MailMessageDataSerializer
 import it.mail.persistence.h2.JdbcMailMessageRepository
@@ -13,7 +13,7 @@ import javax.sql.DataSource
 class PersistenceContextConfiguration {
 
     @Singleton
-    fun idGenerator() = LocalCounterIdGenerator()
+    fun idGenerator() = InMemoryIdGenerator()
 
     @Singleton
     fun kryoMailMessageDataSerializer() = KryoMailMessageDataSerializer()

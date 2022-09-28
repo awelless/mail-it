@@ -1,8 +1,8 @@
 package it.mail.persistence.postgresql.quarkus
 
 import io.vertx.mutiny.pgclient.PgPool
-import it.mail.persistence.common.IdGenerator
-import it.mail.persistence.common.LocalCounterIdGenerator
+import it.mail.persistence.common.id.DistributedIdGenerator
+import it.mail.persistence.common.id.IdGenerator
 import it.mail.persistence.common.serialization.KryoMailMessageDataSerializer
 import it.mail.persistence.common.serialization.MailMessageDataSerializer
 import it.mail.persistence.postgresql.ReactiveMailMessageRepository
@@ -12,8 +12,10 @@ import javax.inject.Singleton
 
 class PersistenceContextConfiguration {
 
+    // instanceIdProvider is constant
+    // should be replaced with a real implementation to scale horizontally
     @Singleton
-    fun idGenerator() = LocalCounterIdGenerator()
+    fun idGenerator() = DistributedIdGenerator { 1 }
 
     @Singleton
     fun kryoMailMessageDataSerializer() = KryoMailMessageDataSerializer()

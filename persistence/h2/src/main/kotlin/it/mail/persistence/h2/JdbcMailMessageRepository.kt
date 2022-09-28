@@ -4,7 +4,7 @@ import it.mail.domain.model.MailMessage
 import it.mail.domain.model.MailMessageStatus
 import it.mail.domain.model.Slice
 import it.mail.persistence.api.MailMessageRepository
-import it.mail.persistence.common.IdGenerator
+import it.mail.persistence.common.id.IdGenerator
 import it.mail.persistence.common.serialization.MailMessageDataSerializer
 import org.apache.commons.dbutils.QueryRunner
 import org.apache.commons.dbutils.ResultSetHandler

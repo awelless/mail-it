@@ -13,7 +13,7 @@ import it.mail.domain.model.Slice
 import it.mail.persistence.api.DuplicateUniqueKeyException
 import it.mail.persistence.api.MailMessageTypeRepository
 import it.mail.persistence.api.PersistenceException
-import it.mail.persistence.common.IdGenerator
+import it.mail.persistence.common.id.IdGenerator
 import it.mail.persistence.common.toLocalDateTime
 import it.mail.persistence.postgresql.MailMessageContent.HTML
 import java.time.Instant

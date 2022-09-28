@@ -8,7 +8,7 @@ import it.mail.domain.model.Slice
 import it.mail.persistence.api.DuplicateUniqueKeyException
 import it.mail.persistence.api.MailMessageTypeRepository
 import it.mail.persistence.api.PersistenceException
-import it.mail.persistence.common.IdGenerator
+import it.mail.persistence.common.id.IdGenerator
 import it.mail.persistence.h2.MailMessageContent.HTML
 import it.mail.persistence.h2.MailMessageContent.PLAIN_TEXT
 import org.apache.commons.dbutils.QueryRunner
