@@ -7,6 +7,13 @@
 </template>
 
 <style>
+/* colors */
+/*--honeydew: #edffec;*/
+/*--fiery-rose: #ef626c;*/
+/*--green-blue-crayola: #2892d7;*/
+/*--charcoal: #1b4353;*/
+/*--indigo-dye: #0d3b66;*/
+
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;

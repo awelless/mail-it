@@ -5,13 +5,13 @@ import java.time.Instant
 
 data class AdminSlicedMailDto(
 
-    var id: Long,
+    val id: Long,
     val emailFrom: String?,
     val emailTo: String,
     val type: IdNameDto,
     val createdAt: Instant,
-    var sendingStartedAt: Instant?,
-    var sentAt: Instant?,
-    var status: MailMessageStatus,
-    var failedCount: Int,
+    val sendingStartedAt: Instant?,
+    val sentAt: Instant?,
+    val status: MailMessageStatus,
+    val failedCount: Int,
 )
