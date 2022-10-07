@@ -12,17 +12,19 @@ class DistributedIdGenerator(
          * 63 bits id length, the first bit is always zero
          *
          * todo revise bits allocation. should be stabilized before 1.0.0 release
-         * 47 bits - timestamp in ms (~4400 years)
-         * 6 bits - sequence within one millisecond
-         * 10 bits - instance id
+         * 42 bits - timestamp in ms (~135 years)
+         * 10 bits - sequence within one millisecond
+         * 11 bits - instance id
          */
-        private const val SEQUENCE_BITS = 6
-        private const val INSTANCE_ID_BITS = 10
+        private const val SEQUENCE_BITS = 10
+        private const val INSTANCE_ID_BITS = 11
 
         private const val SEQUENCE_SHIFT = INSTANCE_ID_BITS
         private const val TIMESTAMP_SHIFT = SEQUENCE_SHIFT + SEQUENCE_BITS
 
         private const val MAX_SEQUENCE_VALUE = 1L shl SEQUENCE_BITS - 1
+
+        private const val EPOCH_START = 1640995200000 // 2022-01-01 00:00:00 UTC
     }
 
     private val idSequence = AtomicReference(IdSequence(0))
@@ -30,7 +32,7 @@ class DistributedIdGenerator(
     override tailrec fun generateId(): Long {
         val currentSequence = idSequence.get()
 
-        val currentTime = System.currentTimeMillis()
+        val currentTime = System.currentTimeMillis() - EPOCH_START
 
         val sequenceValue: Long = if (currentSequence.createdAt < currentTime) { // if sequence was generated in the past
             if (idSequence.compareAndSet(currentSequence, IdSequence(currentTime))) { // it's recreated if it's still not changed by another thread
