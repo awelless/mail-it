@@ -66,7 +66,11 @@ private const val FIND_WITH_TYPE_BY_SENDING_STARTED_BEFORE_AND_STATUSES_SQL = ""
       AND m.status IN (?)
     LIMIT ?"""
 
-private const val FIND_IDS_BY_STATUSES_SQL = "SELECT mail_message_id FROM mail_message WHERE status IN (?)"
+private const val FIND_IDS_BY_STATUSES_SQL = """
+    SELECT mail_message_id 
+      FROM mail_message 
+     WHERE status IN (?) 
+     LIMIT ?"""
 
 private const val FIND_ALL_SLICED_SQL = """
     SELECT m.mail_message_id m_mail_message_id,
@@ -149,7 +153,7 @@ class JdbcMailMessageRepository(
         }
     }
 
-    override suspend fun findAllIdsByStatusIn(statuses: Collection<MailMessageStatus>): List<Long> {
+    override suspend fun findAllIdsByStatusIn(statuses: Collection<MailMessageStatus>, maxListSize: Int): List<Long> {
         val statusNames = statuses
             .map { it.name }
             .toTypedArray()
@@ -158,7 +162,7 @@ class JdbcMailMessageRepository(
             queryRunner.query(
                 it, FIND_IDS_BY_STATUSES_SQL,
                 IDS_MAPPER,
-                it.createArrayOf("VARCHAR", statusNames)
+                it.createArrayOf("VARCHAR", statusNames), maxListSize
             )
         }
     }

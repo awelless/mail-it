@@ -32,9 +32,6 @@ import it.mail.domain.core.quarkus.mailing.QuarkusMailSender
 import it.mail.domain.model.MailMessageType
 import it.mail.persistence.api.MailMessageRepository
 import it.mail.persistence.api.MailMessageTypeRepository
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import javax.enterprise.inject.Disposes
 import javax.inject.Singleton
 
 class AdminServicesContextConfiguration {
@@ -89,11 +86,7 @@ class MailingContextConfiguration {
     fun sendMailMessageService(
         mailSender: MailSender,
         mailMessageService: MailMessageService,
-    ) = SendMailMessageService(mailSender, mailMessageService, CoroutineScope(Dispatchers.IO))
-
-    fun stopSendMailMessageService(@Disposes mailMessageService: SendMailMessageService) {
-        mailMessageService.close()
-    }
+    ) = SendMailMessageService(mailSender, mailMessageService)
 
     @Singleton
     fun hungMailsResetManager(mailMessageService: MailMessageService) = HungMailsResetManager(mailMessageService)

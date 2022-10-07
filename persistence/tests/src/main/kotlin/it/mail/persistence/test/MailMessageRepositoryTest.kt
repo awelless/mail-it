@@ -86,7 +86,7 @@ open class MailMessageRepositoryTest {
         mailMessageRepository.create(message2)
 
         // when
-        val actual = mailMessageRepository.findAllIdsByStatusIn(listOf(PENDING))
+        val actual = mailMessageRepository.findAllIdsByStatusIn(listOf(PENDING), 1000)
 
         // then
         assertEquals(2, actual.size)

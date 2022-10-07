@@ -1,27 +1,50 @@
 package it.mail.domain.core.mailing
 
-import kotlinx.coroutines.joinAll
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.currentCoroutineContext
 import mu.KLogging
 
 class UnsentMailProcessor(
     private val mailMessageService: MailMessageService,
     private val sendService: SendMailMessageService,
 ) {
-    companion object : KLogging()
+    companion object : KLogging() {
+        const val BATCH_SIZE = 200
+    }
 
     suspend fun processUnsentMail() {
-        // TODO select in batches
-        val messageIds = mailMessageService.getAllIdsOfPossibleToSentMessages()
+        logger.info { "Unsent mails processing has started" }
 
-        logger.info { "Processing ${messageIds.size} unsent messages" }
+        processUnsentMailBatch() // recursive method
 
-        val jobs = messageIds.map { sendService.sendMail(it) }
+        logger.info { "Unsent mails processing has finished" }
+    }
 
+    private tailrec suspend fun processUnsentMailBatch() {
+        val unsentMessageIds = mailMessageService.getAllIdsOfPossibleToSentMessages(BATCH_SIZE)
+
+        logger.info { "${unsentMessageIds.size} unsent mails discovered" }
+
+        val mailSendTasks = with(CoroutineScope(currentCoroutineContext())) {
+            unsentMessageIds.map { async { sendMail(it) } }
+        }
+
+        mailSendTasks.awaitAll()
+
+        logger.info { "${unsentMessageIds.size} hung mails ware processed" }
+
+        if (unsentMessageIds.size >= BATCH_SIZE) { // if batch is full, there can be more unsent messages
+            processUnsentMailBatch() // trail call
+        }
+    }
+
+    private suspend fun sendMail(id: Long) {
         try {
-            jobs.joinAll()
-            logger.info { "Processing of unsent messages has finished" }
+            sendService.sendMail(id)
         } catch (e: Exception) {
-            logger.warn { "Processing of unsent messages has finished with exception. Cause message: ${e.message}. Cause: $e" }
+            logger.warn(e) { "Failed to send a message: $id. Cause: ${e.message}" }
         }
     }
 }

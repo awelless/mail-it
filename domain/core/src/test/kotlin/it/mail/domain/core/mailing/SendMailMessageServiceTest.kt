@@ -4,15 +4,12 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.RelaxedMockK
-import io.mockk.impl.annotations.SpyK
 import io.mockk.junit5.MockKExtension
 import it.mail.domain.model.MailMessage
 import it.mail.domain.model.MailMessageType
 import it.mail.domain.model.MailMessageTypeState.FORCE_DELETED
 import it.mail.test.createMailMessage
 import it.mail.test.createPlainMailMessageType
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -26,9 +23,6 @@ class SendMailMessageServiceTest {
 
     @RelaxedMockK
     lateinit var mailMessageService: MailMessageService
-
-    @SpyK
-    var coroutineScope = CoroutineScope(Dispatchers.Default)
 
     @InjectMockKs
     lateinit var sendService: SendMailMessageService
@@ -48,7 +42,7 @@ class SendMailMessageServiceTest {
         coEvery { mailMessageService.getMessageForSending(mailMessage.id) }.returns(mailMessage)
 
         // when
-        sendService.sendMail(mailMessage.id).join()
+        sendService.sendMail(mailMessage.id)
 
         // then
         coVerify(exactly = 1) { mailSender.send(mailMessage) }
@@ -62,7 +56,7 @@ class SendMailMessageServiceTest {
         coEvery { mailSender.send(any()) }.throws(Exception())
 
         // when
-        sendService.sendMail(mailMessage.id).join()
+        sendService.sendMail(mailMessage.id)
 
         // then
         coVerify(exactly = 1) { mailMessageService.processFailedDelivery(mailMessage) }
@@ -75,7 +69,7 @@ class SendMailMessageServiceTest {
         coEvery { mailMessageService.getMessageForSending(mailMessage.id) }.returns(mailMessage)
 
         // when
-        sendService.sendMail(mailMessage.id).join()
+        sendService.sendMail(mailMessage.id)
 
         // then
         coVerify(exactly = 1) { mailMessageService.processMessageTypeForceDeletion(mailMessage) }

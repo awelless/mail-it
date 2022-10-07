@@ -69,7 +69,11 @@ private const val FIND_WITH_TYPE_BY_SENDING_STARTED_BEFORE_AND_STATUSES_SQL = ""
       AND m.status = ANY($2)
     LIMIT $3"""
 
-private const val FIND_IDS_BY_STATUSES_SQL = "SELECT mail_message_id FROM mail_message WHERE status = ANY($1)"
+private const val FIND_IDS_BY_STATUSES_SQL = """
+    SELECT mail_message_id 
+      FROM mail_message 
+     WHERE status = ANY($1)
+     LIMIT $2"""
 
 private const val FIND_ALL_SLICED_SQL = """
     SELECT m.mail_message_id m_mail_message_id,
@@ -143,12 +147,12 @@ class ReactiveMailMessageRepository(
             .awaitSuspending()
     }
 
-    override suspend fun findAllIdsByStatusIn(statuses: Collection<MailMessageStatus>): List<Long> {
+    override suspend fun findAllIdsByStatusIn(statuses: Collection<MailMessageStatus>, maxListSize: Int): List<Long> {
         val statusNames = statuses
             .map { it.name }
             .toTypedArray()
 
-        return client.preparedQuery(FIND_IDS_BY_STATUSES_SQL).execute(Tuple.of(statusNames))
+        return client.preparedQuery(FIND_IDS_BY_STATUSES_SQL).execute(Tuple.of(statusNames, maxListSize))
             .onItem().transformToMulti { Multi.createFrom().iterable(it) }
             .onItem().transform { it.getLong("mail_message_id") }
             .collect().asList()

@@ -11,7 +11,7 @@ interface MailMessageRepository {
 
     suspend fun findAllWithTypeByStatusesAndSendingStartedBefore(statuses: Collection<MailMessageStatus>, sendingStartedBefore: Instant, maxListSize: Int): List<MailMessage>
 
-    suspend fun findAllIdsByStatusIn(statuses: Collection<MailMessageStatus>): List<Long>
+    suspend fun findAllIdsByStatusIn(statuses: Collection<MailMessageStatus>, maxListSize: Int): List<Long>
 
     suspend fun findAllSlicedDescendingIdSorted(page: Int, size: Int): Slice<MailMessage>
 
