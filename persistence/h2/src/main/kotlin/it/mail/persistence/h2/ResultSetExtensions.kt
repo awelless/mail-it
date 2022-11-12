@@ -1,12 +1,12 @@
 package it.mail.persistence.h2
 
-import it.mail.domain.model.HtmlMailMessageType
-import it.mail.domain.model.HtmlTemplateEngine
-import it.mail.domain.model.MailMessage
-import it.mail.domain.model.MailMessageStatus
-import it.mail.domain.model.MailMessageType
-import it.mail.domain.model.MailMessageTypeState
-import it.mail.domain.model.PlainTextMailMessageType
+import it.mail.core.model.HtmlMailMessageType
+import it.mail.core.model.HtmlTemplateEngine
+import it.mail.core.model.MailMessage
+import it.mail.core.model.MailMessageStatus
+import it.mail.core.model.MailMessageType
+import it.mail.core.model.MailMessageTypeState
+import it.mail.core.model.PlainTextMailMessageType
 import it.mail.persistence.common.serialization.MailMessageDataSerializer
 import it.mail.persistence.h2.MailMessageContent.HTML
 import java.sql.ResultSet

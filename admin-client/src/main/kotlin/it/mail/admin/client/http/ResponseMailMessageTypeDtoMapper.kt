@@ -2,12 +2,12 @@ package it.mail.admin.client.http
 
 import it.mail.admin.client.http.dto.PagedMailMessageTypeResponseDto
 import it.mail.admin.client.http.dto.SingleMailMessageTypeResponseDto
-import it.mail.domain.admin.api.type.MailMessageContentType
-import it.mail.domain.admin.api.type.MailMessageContentType.HTML
-import it.mail.domain.admin.api.type.MailMessageContentType.PLAIN_TEXT
-import it.mail.domain.model.HtmlMailMessageType
-import it.mail.domain.model.MailMessageType
-import it.mail.domain.model.PlainTextMailMessageType
+import it.mail.core.admin.api.type.MailMessageContentType
+import it.mail.core.admin.api.type.MailMessageContentType.HTML
+import it.mail.core.admin.api.type.MailMessageContentType.PLAIN_TEXT
+import it.mail.core.model.HtmlMailMessageType
+import it.mail.core.model.MailMessageType
+import it.mail.core.model.PlainTextMailMessageType
 import javax.inject.Singleton
 
 @Singleton

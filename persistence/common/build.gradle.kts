@@ -1,3 +1,7 @@
+apply {
+    plugin("io.quarkus")
+}
+
 val dbUtilsVersion: String by project
 val kryoVersion: String by project
 

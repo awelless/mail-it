@@ -11,11 +11,11 @@ import it.mail.admin.client.http.PAGE_PARAM
 import it.mail.admin.client.http.SIZE_PARAM
 import it.mail.admin.client.http.dto.MailMessageTypeCreateDto
 import it.mail.admin.client.http.dto.MailMessageTypeUpdateDto
-import it.mail.domain.admin.api.type.MailMessageContentType
-import it.mail.domain.model.MailMessageType
-import it.mail.domain.model.MailMessageTypeState.DELETED
-import it.mail.domain.model.MailMessageTypeState.FORCE_DELETED
-import it.mail.persistence.api.MailMessageTypeRepository
+import it.mail.core.admin.api.type.MailMessageContentType
+import it.mail.core.model.MailMessageType
+import it.mail.core.model.MailMessageTypeState.DELETED
+import it.mail.core.model.MailMessageTypeState.FORCE_DELETED
+import it.mail.core.persistence.api.MailMessageTypeRepository
 import it.mail.test.createPlainMailMessageType
 import kotlinx.coroutines.runBlocking
 import org.hamcrest.Matchers.equalTo

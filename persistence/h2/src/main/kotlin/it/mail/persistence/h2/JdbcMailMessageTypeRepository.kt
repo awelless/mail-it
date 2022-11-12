@@ -1,13 +1,13 @@
 package it.mail.persistence.h2
 
-import it.mail.domain.model.HtmlMailMessageType
-import it.mail.domain.model.MailMessageType
-import it.mail.domain.model.MailMessageTypeState
-import it.mail.domain.model.PlainTextMailMessageType
-import it.mail.domain.model.Slice
-import it.mail.persistence.api.DuplicateUniqueKeyException
-import it.mail.persistence.api.MailMessageTypeRepository
-import it.mail.persistence.api.PersistenceException
+import it.mail.core.model.HtmlMailMessageType
+import it.mail.core.model.MailMessageType
+import it.mail.core.model.MailMessageTypeState
+import it.mail.core.model.PlainTextMailMessageType
+import it.mail.core.model.Slice
+import it.mail.core.persistence.api.DuplicateUniqueKeyException
+import it.mail.core.persistence.api.MailMessageTypeRepository
+import it.mail.core.persistence.api.PersistenceException
 import it.mail.persistence.common.id.IdGenerator
 import it.mail.persistence.h2.MailMessageContent.HTML
 import it.mail.persistence.h2.MailMessageContent.PLAIN_TEXT

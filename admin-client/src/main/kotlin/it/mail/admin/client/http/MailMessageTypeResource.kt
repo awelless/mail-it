@@ -4,10 +4,10 @@ import it.mail.admin.client.http.dto.MailMessageTypeCreateDto
 import it.mail.admin.client.http.dto.MailMessageTypeUpdateDto
 import it.mail.admin.client.http.dto.PagedMailMessageTypeResponseDto
 import it.mail.admin.client.http.dto.SingleMailMessageTypeResponseDto
-import it.mail.domain.admin.api.type.CreateMailMessageTypeCommand
-import it.mail.domain.admin.api.type.MailMessageTypeService
-import it.mail.domain.admin.api.type.UpdateMailMessageTypeCommand
-import it.mail.domain.model.Slice
+import it.mail.core.admin.api.type.CreateMailMessageTypeCommand
+import it.mail.core.admin.api.type.MailMessageTypeService
+import it.mail.core.admin.api.type.UpdateMailMessageTypeCommand
+import it.mail.core.model.Slice
 import org.jboss.resteasy.reactive.ResponseStatus
 import org.jboss.resteasy.reactive.RestResponse.StatusCode.ACCEPTED
 import org.jboss.resteasy.reactive.RestResponse.StatusCode.CREATED

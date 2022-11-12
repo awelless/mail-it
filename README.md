@@ -1,7 +1,13 @@
 # mail-it
 
-### Setting up git hooks
+### Help commands
 
-```bash
+#### Build native executable
+```shell
+./gradlew distribution:assemble -Dquarkus.package.type=native -PdatabaseProvider=postgresql
+```
+
+#### To set up git hooks
+```shell
 ./gradlew copyGitHooks
 ```

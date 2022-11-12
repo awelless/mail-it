@@ -2,8 +2,14 @@ apply {
     plugin("io.quarkus")
 }
 
+val freemarkerVersion: String by project
+val svmVersion: String by project
+
 dependencies {
-    implementation(project(":domain:core")) // core implementation
+    compileOnly("org.freemarker:freemarker:$freemarkerVersion")
+    compileOnly("org.graalvm.nativeimage:svm:$svmVersion")
+
+    implementation(project(":core:service")) // core implementation
     implementation(project(":admin-client")) // admin web-ui implementation
     databaseProviderImplementation()
     connectorsImplementation()
@@ -11,9 +17,9 @@ dependencies {
     implementation("io.quarkus:quarkus-smallrye-health")
 
     testImplementation(project(":common-test"))
-    testImplementation(project(":domain:admin-api"))
-    testImplementation(project(":domain:external-api"))
-    testImplementation(project(":domain:persistence-api"))
+    testImplementation(project(":core:admin-api"))
+    testImplementation(project(":core:external-api"))
+    testImplementation(project(":core:persistence-api"))
 
     testImplementation("io.quarkus:quarkus-resteasy-reactive")
 }

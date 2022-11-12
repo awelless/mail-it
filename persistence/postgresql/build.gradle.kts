@@ -3,7 +3,7 @@ apply {
 }
 
 dependencies {
-    implementation(project(":domain:persistence-api"))
+    implementation(project(":core:persistence-api"))
     implementation(project(":persistence:common"))
     implementation(project(":persistence:liquibase"))
 

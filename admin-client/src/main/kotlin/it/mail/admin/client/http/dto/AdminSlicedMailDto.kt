@@ -1,6 +1,6 @@
 package it.mail.admin.client.http.dto
 
-import it.mail.domain.model.MailMessageStatus
+import it.mail.core.model.MailMessageStatus
 import java.time.Instant
 
 data class AdminSlicedMailDto(

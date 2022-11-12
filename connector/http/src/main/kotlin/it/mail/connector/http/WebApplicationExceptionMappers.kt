@@ -1,8 +1,8 @@
 package it.mail.connector.http
 
 import com.fasterxml.jackson.databind.JsonMappingException
-import it.mail.exception.NotFoundException
-import it.mail.exception.ValidationException
+import it.mail.core.exception.NotFoundException
+import it.mail.core.exception.ValidationException
 import mu.KLogging
 import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.Response

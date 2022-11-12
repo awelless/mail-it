@@ -1,11 +1,11 @@
 package it.mail.test
 
-import it.mail.domain.model.HtmlMailMessageType
-import it.mail.domain.model.HtmlTemplateEngine.NONE
-import it.mail.domain.model.MailMessage
-import it.mail.domain.model.MailMessageStatus
-import it.mail.domain.model.MailMessageType
-import it.mail.domain.model.PlainTextMailMessageType
+import it.mail.core.model.HtmlMailMessageType
+import it.mail.core.model.HtmlTemplateEngine.NONE
+import it.mail.core.model.MailMessage
+import it.mail.core.model.MailMessageStatus
+import it.mail.core.model.MailMessageType
+import it.mail.core.model.PlainTextMailMessageType
 import java.time.Instant
 import java.util.concurrent.atomic.AtomicLong
 

@@ -2,7 +2,6 @@ package it.mail.persistence.h2.quarkus
 
 import it.mail.persistence.common.id.IdGenerator
 import it.mail.persistence.common.id.InMemoryIdGenerator
-import it.mail.persistence.common.serialization.KryoMailMessageDataSerializer
 import it.mail.persistence.common.serialization.MailMessageDataSerializer
 import it.mail.persistence.h2.JdbcMailMessageRepository
 import it.mail.persistence.h2.JdbcMailMessageTypeRepository
@@ -14,9 +13,6 @@ class PersistenceContextConfiguration {
 
     @Singleton
     fun idGenerator() = InMemoryIdGenerator()
-
-    @Singleton
-    fun kryoMailMessageDataSerializer() = KryoMailMessageDataSerializer()
 
     @Singleton
     fun queryRunner() = QueryRunner()

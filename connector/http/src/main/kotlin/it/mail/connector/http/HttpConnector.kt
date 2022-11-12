@@ -1,7 +1,7 @@
 package it.mail.connector.http
 
-import it.mail.domain.external.api.CreateMailCommand
-import it.mail.domain.external.api.ExternalMailMessageService
+import it.mail.core.external.api.CreateMailCommand
+import it.mail.core.external.api.ExternalMailMessageService
 import org.jboss.resteasy.reactive.ResponseStatus
 import org.jboss.resteasy.reactive.RestResponse.StatusCode.ACCEPTED
 import javax.ws.rs.POST

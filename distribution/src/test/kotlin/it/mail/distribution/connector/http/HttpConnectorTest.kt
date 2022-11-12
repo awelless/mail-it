@@ -6,10 +6,10 @@ import io.restassured.module.kotlin.extensions.Extract
 import io.restassured.module.kotlin.extensions.Given
 import io.restassured.module.kotlin.extensions.Then
 import io.restassured.module.kotlin.extensions.When
-import it.mail.domain.external.api.CreateMailCommand
-import it.mail.domain.model.MailMessageType
-import it.mail.persistence.api.MailMessageRepository
-import it.mail.persistence.api.MailMessageTypeRepository
+import it.mail.core.external.api.CreateMailCommand
+import it.mail.core.model.MailMessageType
+import it.mail.core.persistence.api.MailMessageRepository
+import it.mail.core.persistence.api.MailMessageTypeRepository
 import it.mail.test.createPlainMailMessageType
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest

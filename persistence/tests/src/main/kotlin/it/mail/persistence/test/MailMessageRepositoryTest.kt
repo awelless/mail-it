@@ -1,11 +1,11 @@
 package it.mail.persistence.test
 
 import io.quarkus.test.junit.QuarkusTest
-import it.mail.domain.model.MailMessage
-import it.mail.domain.model.MailMessageStatus.PENDING
-import it.mail.domain.model.MailMessageType
-import it.mail.persistence.api.MailMessageRepository
-import it.mail.persistence.api.MailMessageTypeRepository
+import it.mail.core.model.MailMessage
+import it.mail.core.model.MailMessageStatus.PENDING
+import it.mail.core.model.MailMessageType
+import it.mail.core.persistence.api.MailMessageRepository
+import it.mail.core.persistence.api.MailMessageTypeRepository
 import it.mail.test.createPlainMailMessageType
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest

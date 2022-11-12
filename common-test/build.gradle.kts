@@ -3,7 +3,7 @@ val mockkVersion: String by project
 val restAssuredKotlinExtensionsVersion: String by project
 
 dependencies {
-    api(project(":domain:model"))
+    api(project(":core:model"))
 
     api("io.mockk:mockk:$mockkVersion")
     api("io.quarkus:quarkus-junit5")

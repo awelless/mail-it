@@ -1,9 +1,9 @@
 package it.mail.persistence.h2
 
-import it.mail.domain.model.MailMessage
-import it.mail.domain.model.MailMessageStatus
-import it.mail.domain.model.Slice
-import it.mail.persistence.api.MailMessageRepository
+import it.mail.core.model.MailMessage
+import it.mail.core.model.MailMessageStatus
+import it.mail.core.model.Slice
+import it.mail.core.persistence.api.MailMessageRepository
 import it.mail.persistence.common.id.IdGenerator
 import it.mail.persistence.common.serialization.MailMessageDataSerializer
 import org.apache.commons.dbutils.QueryRunner

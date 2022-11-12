@@ -6,9 +6,9 @@ import io.restassured.module.kotlin.extensions.Then
 import io.restassured.module.kotlin.extensions.When
 import it.mail.admin.client.http.PAGE_PARAM
 import it.mail.admin.client.http.SIZE_PARAM
-import it.mail.domain.model.MailMessage
-import it.mail.persistence.api.MailMessageRepository
-import it.mail.persistence.api.MailMessageTypeRepository
+import it.mail.core.model.MailMessage
+import it.mail.core.persistence.api.MailMessageRepository
+import it.mail.core.persistence.api.MailMessageTypeRepository
 import it.mail.test.createMailMessage
 import it.mail.test.createPlainMailMessageType
 import kotlinx.coroutines.runBlocking

@@ -2,9 +2,9 @@ package it.mail.admin.client.http
 
 import it.mail.admin.client.http.dto.AdminSlicedMailDto
 import it.mail.admin.client.http.dto.IdNameDto
-import it.mail.domain.admin.api.mail.AdminMailMessageService
-import it.mail.domain.model.MailMessage
-import it.mail.domain.model.Slice
+import it.mail.core.admin.api.mail.AdminMailMessageService
+import it.mail.core.model.MailMessage
+import it.mail.core.model.Slice
 import javax.ws.rs.GET
 import javax.ws.rs.Path
 import javax.ws.rs.QueryParam
