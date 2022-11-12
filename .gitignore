@@ -9,7 +9,7 @@ build/
 bin/
 
 # IntelliJ
-.idea
+**/.idea/
 *.ipr
 *.iml
 *.iws
@@ -18,7 +18,7 @@ bin/
 nb-configuration.xml
 
 # Visual Studio Code
-.vscode
+**/.vscode/
 .factorypath
 
 # OSX
@@ -38,5 +38,6 @@ nb-configuration.xml
 out/
 
 # Client app libs and artifacts
-admin-client-ui/node_modules/
+admin-client-ui/.quasar/
 admin-client-ui/dist/
+admin-client-ui/node_modules/
