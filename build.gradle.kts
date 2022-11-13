@@ -61,7 +61,7 @@ subprojects {
     }
 }
 
-task("setUpGitHooks", Copy::class) {
+task<Copy>("setUpGitHooks") {
     from("git")
     into(".git/hooks")
 }

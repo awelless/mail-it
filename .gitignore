@@ -41,3 +41,4 @@ out/
 admin-client-ui/.quasar/
 admin-client-ui/dist/
 admin-client-ui/node_modules/
+admin-client/src/main/resources/META-INF/resources/
