@@ -26,11 +26,8 @@ import it.mail.core.service.mailing.templates.freemarker.Configuration
 import it.mail.core.service.mailing.templates.freemarker.FreemarkerTemplateProcessor
 import it.mail.core.service.mailing.templates.freemarker.RepositoryTemplateLoader
 import it.mail.core.service.mailing.templates.none.NoneTemplateProcessor
-import it.mail.core.service.quarkus.mailing.HtmlMailFactory
 import it.mail.core.service.quarkus.mailing.MailFactory
-import it.mail.core.service.quarkus.mailing.MailFactoryManager
 import it.mail.core.service.quarkus.mailing.MailSenderImpl
-import it.mail.core.service.quarkus.mailing.PlainTextMailFactory
 import it.mail.core.service.quarkus.mailing.QuarkusMailSender
 import javax.inject.Singleton
 
@@ -98,10 +95,7 @@ class MailingContextConfiguration {
     ) = UnsentMailProcessor(mailMessageService, sendService)
 
     @Singleton
-    fun mailFactory(templateProcessor: TemplateProcessor) = MailFactoryManager(
-        PlainTextMailFactory(),
-        HtmlMailFactory(templateProcessor),
-    )
+    fun mailFactory(templateProcessor: TemplateProcessor) = MailFactory(templateProcessor)
 
     @Singleton
     fun templateProcessorManager(mailMessageTypeRepository: MailMessageTypeRepository) = TemplateProcessorManager(

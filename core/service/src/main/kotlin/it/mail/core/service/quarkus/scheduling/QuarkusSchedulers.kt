@@ -1,6 +1,7 @@
 package it.mail.core.service.quarkus.scheduling
 
 import io.quarkus.scheduler.Scheduled
+import io.quarkus.scheduler.Scheduled.ConcurrentExecution.PROCEED
 import io.quarkus.scheduler.Scheduled.ConcurrentExecution.SKIP
 import it.mail.core.service.mailing.HungMailsResetManager
 import it.mail.core.service.mailing.UnsentMailProcessor
@@ -25,7 +26,7 @@ class MailSendingTaskQuarkusTask(
     private val mailProcessor: UnsentMailProcessor,
 ) {
 
-    @Scheduled(cron = EACH_10_SECONDS, concurrentExecution = SKIP)
+    @Scheduled(cron = EACH_10_SECONDS, concurrentExecution = PROCEED)
     suspend fun run() {
         mailProcessor.processUnsentMail()
     }
