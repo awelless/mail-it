@@ -11,12 +11,12 @@ import it.mail.core.persistence.api.MailMessageRepository
 import it.mail.core.persistence.api.MailMessageTypeRepository
 import it.mail.test.createMailMessage
 import it.mail.test.createPlainMailMessageType
+import javax.inject.Inject
 import kotlinx.coroutines.runBlocking
 import org.hamcrest.Matchers.equalTo
 import org.jboss.resteasy.reactive.RestResponse.StatusCode.OK
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import javax.inject.Inject
 
 @QuarkusTest
 class MailMessageResourceTest {

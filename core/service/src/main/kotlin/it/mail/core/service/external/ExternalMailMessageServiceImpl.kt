@@ -8,8 +8,8 @@ import it.mail.core.model.MailMessageStatus.PENDING
 import it.mail.core.persistence.api.MailMessageRepository
 import it.mail.core.persistence.api.MailMessageTypeRepository
 import it.mail.core.service.isEmail
-import mu.KLogging
 import java.time.Instant
+import mu.KLogging
 
 class ExternalMailMessageServiceImpl(
     private val mailMessageRepository: MailMessageRepository,

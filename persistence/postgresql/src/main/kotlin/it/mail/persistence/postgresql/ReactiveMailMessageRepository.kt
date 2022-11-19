@@ -119,9 +119,22 @@ private const val INSERT_SQL = """
    VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)"""
 
 private const val UPDATE_STATUS_SQL = "UPDATE mail_message SET status = $1 WHERE mail_message_id = $2"
-private const val UPDATE_STATUS_AND_SENDING_START_SQL = "UPDATE mail_message SET status = $1, sending_started_at = $2 WHERE mail_message_id = $3 AND status IN ($4)"
+
+private const val UPDATE_STATUS_AND_SENDING_START_SQL = """
+    UPDATE mail_message SET 
+        status = $1, 
+        sending_started_at = $2 
+    WHERE mail_message_id = $3 
+      AND status IN ($4)"""
+
 private const val UPDATE_STATUS_AND_SENT_AT_SQL = "UPDATE mail_message SET status = $1, sent_at = $2 WHERE mail_message_id = $3"
-private const val UPDATE_STATUS_FILED_COUNT_AND_SENDING_START_SQL = "UPDATE mail_message SET status = ?, failed_count = ?, sending_started_at = ? WHERE mail_message_id = ?"
+
+private const val UPDATE_STATUS_FILED_COUNT_AND_SENDING_START_SQL = """
+    UPDATE mail_message SET 
+        status = ?, 
+        failed_count = ?, 
+        sending_started_at = ? 
+    WHERE mail_message_id = ?"""
 
 class ReactiveMailMessageRepository(
     private val idGenerator: IdGenerator,
@@ -135,12 +148,17 @@ class ReactiveMailMessageRepository(
             .onItem().transform { if (it.hasNext()) it.next().getMailMessageWithTypeFromRow(dataSerializer) else null }
             .awaitSuspending()
 
-    override suspend fun findAllWithTypeByStatusesAndSendingStartedBefore(statuses: Collection<MailMessageStatus>, sendingStartedBefore: Instant, maxListSize: Int): List<MailMessage> {
+    override suspend fun findAllWithTypeByStatusesAndSendingStartedBefore(
+        statuses: Collection<MailMessageStatus>,
+        sendingStartedBefore: Instant,
+        maxListSize: Int
+    ): List<MailMessage> {
         val statusNames = statuses
             .map { it.name }
             .toTypedArray()
 
-        return client.preparedQuery(FIND_WITH_TYPE_BY_SENDING_STARTED_BEFORE_AND_STATUSES_SQL).execute(Tuple.of(sendingStartedBefore.toLocalDateTime(), statusNames, maxListSize))
+        return client.preparedQuery(FIND_WITH_TYPE_BY_SENDING_STARTED_BEFORE_AND_STATUSES_SQL)
+            .execute(Tuple.of(sendingStartedBefore.toLocalDateTime(), statusNames, maxListSize))
             .onItem().transformToMulti { Multi.createFrom().iterable(it) }
             .onItem().transform { it.getMailMessageWithTypeFromRow(dataSerializer) }
             .collect().asList()
@@ -221,8 +239,14 @@ class ReactiveMailMessageRepository(
             .onItem().transform { it.rowCount() }
             .awaitSuspending()
 
-    override suspend fun updateMessageStatusFailedCountAndSendingStartedTime(id: Long, status: MailMessageStatus, failedCount: Int, sendingStartedAt: Instant?): Int =
-        client.preparedQuery(UPDATE_STATUS_FILED_COUNT_AND_SENDING_START_SQL).execute(Tuple.of(status, failedCount, sendingStartedAt, id))
+    override suspend fun updateMessageStatusFailedCountAndSendingStartedTime(
+        id: Long,
+        status: MailMessageStatus,
+        failedCount: Int,
+        sendingStartedAt: Instant?
+    ): Int =
+        client.preparedQuery(UPDATE_STATUS_FILED_COUNT_AND_SENDING_START_SQL)
+            .execute(Tuple.of(status, failedCount, sendingStartedAt, id))
             .onItem().transform { it.rowCount() }
             .awaitSuspending()
 }

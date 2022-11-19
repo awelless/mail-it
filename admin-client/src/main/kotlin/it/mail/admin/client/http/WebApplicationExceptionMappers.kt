@@ -3,7 +3,6 @@ package it.mail.admin.client.http
 import com.fasterxml.jackson.databind.JsonMappingException
 import it.mail.core.exception.NotFoundException
 import it.mail.core.exception.ValidationException
-import mu.KLogging
 import javax.ws.rs.core.MediaType.APPLICATION_JSON
 import javax.ws.rs.core.Response
 import javax.ws.rs.core.Response.Status.BAD_REQUEST
@@ -11,6 +10,7 @@ import javax.ws.rs.core.Response.Status.INTERNAL_SERVER_ERROR
 import javax.ws.rs.core.Response.Status.NOT_FOUND
 import javax.ws.rs.ext.ExceptionMapper
 import javax.ws.rs.ext.Provider
+import mu.KLogging
 
 @Provider
 class ValidationExceptionMapper : ExceptionMapper<ValidationException> {

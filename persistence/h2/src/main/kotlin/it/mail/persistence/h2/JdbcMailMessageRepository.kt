@@ -6,11 +6,11 @@ import it.mail.core.model.Slice
 import it.mail.core.persistence.api.MailMessageRepository
 import it.mail.persistence.common.id.IdGenerator
 import it.mail.persistence.common.serialization.MailMessageDataSerializer
-import org.apache.commons.dbutils.QueryRunner
-import org.apache.commons.dbutils.ResultSetHandler
 import java.sql.ResultSet
 import java.time.Instant
 import javax.sql.DataSource
+import org.apache.commons.dbutils.QueryRunner
+import org.apache.commons.dbutils.ResultSetHandler
 
 private const val FIND_WITH_TYPE_BY_ID_SQL = """
     SELECT m.mail_message_id m_mail_message_id,
@@ -118,7 +118,13 @@ private const val INSERT_SQL = """
 private const val UPDATE_STATUS_SQL = "UPDATE mail_message SET status = ? WHERE mail_message_id = ?"
 private const val UPDATE_STATUS_AND_SENDING_START_SQL = "UPDATE mail_message SET status = ?, sending_started_at = ? WHERE mail_message_id = ? AND status IN (?)"
 private const val UPDATE_STATUS_AND_SENT_AT_SQL = "UPDATE mail_message SET status = ?, sent_at = ? WHERE mail_message_id = ?"
-private const val UPDATE_STATUS_FILED_COUNT_AND_SENDING_START_SQL = "UPDATE mail_message SET status = ?, failed_count = ?, sending_started_at = ? WHERE mail_message_id = ?"
+
+private const val UPDATE_STATUS_FILED_COUNT_AND_SENDING_START_SQL = """
+    UPDATE mail_message SET 
+        status = ?, 
+        failed_count = ?, 
+        sending_started_at = ? 
+    WHERE mail_message_id = ?"""
 
 class JdbcMailMessageRepository(
     private val idGenerator: IdGenerator,
@@ -139,7 +145,11 @@ class JdbcMailMessageRepository(
             )
         }
 
-    override suspend fun findAllWithTypeByStatusesAndSendingStartedBefore(statuses: Collection<MailMessageStatus>, sendingStartedBefore: Instant, maxListSize: Int): List<MailMessage> {
+    override suspend fun findAllWithTypeByStatusesAndSendingStartedBefore(
+        statuses: Collection<MailMessageStatus>,
+        sendingStartedBefore: Instant,
+        maxListSize: Int
+    ): List<MailMessage> {
         val statusNames = statuses
             .map { it.name }
             .toTypedArray()
@@ -234,7 +244,12 @@ class JdbcMailMessageRepository(
             )
         }
 
-    override suspend fun updateMessageStatusFailedCountAndSendingStartedTime(id: Long, status: MailMessageStatus, failedCount: Int, sendingStartedAt: Instant?): Int =
+    override suspend fun updateMessageStatusFailedCountAndSendingStartedTime(
+        id: Long,
+        status: MailMessageStatus,
+        failedCount: Int,
+        sendingStartedAt: Instant?
+    ): Int =
         dataSource.connection.use {
             queryRunner.update(
                 it, UPDATE_STATUS_FILED_COUNT_AND_SENDING_START_SQL,

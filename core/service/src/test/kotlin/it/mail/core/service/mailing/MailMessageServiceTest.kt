@@ -45,7 +45,14 @@ class MailMessageServiceTest {
 
     @Test
     fun getMessageForSending_marksStatusSending() = runTest {
-        coEvery { mailMessageRepository.updateMessageStatusAndSendingStartedTimeByIdAndStatusIn(mailMessage.id, possibleToSendMessageStatuses, SENDING, any()) }.returns(1)
+        coEvery {
+            mailMessageRepository.updateMessageStatusAndSendingStartedTimeByIdAndStatusIn(
+                id = mailMessage.id,
+                statuses = possibleToSendMessageStatuses,
+                status = SENDING,
+                sendingStartedAt = any(),
+            )
+        }.returns(1)
         coEvery { mailMessageRepository.findOneWithTypeById(mailMessage.id) }.returns(mailMessage)
 
         val actual = mailMessageService.getMessageForSending(mailMessage.id)
@@ -55,7 +62,14 @@ class MailMessageServiceTest {
 
     @Test
     fun getMessageForSending_notFoundForMarking_marksStatusSending() = runTest {
-        coEvery { mailMessageRepository.updateMessageStatusAndSendingStartedTimeByIdAndStatusIn(mailMessage.id, possibleToSendMessageStatuses, SENDING, any()) }.returns(0)
+        coEvery {
+            mailMessageRepository.updateMessageStatusAndSendingStartedTimeByIdAndStatusIn(
+                id = mailMessage.id,
+                statuses = possibleToSendMessageStatuses,
+                status = SENDING,
+                sendingStartedAt = any(),
+            )
+        }.returns(0)
 
         assertThrows<NotFoundException> { mailMessageService.getMessageForSending(mailMessage.id) }
     }

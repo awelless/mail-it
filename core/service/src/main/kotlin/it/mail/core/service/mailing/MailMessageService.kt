@@ -9,10 +9,10 @@ import it.mail.core.model.MailMessageStatus.RETRY
 import it.mail.core.model.MailMessageStatus.SENDING
 import it.mail.core.model.MailMessageStatus.SENT
 import it.mail.core.persistence.api.MailMessageRepository
-import mu.KLogging
 import java.time.Instant
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.toJavaDuration
+import mu.KLogging
 
 class MailMessageService(
     private val mailMessageRepository: MailMessageRepository,
@@ -31,7 +31,14 @@ class MailMessageService(
         mailMessageRepository.findAllIdsByStatusIn(possibleToSendMessageStatuses, maxListSize)
 
     suspend fun getMessageForSending(messageId: Long): MailMessage {
-        if (mailMessageRepository.updateMessageStatusAndSendingStartedTimeByIdAndStatusIn(messageId, possibleToSendMessageStatuses, SENDING, Instant.now()) == 0) {
+        val messagesUpdated = mailMessageRepository.updateMessageStatusAndSendingStartedTimeByIdAndStatusIn(
+            id = messageId,
+            statuses = possibleToSendMessageStatuses,
+            status = SENDING,
+            sendingStartedAt = Instant.now(),
+        )
+
+        if (messagesUpdated == 0) {
             throw NotFoundException("MailMessage, id: $messageId for delivery is not found")
         }
 

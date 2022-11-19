@@ -2,9 +2,9 @@ package it.mail.distribution
 
 import io.smallrye.health.api.AsyncHealthCheck
 import io.smallrye.mutiny.Uni
+import javax.enterprise.context.ApplicationScoped
 import org.eclipse.microprofile.health.HealthCheckResponse
 import org.eclipse.microprofile.health.Liveness
-import javax.enterprise.context.ApplicationScoped
 
 @Liveness
 @ApplicationScoped

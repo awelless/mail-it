@@ -6,8 +6,8 @@ import it.mail.persistence.common.id.IdGenerator
 import it.mail.persistence.common.serialization.MailMessageDataSerializer
 import it.mail.persistence.postgresql.ReactiveMailMessageRepository
 import it.mail.persistence.postgresql.ReactiveMailMessageTypeRepository
-import org.apache.commons.dbutils.QueryRunner
 import javax.inject.Singleton
+import org.apache.commons.dbutils.QueryRunner
 
 class PersistenceContextConfiguration {
 

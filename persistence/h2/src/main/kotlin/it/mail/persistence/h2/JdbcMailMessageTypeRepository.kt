@@ -11,13 +11,13 @@ import it.mail.core.persistence.api.PersistenceException
 import it.mail.persistence.common.id.IdGenerator
 import it.mail.persistence.h2.MailMessageContent.HTML
 import it.mail.persistence.h2.MailMessageContent.PLAIN_TEXT
-import org.apache.commons.dbutils.QueryRunner
-import org.apache.commons.dbutils.ResultSetHandler
-import org.h2.api.ErrorCode
 import java.sql.ResultSet
 import java.sql.SQLException
 import java.time.Instant
 import javax.sql.DataSource
+import org.apache.commons.dbutils.QueryRunner
+import org.apache.commons.dbutils.ResultSetHandler
+import org.h2.api.ErrorCode
 
 private const val FIND_BY_ID_SQL = """
     SELECT mail_message_type_id mt_mail_message_type_id,

@@ -2,10 +2,10 @@ package it.mail.connector.http
 
 import it.mail.core.external.api.CreateMailCommand
 import it.mail.core.external.api.ExternalMailMessageService
-import org.jboss.resteasy.reactive.ResponseStatus
-import org.jboss.resteasy.reactive.RestResponse.StatusCode.ACCEPTED
 import javax.ws.rs.POST
 import javax.ws.rs.Path
+import org.jboss.resteasy.reactive.ResponseStatus
+import org.jboss.resteasy.reactive.RestResponse.StatusCode.ACCEPTED
 
 @Path("/api/connector/mail")
 class HttpConnector(

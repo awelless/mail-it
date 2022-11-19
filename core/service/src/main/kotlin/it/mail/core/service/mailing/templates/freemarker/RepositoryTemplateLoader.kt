@@ -6,8 +6,8 @@ import it.mail.core.model.HtmlMailMessageType
 import it.mail.core.model.HtmlTemplateEngine.FREEMARKER
 import it.mail.core.persistence.api.MailMessageTypeRepository
 import it.mail.core.service.mailing.templates.InvalidTemplateEngineException
-import kotlinx.coroutines.runBlocking
 import java.io.StringReader
+import kotlinx.coroutines.runBlocking
 
 class RepositoryTemplateLoader(
     private val mailMessageTypeRepository: MailMessageTypeRepository,

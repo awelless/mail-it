@@ -8,14 +8,14 @@ import it.mail.core.model.MailMessageType
 import it.mail.core.persistence.api.MailMessageRepository
 import it.mail.core.persistence.api.MailMessageTypeRepository
 import it.mail.test.createPlainMailMessageType
+import java.time.Instant
+import javax.inject.Inject
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import java.time.Instant
-import javax.inject.Inject
 
 @QuarkusTest
 open class MailMessageRepositoryTest {

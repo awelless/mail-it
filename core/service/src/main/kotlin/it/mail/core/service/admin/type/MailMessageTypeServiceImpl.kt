@@ -11,8 +11,8 @@ import it.mail.core.model.MailMessageTypeState.FORCE_DELETED
 import it.mail.core.model.Slice
 import it.mail.core.persistence.api.DuplicateUniqueKeyException
 import it.mail.core.persistence.api.MailMessageTypeRepository
-import mu.KLogging
 import java.time.Instant
+import mu.KLogging
 
 class MailMessageTypeServiceImpl(
     private val mailMessageTypeRepository: MailMessageTypeRepository,

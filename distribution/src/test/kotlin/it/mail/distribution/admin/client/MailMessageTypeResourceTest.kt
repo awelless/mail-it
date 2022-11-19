@@ -17,6 +17,7 @@ import it.mail.core.model.MailMessageTypeState.DELETED
 import it.mail.core.model.MailMessageTypeState.FORCE_DELETED
 import it.mail.core.persistence.api.MailMessageTypeRepository
 import it.mail.test.createPlainMailMessageType
+import javax.inject.Inject
 import kotlinx.coroutines.runBlocking
 import org.hamcrest.Matchers.equalTo
 import org.jboss.resteasy.reactive.RestResponse.StatusCode.ACCEPTED
@@ -25,7 +26,6 @@ import org.jboss.resteasy.reactive.RestResponse.StatusCode.OK
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import javax.inject.Inject
 
 @QuarkusTest
 class MailMessageTypeResourceTest {

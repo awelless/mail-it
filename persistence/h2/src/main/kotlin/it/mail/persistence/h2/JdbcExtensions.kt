@@ -1,7 +1,7 @@
 package it.mail.persistence.h2
 
-import org.apache.commons.dbutils.ResultSetHandler
 import java.sql.ResultSet
+import org.apache.commons.dbutils.ResultSetHandler
 
 internal val IDS_MAPPER = MultipleIdsResultSetMapper()
 internal val EXISTS_QUERY_MAPPER = ExistsQueryResultSetMapper()
