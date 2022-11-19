@@ -63,13 +63,13 @@ private const val FIND_WITH_TYPE_BY_SENDING_STARTED_BEFORE_AND_STATUSES_SQL = ""
     FROM mail_message m
     INNER JOIN mail_message_type mt ON m.mail_message_type_id = mt.mail_message_type_id
     WHERE m.sending_started_at < ?
-      AND m.status IN (?)
+      AND m.status IN (SELECT * FROM TABLE(x VARCHAR = ?))
     LIMIT ?"""
 
 private const val FIND_IDS_BY_STATUSES_SQL = """
     SELECT mail_message_id 
       FROM mail_message 
-     WHERE status IN (?) 
+     WHERE status IN (SELECT * FROM TABLE(x VARCHAR = ?)) 
      LIMIT ?"""
 
 private const val FIND_ALL_SLICED_SQL = """
@@ -148,7 +148,7 @@ class JdbcMailMessageRepository(
             queryRunner.query(
                 it, FIND_WITH_TYPE_BY_SENDING_STARTED_BEFORE_AND_STATUSES_SQL,
                 multipleMailWithTypeMapper,
-                sendingStartedBefore, it.createArrayOf("VARCHAR", statusNames), maxListSize
+                sendingStartedBefore, statusNames, maxListSize
             )
         }
     }
@@ -162,7 +162,7 @@ class JdbcMailMessageRepository(
             queryRunner.query(
                 it, FIND_IDS_BY_STATUSES_SQL,
                 IDS_MAPPER,
-                it.createArrayOf("VARCHAR", statusNames), maxListSize
+                statusNames, maxListSize
             )
         }
     }

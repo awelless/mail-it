@@ -3,6 +3,7 @@ package it.mail.persistence.test
 import io.quarkus.test.junit.QuarkusTest
 import it.mail.core.model.MailMessage
 import it.mail.core.model.MailMessageStatus.PENDING
+import it.mail.core.model.MailMessageStatus.SENDING
 import it.mail.core.model.MailMessageType
 import it.mail.core.persistence.api.MailMessageRepository
 import it.mail.core.persistence.api.MailMessageTypeRepository
@@ -68,6 +69,32 @@ open class MailMessageRepositoryTest {
         assertEquals(mailMessageType.maxRetriesCount, actual.type.maxRetriesCount)
         assertEquals(mailMessageType.createdAt, actual.type.createdAt)
         assertEquals(mailMessageType.updatedAt, actual.type.updatedAt)
+    }
+
+    @Test
+    fun findAllWithTypeByStatusesAndSendingStartedBefore_returns() = runTest {
+        // given
+        val messageSendingStartedAt = Instant.now().minusSeconds(10)
+
+        val sendingMessage = MailMessage(
+            text = "text2",
+            data = emptyMap(),
+            subject = null,
+            emailFrom = "email@from.com",
+            emailTo = "email@to.com",
+            type = mailMessageType,
+            createdAt = Instant.now().minusSeconds(100),
+            sendingStartedAt = messageSendingStartedAt,
+            status = SENDING,
+        )
+        mailMessageRepository.create(sendingMessage)
+
+        // when
+        val actual = mailMessageRepository.findAllWithTypeByStatusesAndSendingStartedBefore(listOf(SENDING), Instant.now(), 1000)
+
+        // then
+        assertEquals(1, actual.size)
+        assertEquals(sendingMessage.id, actual.first().id)
     }
 
     @Test
