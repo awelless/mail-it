@@ -5,7 +5,7 @@ export default interface MailMessageType {
   maxRetriesCount?: number
   contentType: MailMessageContentType
   templateEngine?: HtmlTemplateEngine
-  template: string
+  template?: string
 }
 
 export enum MailMessageContentType {

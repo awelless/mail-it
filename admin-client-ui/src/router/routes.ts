@@ -6,6 +6,7 @@ const routes: RouteRecordRaw[] = [
     component: () => import('layouts/MainLayout.vue'),
     children: [
       { path: '', component: () => import('pages/MailMessagesPage.vue') },
+      { path: '/types/:id', component: () => import('pages/MailTypePage.vue') },
     ],
   },
 

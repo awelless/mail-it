@@ -1,17 +1,19 @@
 <template>
-  <q-btn-group>
-    <q-btn>&lt;</q-btn>
-    <q-btn disable>{{ slice.page }}</q-btn>
-    <q-btn>&gt;</q-btn>
-  </q-btn-group>
+  <q-pagination
+    :model-value='slice.page'
+    :max='slice.page + (slice.last ? 0 : 1)'
+    direction-links
+    @update:model-value='fetchFunction'
+  />
 </template>
 
-<script setup lang="ts">
+<script setup lang='ts'>
 import { defineProps } from 'vue'
 import Slice from 'src/models/Slice'
 
 defineProps<{
-  slice: Slice<any>
+  slice: Slice<unknown>,
+  fetchFunction: (page: number) => void,
 }>()
 </script>
 
