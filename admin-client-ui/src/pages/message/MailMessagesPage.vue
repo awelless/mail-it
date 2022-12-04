@@ -10,7 +10,7 @@
 </template>
 
 <script setup lang='ts'>
-import MailMessageCard from 'src/components/MailMessageCard.vue'
+import MailMessageCard from 'components/message/MailMessageCard.vue'
 import Slice from 'src/models/Slice'
 import MailMessage, { MailMessageStatus } from 'src/models/MailMessage'
 import { ref } from 'vue'

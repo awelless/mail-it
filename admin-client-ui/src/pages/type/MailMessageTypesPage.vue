@@ -1,4 +1,5 @@
 <template>
+  <q-btn to='/types/create' color='info'>Create</q-btn>
   <q-spinner v-if='!types' color='primary' size='3em' />
   <div v-else>
     <div v-for='type in types.content' :key='type.id'>
@@ -14,7 +15,7 @@ import { ref } from 'vue'
 import MailMessageType, { HtmlTemplateEngine, MailMessageContentType } from 'src/models/MailMessageType'
 import Slice from 'src/models/Slice'
 import SliceFooter from 'components/SliceFooter.vue'
-import MailMessageTypeCard from 'components/MailMessageTypeCard.vue'
+import MailMessageTypeCard from 'components/type/MailMessageTypeCard.vue'
 
 const types = ref<Slice<MailMessageType> | null>(null)
 
