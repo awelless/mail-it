@@ -12,12 +12,12 @@
 
     <q-drawer show-if-above bordered>
       <q-list>
-        <q-item clickable v-ripple to='/'>
+        <q-item clickable to='/'>
           <q-item-section>
             Mails
           </q-item-section>
         </q-item>
-        <q-item clickable v-ripple to='/types'>
+        <q-item clickable to='/types'>
           <q-item-section>
             Mail Types
           </q-item-section>
