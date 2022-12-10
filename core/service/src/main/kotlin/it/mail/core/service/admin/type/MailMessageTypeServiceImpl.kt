@@ -9,8 +9,8 @@ import it.mail.core.model.MailMessageType
 import it.mail.core.model.MailMessageTypeState.DELETED
 import it.mail.core.model.MailMessageTypeState.FORCE_DELETED
 import it.mail.core.model.Slice
-import it.mail.core.persistence.api.DuplicateUniqueKeyException
-import it.mail.core.persistence.api.MailMessageTypeRepository
+import it.mail.core.spi.DuplicateUniqueKeyException
+import it.mail.core.spi.MailMessageTypeRepository
 import java.time.Instant
 import mu.KLogging
 

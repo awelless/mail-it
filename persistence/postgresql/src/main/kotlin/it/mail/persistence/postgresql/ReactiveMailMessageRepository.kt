@@ -7,7 +7,7 @@ import io.vertx.mutiny.sqlclient.Tuple
 import it.mail.core.model.MailMessage
 import it.mail.core.model.MailMessageStatus
 import it.mail.core.model.Slice
-import it.mail.core.persistence.api.MailMessageRepository
+import it.mail.core.spi.MailMessageRepository
 import it.mail.persistence.common.id.IdGenerator
 import it.mail.persistence.common.serialization.MailMessageDataSerializer
 import it.mail.persistence.common.toLocalDateTime

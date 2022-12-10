@@ -15,7 +15,7 @@ import it.mail.core.admin.api.type.MailMessageContentType
 import it.mail.core.model.MailMessageType
 import it.mail.core.model.MailMessageTypeState.DELETED
 import it.mail.core.model.MailMessageTypeState.FORCE_DELETED
-import it.mail.core.persistence.api.MailMessageTypeRepository
+import it.mail.core.spi.MailMessageTypeRepository
 import it.mail.test.createPlainMailMessageType
 import javax.inject.Inject
 import kotlinx.coroutines.runBlocking

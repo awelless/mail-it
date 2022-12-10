@@ -1,4 +1,4 @@
-package it.mail.core.persistence.api
+package it.mail.core.spi
 
 import it.mail.core.model.MailMessage
 import it.mail.core.model.MailMessageStatus

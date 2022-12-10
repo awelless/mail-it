@@ -12,8 +12,8 @@ import it.mail.core.admin.api.type.MailMessageContentType
 import it.mail.core.admin.api.type.UpdateMailMessageTypeCommand
 import it.mail.core.exception.ValidationException
 import it.mail.core.model.MailMessageType
-import it.mail.core.persistence.api.DuplicateUniqueKeyException
-import it.mail.core.persistence.api.MailMessageTypeRepository
+import it.mail.core.spi.DuplicateUniqueKeyException
+import it.mail.core.spi.MailMessageTypeRepository
 import it.mail.test.createPlainMailMessageType
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertSame

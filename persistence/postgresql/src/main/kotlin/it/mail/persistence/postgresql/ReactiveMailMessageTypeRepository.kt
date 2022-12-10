@@ -10,9 +10,9 @@ import it.mail.core.model.MailMessageType
 import it.mail.core.model.MailMessageTypeState
 import it.mail.core.model.PlainTextMailMessageType
 import it.mail.core.model.Slice
-import it.mail.core.persistence.api.DuplicateUniqueKeyException
-import it.mail.core.persistence.api.MailMessageTypeRepository
-import it.mail.core.persistence.api.PersistenceException
+import it.mail.core.spi.DuplicateUniqueKeyException
+import it.mail.core.spi.MailMessageTypeRepository
+import it.mail.core.spi.PersistenceException
 import it.mail.persistence.common.id.IdGenerator
 import it.mail.persistence.common.toLocalDateTime
 import it.mail.persistence.postgresql.MailMessageContent.HTML

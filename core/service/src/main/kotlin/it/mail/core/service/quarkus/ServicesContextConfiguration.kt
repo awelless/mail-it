@@ -2,8 +2,6 @@ package it.mail.core.service.quarkus
 
 import io.quarkus.mailer.reactive.ReactiveMailer
 import it.mail.core.model.MailMessageType
-import it.mail.core.persistence.api.MailMessageRepository
-import it.mail.core.persistence.api.MailMessageTypeRepository
 import it.mail.core.service.admin.mail.AdminMailMessageServiceImpl
 import it.mail.core.service.admin.type.HtmlMailMessageTypeFactory
 import it.mail.core.service.admin.type.HtmlMailMessageTypeStateUpdater
@@ -29,6 +27,8 @@ import it.mail.core.service.mailing.templates.none.NoneTemplateProcessor
 import it.mail.core.service.quarkus.mailing.MailFactory
 import it.mail.core.service.quarkus.mailing.MailSenderImpl
 import it.mail.core.service.quarkus.mailing.QuarkusMailSender
+import it.mail.core.spi.MailMessageRepository
+import it.mail.core.spi.MailMessageTypeRepository
 import javax.inject.Singleton
 
 class AdminServicesContextConfiguration {

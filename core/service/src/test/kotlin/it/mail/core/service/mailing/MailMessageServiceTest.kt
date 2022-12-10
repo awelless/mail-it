@@ -13,7 +13,7 @@ import it.mail.core.model.MailMessageStatus.RETRY
 import it.mail.core.model.MailMessageStatus.SENDING
 import it.mail.core.model.MailMessageStatus.SENT
 import it.mail.core.model.MailMessageType
-import it.mail.core.persistence.api.MailMessageRepository
+import it.mail.core.spi.MailMessageRepository
 import it.mail.test.createMailMessage
 import it.mail.test.createPlainMailMessageType
 import kotlinx.coroutines.test.runTest

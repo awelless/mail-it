@@ -8,8 +8,8 @@ import io.restassured.module.kotlin.extensions.Then
 import io.restassured.module.kotlin.extensions.When
 import it.mail.core.external.api.CreateMailCommand
 import it.mail.core.model.MailMessageType
-import it.mail.core.persistence.api.MailMessageRepository
-import it.mail.core.persistence.api.MailMessageTypeRepository
+import it.mail.core.spi.MailMessageRepository
+import it.mail.core.spi.MailMessageTypeRepository
 import it.mail.test.createPlainMailMessageType
 import javax.inject.Inject
 import kotlinx.coroutines.runBlocking

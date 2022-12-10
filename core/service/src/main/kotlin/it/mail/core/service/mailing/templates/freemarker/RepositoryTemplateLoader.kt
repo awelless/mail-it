@@ -4,8 +4,8 @@ import freemarker.cache.TemplateLoader
 import it.mail.core.exception.NotFoundException
 import it.mail.core.model.HtmlMailMessageType
 import it.mail.core.model.HtmlTemplateEngine.FREEMARKER
-import it.mail.core.persistence.api.MailMessageTypeRepository
 import it.mail.core.service.mailing.templates.InvalidTemplateEngineException
+import it.mail.core.spi.MailMessageTypeRepository
 import java.io.StringReader
 import kotlinx.coroutines.runBlocking
 

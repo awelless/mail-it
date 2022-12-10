@@ -1,6 +1,6 @@
 dependencies {
     api(project(":common-test"))
-    api(project(":core:persistence-api"))
+    api(project(":core:spi"))
 }
 
 kotlin {

@@ -7,8 +7,8 @@ import io.mockk.junit5.MockKExtension
 import it.mail.core.model.HtmlMailMessageType
 import it.mail.core.model.HtmlTemplateEngine.FREEMARKER
 import it.mail.core.model.HtmlTemplateEngine.NONE
-import it.mail.core.persistence.api.MailMessageTypeRepository
 import it.mail.core.service.mailing.templates.InvalidTemplateEngineException
+import it.mail.core.spi.MailMessageTypeRepository
 import it.mail.test.createHtmlMailMessageType
 import it.mail.test.createPlainMailMessageType
 import org.junit.jupiter.api.Assertions.assertEquals

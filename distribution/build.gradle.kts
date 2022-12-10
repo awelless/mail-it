@@ -18,8 +18,8 @@ dependencies {
 
     testImplementation(project(":common-test"))
     testImplementation(project(":core:admin-api"))
-    testImplementation(project(":core:external-api"))
-    testImplementation(project(":core:persistence-api"))
+    testImplementation(project(":core:connector-api"))
+    testImplementation(project(":core:spi"))
 
     testImplementation("io.quarkus:quarkus-resteasy-reactive")
 }

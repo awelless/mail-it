@@ -1,4 +1,4 @@
-package it.mail.core.persistence.api
+package it.mail.core.spi
 
 import it.mail.core.model.MailMessageType
 import it.mail.core.model.MailMessageTypeState

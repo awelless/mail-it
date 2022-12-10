@@ -5,8 +5,8 @@ import it.mail.core.model.MailMessage
 import it.mail.core.model.MailMessageStatus.PENDING
 import it.mail.core.model.MailMessageStatus.SENDING
 import it.mail.core.model.MailMessageType
-import it.mail.core.persistence.api.MailMessageRepository
-import it.mail.core.persistence.api.MailMessageTypeRepository
+import it.mail.core.spi.MailMessageRepository
+import it.mail.core.spi.MailMessageTypeRepository
 import it.mail.test.createPlainMailMessageType
 import java.time.Instant
 import javax.inject.Inject

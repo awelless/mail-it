@@ -1,6 +1,6 @@
 package it.mail.core.exception
 
-open class ApplicationException(message: String, cause: Exception? = null) : Exception(message, cause) {
+sealed class ApplicationException(message: String, cause: Exception? = null) : Exception(message, cause) {
 
     override val message: String
         get() = super.message!! // message is always presents
