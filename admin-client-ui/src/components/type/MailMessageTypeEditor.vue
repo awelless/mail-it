@@ -1,5 +1,5 @@
 <template>
-  <q-form>
+  <div class='q-gutter-md'>
     <q-input outlined v-model='name' label='Name' />
     <q-input outlined v-model='description' label='Description' />
 
@@ -19,7 +19,6 @@
         :options='Object.values(HtmlTemplateEngine)'
       />
 
-      <br/>
       <p class='text-body1'>Upload template file</p>
       <q-file
         outlined
@@ -33,16 +32,17 @@
         </template>
       </q-file>
 
-      <br/>
       <p class='text-body1'>or paste it here</p>
       <q-input outlined v-model='template' label='Template' type='textarea' />
     </template>
 
-    <q-btn-group>
-      <q-btn @click='create' color='info'>Create</q-btn>
-      <q-btn to='/types' class='text-black bg-white'>Back</q-btn>
-    </q-btn-group>
-  </q-form>
+    <div class='row'>
+      <div class='col-md-2 q-gutter-sm'>
+        <q-btn @click='create' color='info' style='width:40%'>Create</q-btn>
+        <q-btn to='/types' class='text-black bg-white' style='width:40%'>Back</q-btn>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script setup lang='ts'>

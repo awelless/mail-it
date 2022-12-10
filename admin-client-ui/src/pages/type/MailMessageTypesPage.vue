@@ -1,11 +1,14 @@
 <template>
-  <q-btn to='/types/create' color='info'>Create</q-btn>
+  <div class='row'>
+    <div class='col-md-1'>
+      <q-btn to='/types/create' color='info' style='width: 80%'>Create</q-btn>
+    </div>
+  </div>
   <q-spinner v-if='!types' color='primary' size='3em' />
-  <div v-else>
+  <div v-else class='q-gutter-md q-pt-md'>
     <div v-for='type in types.content' :key='type.id'>
       <MailMessageTypeCard :type='type' />
     </div>
-    <br />
     <SliceFooter :slice='types' :fetch-function='fetchFunction' />
   </div>
 </template>

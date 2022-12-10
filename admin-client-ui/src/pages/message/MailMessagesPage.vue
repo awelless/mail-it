@@ -1,10 +1,9 @@
 <template>
   <q-spinner v-if='!mails' color='primary' size='3em' />
-  <div v-else>
+  <div v-else class='q-gutter-md'>
     <div v-for='mail in mails.content' :key='mail.id'>
       <MailMessageCard :mail='mail' />
     </div>
-    <br />
     <SliceFooter :slice='mails' :fetch-function='fetchFunction' />
   </div>
 </template>
