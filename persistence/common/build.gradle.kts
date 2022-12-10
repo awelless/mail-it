@@ -8,6 +8,7 @@ val kryoVersion: String by project
 dependencies {
     api("commons-dbutils:commons-dbutils:$dbUtilsVersion")
 
+    implementation(project(":core:model"))
     implementation("com.esotericsoftware:kryo:$kryoVersion")
 
     testImplementation(project(":common-test"))

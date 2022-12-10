@@ -8,6 +8,7 @@ import it.mail.core.model.Slice
 import it.mail.core.spi.DuplicateUniqueKeyException
 import it.mail.core.spi.MailMessageTypeRepository
 import it.mail.core.spi.PersistenceException
+import it.mail.persistence.common.createSlice
 import it.mail.persistence.common.id.IdGenerator
 import it.mail.persistence.h2.MailMessageContent.HTML
 import it.mail.persistence.h2.MailMessageContent.PLAIN_TEXT
@@ -124,11 +125,11 @@ class JdbcMailMessageTypeRepository(
             queryRunner.query(
                 it, FIND_ALL_SLICED_SQL,
                 multipleItemsMapper,
-                size, offset
+                size + 1, offset
             )
         }
 
-        return Slice(content, page, size)
+        return createSlice(content, page, size)
     }
 
     override suspend fun create(mailMessageType: MailMessageType): MailMessageType {

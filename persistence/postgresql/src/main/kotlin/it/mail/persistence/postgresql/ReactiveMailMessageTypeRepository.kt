@@ -13,6 +13,7 @@ import it.mail.core.model.Slice
 import it.mail.core.spi.DuplicateUniqueKeyException
 import it.mail.core.spi.MailMessageTypeRepository
 import it.mail.core.spi.PersistenceException
+import it.mail.persistence.common.createSlice
 import it.mail.persistence.common.id.IdGenerator
 import it.mail.persistence.common.toLocalDateTime
 import it.mail.persistence.postgresql.MailMessageContent.HTML
@@ -111,11 +112,11 @@ class ReactiveMailMessageTypeRepository(
     override suspend fun findAllSliced(page: Int, size: Int): Slice<MailMessageType> {
         val offset = page * size
 
-        return client.preparedQuery(FIND_ALL_SLICED_SQL).execute(Tuple.of(size, offset))
+        return client.preparedQuery(FIND_ALL_SLICED_SQL).execute(Tuple.of(size + 1, offset))
             .onItem().transformToMulti { Multi.createFrom().iterable(it) }
             .onItem().transform { it.getMailMessageTypeFromRow() }
             .collect().asList()
-            .onItem().transform { Slice(it, page, size) }
+            .onItem().transform { createSlice(it, page, size) }
             .awaitSuspending()
     }
 

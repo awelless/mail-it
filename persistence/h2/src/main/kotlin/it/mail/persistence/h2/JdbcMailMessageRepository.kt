@@ -4,6 +4,7 @@ import it.mail.core.model.MailMessage
 import it.mail.core.model.MailMessageStatus
 import it.mail.core.model.Slice
 import it.mail.core.spi.MailMessageRepository
+import it.mail.persistence.common.createSlice
 import it.mail.persistence.common.id.IdGenerator
 import it.mail.persistence.common.serialization.MailMessageDataSerializer
 import java.sql.ResultSet
@@ -184,11 +185,11 @@ class JdbcMailMessageRepository(
             queryRunner.query(
                 it, FIND_ALL_SLICED_SQL,
                 multipleMailWithTypeMapper,
-                size, offset
+                size + 1, offset
             )
         }
 
-        return Slice(content, page, size)
+        return createSlice(content, page, size)
     }
 
     override suspend fun create(mailMessage: MailMessage): MailMessage {

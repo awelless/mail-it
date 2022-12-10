@@ -8,6 +8,7 @@ import it.mail.core.model.MailMessage
 import it.mail.core.model.MailMessageStatus
 import it.mail.core.model.Slice
 import it.mail.core.spi.MailMessageRepository
+import it.mail.persistence.common.createSlice
 import it.mail.persistence.common.id.IdGenerator
 import it.mail.persistence.common.serialization.MailMessageDataSerializer
 import it.mail.persistence.common.toLocalDateTime
@@ -180,11 +181,11 @@ class ReactiveMailMessageRepository(
     override suspend fun findAllSlicedDescendingIdSorted(page: Int, size: Int): Slice<MailMessage> {
         val offset = page * size
 
-        return client.preparedQuery(FIND_ALL_SLICED_SQL).execute(Tuple.of(size, offset))
+        return client.preparedQuery(FIND_ALL_SLICED_SQL).execute(Tuple.of(size + 1, offset))
             .onItem().transformToMulti { Multi.createFrom().iterable(it) }
             .onItem().transform { it.getMailMessageWithTypeFromRow(dataSerializer) }
             .collect().asList()
-            .onItem().transform { Slice(it, page, size) }
+            .onItem().transform { createSlice(it, page, size) }
             .awaitSuspending()
     }
 

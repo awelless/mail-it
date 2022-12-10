@@ -72,7 +72,7 @@ class MailMessageTypeResourceTest {
     fun getAllSliced() {
         Given {
             param(PAGE_PARAM, 0)
-            param(SIZE_PARAM, 20)
+            param(SIZE_PARAM, 10)
         } When {
             get(mailTypesUrl)
         } Then {
@@ -85,8 +85,11 @@ class MailMessageTypeResourceTest {
                 "content[0].$namePath", equalTo(mailType.name),
                 "content[0].$descriptionPath", equalTo(mailType.description),
                 "content[0].$maxRetriesCountPath", equalTo(mailType.maxRetriesCount),
+
                 "page", equalTo(0),
-                "size", equalTo(20),
+                "size", equalTo(10),
+
+                "last", equalTo(true)
             )
         }
     }
@@ -104,8 +107,11 @@ class MailMessageTypeResourceTest {
                 "content[0].$namePath", equalTo(mailType.name),
                 "content[0].$descriptionPath", equalTo(mailType.description),
                 "content[0].$maxRetriesCountPath", equalTo(mailType.maxRetriesCount),
+
                 "page", equalTo(DEFAULT_PAGE),
                 "size", equalTo(DEFAULT_SIZE),
+
+                "last", equalTo(true)
             )
         }
     }

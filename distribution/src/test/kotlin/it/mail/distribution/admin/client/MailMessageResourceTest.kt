@@ -50,7 +50,7 @@ class MailMessageResourceTest {
     fun getAllSliced() {
         Given {
             param(PAGE_PARAM, 0)
-            param(SIZE_PARAM, 20)
+            param(SIZE_PARAM, 10)
         } When {
             get(mailsUrl)
         } Then {
@@ -73,7 +73,9 @@ class MailMessageResourceTest {
                 "content[1].type.id", equalTo(mail1.type.id.toInt()),
                 "content[1].type.name", equalTo(mail1.type.name),
                 "content[1].status", equalTo(mail1.status.name),
-                "content[1].failedCount", equalTo(mail1.failedCount)
+                "content[1].failedCount", equalTo(mail1.failedCount),
+
+                "last", equalTo(true)
             )
         }
     }
