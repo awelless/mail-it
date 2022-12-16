@@ -38,8 +38,8 @@
 
     <div class='row'>
       <div class='col-md-2 q-gutter-sm'>
-        <q-btn @click='create' color='info' style='width:40%'>Create</q-btn>
-        <q-btn to='/types' class='text-black bg-white' style='width:40%'>Back</q-btn>
+        <q-btn @click='submit()' color='info' style='width:40%'>{{ submissionButtonMessage }}</q-btn>
+        <q-btn :to='backPath' class='text-black bg-white' style='width:40%'>Back</q-btn>
       </div>
     </div>
   </div>
@@ -47,16 +47,23 @@
 
 <script setup lang='ts'>
 import { computed, ref } from 'vue'
-import { HtmlTemplateEngine, MailMessageContentType } from 'src/models/MailMessageType'
+import MailMessageType, { HtmlTemplateEngine, MailMessageContentType } from 'src/models/MailMessageType'
 
-const name = ref('')
-const description = ref('')
-const infiniteRetries = ref(false)
-const maxRetriesCount = ref<number | null>(null)
-const contentType = ref<string | null>(null)
-const templateEngine = ref<HtmlTemplateEngine | null>(null)
-const templateFile = ref<File | null>(null)
-const template = ref<string | null>(null)
+const props = defineProps<{
+  mailMessageType?: MailMessageType
+  submissionButtonMessage: string
+  submissionAction: (type: MailMessageType) => void
+  backPath: string
+}>()
+
+const name = ref(props.mailMessageType?.name ?? '')
+const description = ref(props.mailMessageType?.description ?? '')
+const infiniteRetries = ref(props.mailMessageType && !props.mailMessageType.maxRetriesCount)
+const maxRetriesCount = ref<number | undefined>(props.mailMessageType?.maxRetriesCount)
+const contentType = ref<MailMessageContentType | undefined>(props.mailMessageType?.contentType)
+const templateEngine = ref<HtmlTemplateEngine | undefined>(props.mailMessageType?.templateEngine)
+const templateFile = ref<File | undefined>(undefined)
+const template = ref<string | undefined>(props.mailMessageType?.template)
 
 const acceptFileTypes = computed(() => {
   switch (templateEngine.value) {
@@ -71,9 +78,23 @@ async function handleUpload(file: File) {
   template.value = await file.text()
 }
 
-function create() {
-  // todo
-  console.log('creation')
+function submit() {
+  const actualContentType = contentType.value
+
+  // todo validation
+  if (!actualContentType) {
+    return
+  }
+
+  props.submissionAction({
+    id: props.mailMessageType?.id ?? 0,
+    name: name.value,
+    description: description.value,
+    maxRetriesCount: maxRetriesCount.value,
+    contentType: actualContentType,
+    templateEngine: templateEngine.value,
+    template: template.value,
+  })
 }
 </script>
 

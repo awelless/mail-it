@@ -10,12 +10,18 @@ const routes: RouteRecordRaw[] = [
     component: () => import('pages/type/MailMessageTypesPage.vue'),
   },
   {
-    path: '/types/:id',
-    component: () => import('pages/type/MailMessageType.vue'),
-  },
-  {
     path: '/types/create',
     component: () => import('pages/type/CreateMailMessageType.vue'),
+  },
+  {
+    path: '/types/:id',
+    component: () => import('pages/type/MailMessageType.vue'),
+    props: true,
+  },
+  {
+    path: '/types/:id/edit',
+    component: () => import('pages/type/EditMailMessageType.vue'),
+    props: true,
   },
 
   // Always leave this as last one,
