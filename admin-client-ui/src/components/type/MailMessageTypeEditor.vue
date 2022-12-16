@@ -52,7 +52,7 @@ import MailMessageType, { HtmlTemplateEngine, MailMessageContentType } from 'src
 const props = defineProps<{
   mailMessageType?: MailMessageType
   submissionButtonMessage: string
-  submissionAction: (type: MailMessageType) => void
+  submissionAction: (type: MailMessageType) => Promise<void>
   backPath: string
 }>()
 
@@ -78,7 +78,7 @@ async function handleUpload(file: File) {
   template.value = await file.text()
 }
 
-function submit() {
+async function submit() {
   const actualContentType = contentType.value
 
   // todo validation
@@ -86,11 +86,11 @@ function submit() {
     return
   }
 
-  props.submissionAction({
+  await props.submissionAction({
     id: props.mailMessageType?.id ?? 0,
     name: name.value,
     description: description.value,
-    maxRetriesCount: maxRetriesCount.value,
+    maxRetriesCount: infiniteRetries.value ? undefined : maxRetriesCount.value,
     contentType: actualContentType,
     templateEngine: templateEngine.value,
     template: template.value,

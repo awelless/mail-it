@@ -1,34 +1,43 @@
 <template>
-  <p class='text-h4 text-primary text-bold q-pb-md'>
-    Edit Mail Message Type: {{ mailMessageType.name }} #{{ mailMessageType.id }}
-  </p>
-  <MailMessageTypeEditor
-    :mail-message-type='mailMessageType'
-    submission-button-message='Edit'
-    :submission-action='edit'
-    :back-path='`/types/${mailMessageType.id}`'
-  />
+  <q-spinner v-if='!type' color='primary' size='3em' />
+  <div v-else>
+    <p class='text-h4 text-primary text-bold q-pb-md'>
+      Edit Mail Message Type: {{ type.name }} #{{ type.id }}
+    </p>
+    <MailMessageTypeEditor
+      :mail-message-type='type'
+      submission-button-message='Edit'
+      :submission-action='update'
+      :back-path='`/types/${type.id}`'
+    />
+  </div>
 </template>
 
 <script setup lang='ts'>
 import MailMessageTypeEditor from 'components/type/MailMessageTypeEditor.vue'
-import MailMessageType, { MailMessageContentType } from 'src/models/MailMessageType'
+import MailMessageType from 'src/models/MailMessageType'
 import { ref } from 'vue'
+import mailMessageTypeClient from 'src/client/mailMessageTypeClient'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
 
 const props = defineProps<{
   id: number
 }>()
 
-const mailMessageType = ref<MailMessageType>({
-  id: 1,
-  name: 'Casual mail',
-  description: 'some description',
-  maxRetriesCount: 10,
-  contentType: MailMessageContentType.PLAIN_TEXT,
-})
+const type = ref<MailMessageType | null>(null)
 
-function edit(type: MailMessageType) {
-  console.log('update type')
+async function load() {
+  type.value = await mailMessageTypeClient.getById(props.id)
+}
+
+load()
+
+async function update(type: MailMessageType) {
+  await mailMessageTypeClient.update(type)
+  // todo doesn't work
+  await router.push(`/types/${props.id}`)
 }
 </script>
 

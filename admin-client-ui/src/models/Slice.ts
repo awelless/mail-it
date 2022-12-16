@@ -5,5 +5,5 @@ export default interface Slice<T> {
   last: boolean
 }
 
-export const DEFAULT_SLICE_NUMBER = 1
+export const DEFAULT_SLICE_NUMBER = 0
 export const DEFAULT_SLICE_SIZE = 10

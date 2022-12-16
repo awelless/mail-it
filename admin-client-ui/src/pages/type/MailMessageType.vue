@@ -19,18 +19,19 @@
 <script setup lang='ts'>
 import { ref } from 'vue'
 import MailMessageType, { MailMessageContentType } from 'src/models/MailMessageType'
+import mailMessageTypeClient from 'src/client/mailMessageTypeClient'
 
 const props = defineProps<{
   id: number
 }>()
 
-const type = ref<MailMessageType>({
-  id: 1,
-  name: 'Casual mail',
-  description: 'some description',
-  maxRetriesCount: 10,
-  contentType: MailMessageContentType.PLAIN_TEXT,
-})
+const type = ref<MailMessageType | null>(null)
+
+async function load() {
+  type.value = await mailMessageTypeClient.getById(props.id)
+}
+
+load()
 </script>
 
 <style scoped></style>

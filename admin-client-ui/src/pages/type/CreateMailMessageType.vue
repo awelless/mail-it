@@ -10,10 +10,15 @@
 <script setup lang='ts'>
 import MailMessageTypeEditor from 'components/type/MailMessageTypeEditor.vue'
 import MailMessageType from 'src/models/MailMessageType'
+import mailMessageTypeClient from 'src/client/mailMessageTypeClient'
+import { useRouter } from 'vue-router'
 
-function create(type: MailMessageType) {
-  // todo
-  console.log('creation')
+const router = useRouter()
+
+async function create(type: MailMessageType) {
+  const createdType = await mailMessageTypeClient.create(type)
+  // todo doesn't work
+  await router.push(`/types/${createdType.id}`)
 }
 </script>
 
