@@ -60,6 +60,7 @@ private const val FIND_ALL_SLICED_SQL = """
            template_engine mt_template_engine,
            template mt_template
       FROM mail_message_type
+     ORDER BY mt_mail_message_type_id DESC
      LIMIT ? OFFSET ?"""
 
 private const val INSERT_SQL = """
