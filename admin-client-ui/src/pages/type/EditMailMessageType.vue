@@ -36,7 +36,6 @@ load()
 
 async function update(type: MailMessageType) {
   await mailMessageTypeClient.update(type)
-  // todo doesn't work
   await router.push(`/types/${props.id}`)
 }
 </script>

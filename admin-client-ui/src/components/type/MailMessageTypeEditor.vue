@@ -68,6 +68,7 @@ const template = ref<string | undefined>(props.mailMessageType?.template)
 const acceptFileTypes = computed(() => {
   switch (templateEngine.value) {
     case null: return '*/*'
+    case undefined: return '*/*'
     case HtmlTemplateEngine.NONE: return '.html'
     case HtmlTemplateEngine.FREEMARKER: return '.ftl, .ftlh'
     default: throw Error(`Unsupported template engine: ${templateEngine.value}`)

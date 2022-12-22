@@ -27,8 +27,8 @@ task<Copy>("copyWebUiArtifactToResources") {
 task<Exec>("buildWebUiArtifact") {
     workingDir("../admin-client-ui")
 
-    commandLine("yarn", "quasar", "clean")
-    commandLine("yarn", "quasar", "build")
+    commandLine("yarn", "clean")
+    commandLine("yarn", "build")
 }
 
 tasks.clean {

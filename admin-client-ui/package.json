@@ -6,6 +6,7 @@
   "author": "Alaksiej Ščarbaty <hahaha.funny.yellow.dog@gmail.com>",
   "private": true,
   "scripts": {
+    "clean": "quasar clean",
     "dev": "quasar dev",
     "lint": "eslint --ext .js,.ts,.vue ./",
     "format": "prettier --write \"**/*.{js,ts,vue,scss,html,md,json}\" --ignore-path .gitignore",

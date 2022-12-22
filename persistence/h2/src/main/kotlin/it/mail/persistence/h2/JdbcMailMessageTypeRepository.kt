@@ -147,7 +147,7 @@ class JdbcMailMessageTypeRepository(
                     mailMessageType.createdAt,
                     mailMessageType.updatedAt,
                     mailMessageType.contentType,
-                    (mailMessageType as? HtmlMailMessageType)?.templateEngine,
+                    (mailMessageType as? HtmlMailMessageType)?.templateEngine?.name,
                     (mailMessageType as? HtmlMailMessageType)?.template,
                 )
             }

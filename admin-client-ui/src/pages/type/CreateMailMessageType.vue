@@ -17,7 +17,6 @@ const router = useRouter()
 
 async function create(type: MailMessageType) {
   const createdType = await mailMessageTypeClient.create(type)
-  // todo doesn't work
   await router.push(`/types/${createdType.id}`)
 }
 </script>
