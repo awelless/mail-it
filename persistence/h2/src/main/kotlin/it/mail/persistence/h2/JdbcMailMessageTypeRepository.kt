@@ -171,7 +171,7 @@ class JdbcMailMessageTypeRepository(
                 mailMessageType.description,
                 mailMessageType.maxRetriesCount,
                 mailMessageType.updatedAt,
-                (mailMessageType as? HtmlMailMessageType)?.templateEngine,
+                (mailMessageType as? HtmlMailMessageType)?.templateEngine?.name,
                 (mailMessageType as? HtmlMailMessageType)?.template,
                 mailMessageType.id,
             )

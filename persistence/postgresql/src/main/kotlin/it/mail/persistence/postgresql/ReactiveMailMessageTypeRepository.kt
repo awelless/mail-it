@@ -132,7 +132,7 @@ class ReactiveMailMessageTypeRepository(
             mailMessageType.createdAt.toLocalDateTime(),
             mailMessageType.updatedAt.toLocalDateTime(),
             mailMessageType.contentType,
-            (mailMessageType as? HtmlMailMessageType)?.templateEngine,
+            (mailMessageType as? HtmlMailMessageType)?.templateEngine?.name,
             (mailMessageType as? HtmlMailMessageType)?.template,
         )
 
@@ -151,7 +151,7 @@ class ReactiveMailMessageTypeRepository(
             mailMessageType.description,
             mailMessageType.maxRetriesCount,
             mailMessageType.updatedAt.toLocalDateTime(),
-            (mailMessageType as? HtmlMailMessageType)?.templateEngine,
+            (mailMessageType as? HtmlMailMessageType)?.templateEngine?.name,
             (mailMessageType as? HtmlMailMessageType)?.template,
             mailMessageType.id,
         )
