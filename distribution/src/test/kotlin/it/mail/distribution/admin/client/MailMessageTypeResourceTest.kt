@@ -11,6 +11,7 @@ import it.mail.admin.client.http.PAGE_PARAM
 import it.mail.admin.client.http.SIZE_PARAM
 import it.mail.admin.client.http.dto.MailMessageTypeCreateDto
 import it.mail.admin.client.http.dto.MailMessageTypeUpdateDto
+import it.mail.admin.client.security.UserCredentials
 import it.mail.core.admin.api.type.MailMessageContentType
 import it.mail.core.model.MailMessageType
 import it.mail.core.model.MailMessageTypeState.DELETED
@@ -40,6 +41,8 @@ class MailMessageTypeResourceTest {
     private val maxRetriesCountPath = "maxRetriesCount"
 
     @Inject
+    lateinit var userCredentials: UserCredentials
+    @Inject
     lateinit var mailMessageTypeRepository: MailMessageTypeRepository
 
     lateinit var mailType: MailMessageType
@@ -54,7 +57,9 @@ class MailMessageTypeResourceTest {
 
     @Test
     fun getById() {
-        When {
+        Given {
+            auth().preemptive().basic(userCredentials.username, String(userCredentials.password))
+        } When {
             get(mailTypeUrl, mailType.id)
         } Then {
             statusCode(OK)
@@ -63,7 +68,7 @@ class MailMessageTypeResourceTest {
                 idPath, equalTo(mailType.id.toInt()),
                 namePath, equalTo(mailType.name),
                 descriptionPath, equalTo(mailType.description),
-                maxRetriesCountPath, equalTo(mailType.maxRetriesCount)
+                maxRetriesCountPath, equalTo(mailType.maxRetriesCount),
             )
         }
     }
@@ -73,6 +78,8 @@ class MailMessageTypeResourceTest {
         Given {
             param(PAGE_PARAM, 0)
             param(SIZE_PARAM, 10)
+
+            auth().preemptive().basic(userCredentials.username, String(userCredentials.password))
         } When {
             get(mailTypesUrl)
         } Then {
@@ -89,14 +96,16 @@ class MailMessageTypeResourceTest {
                 "page", equalTo(0),
                 "size", equalTo(10),
 
-                "last", equalTo(true)
+                "last", equalTo(true),
             )
         }
     }
 
     @Test
     fun `getAllSliced with no page and size - uses default`() {
-        When {
+        Given {
+            auth().preemptive().basic(userCredentials.username, String(userCredentials.password))
+        } When {
             get(mailTypesUrl)
         } Then {
             statusCode(OK)
@@ -111,7 +120,7 @@ class MailMessageTypeResourceTest {
                 "page", equalTo(DEFAULT_PAGE),
                 "size", equalTo(DEFAULT_SIZE),
 
-                "last", equalTo(true)
+                "last", equalTo(true),
             )
         }
     }
@@ -128,6 +137,8 @@ class MailMessageTypeResourceTest {
         Given {
             contentType(JSON)
             body(createDto)
+
+            auth().preemptive().basic(userCredentials.username, String(userCredentials.password))
         } When {
             post(mailTypesUrl)
         } Then {
@@ -151,6 +162,8 @@ class MailMessageTypeResourceTest {
         Given {
             contentType(JSON)
             body(updateDto)
+
+            auth().preemptive().basic(userCredentials.username, String(userCredentials.password))
         } When {
             put(mailTypeUrl, mailType.id)
         } Then {
@@ -165,7 +178,9 @@ class MailMessageTypeResourceTest {
 
     @Test
     suspend fun delete_marksAsDeleted() {
-        When {
+        Given {
+            auth().preemptive().basic(userCredentials.username, String(userCredentials.password))
+        } When {
             delete(mailTypeUrl, mailType.id)
         } Then {
             statusCode(ACCEPTED)
@@ -178,7 +193,9 @@ class MailMessageTypeResourceTest {
 
     @Test
     suspend fun delete_force_marksAsForceDeleted() {
-        When {
+        Given {
+            auth().preemptive().basic(userCredentials.username, String(userCredentials.password))
+        } When {
             delete(mailTypeForceDeleteUrl, mailType.id)
         } Then {
             statusCode(ACCEPTED)

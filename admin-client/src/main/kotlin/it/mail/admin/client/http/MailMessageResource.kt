@@ -2,14 +2,17 @@ package it.mail.admin.client.http
 
 import it.mail.admin.client.http.dto.AdminSlicedMailDto
 import it.mail.admin.client.http.dto.IdNameDto
+import it.mail.admin.client.security.Roles.ADMIN
 import it.mail.core.admin.api.mail.AdminMailMessageService
 import it.mail.core.model.MailMessage
 import it.mail.core.model.Slice
+import javax.annotation.security.RolesAllowed
 import javax.ws.rs.GET
 import javax.ws.rs.Path
 import javax.ws.rs.QueryParam
 
 @Path("/api/admin/mails")
+@RolesAllowed(ADMIN)
 class MailMessageResource(
     private val mailMessageService: AdminMailMessageService,
 ) {

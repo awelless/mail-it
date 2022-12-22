@@ -4,10 +4,12 @@ import it.mail.admin.client.http.dto.MailMessageTypeCreateDto
 import it.mail.admin.client.http.dto.MailMessageTypeUpdateDto
 import it.mail.admin.client.http.dto.PagedMailMessageTypeResponseDto
 import it.mail.admin.client.http.dto.SingleMailMessageTypeResponseDto
+import it.mail.admin.client.security.Roles.ADMIN
 import it.mail.core.admin.api.type.CreateMailMessageTypeCommand
 import it.mail.core.admin.api.type.MailMessageTypeService
 import it.mail.core.admin.api.type.UpdateMailMessageTypeCommand
 import it.mail.core.model.Slice
+import javax.annotation.security.RolesAllowed
 import javax.ws.rs.DELETE
 import javax.ws.rs.GET
 import javax.ws.rs.POST
@@ -20,6 +22,7 @@ import org.jboss.resteasy.reactive.RestResponse.StatusCode.ACCEPTED
 import org.jboss.resteasy.reactive.RestResponse.StatusCode.CREATED
 
 @Path("/api/admin/mails/types")
+@RolesAllowed(ADMIN)
 class MailMessageTypeResource(
     private val mailMessageTypeService: MailMessageTypeService,
     private val mailMessageTypeDtoMapper: ResponseMailMessageTypeDtoMapper,

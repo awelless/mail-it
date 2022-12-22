@@ -7,6 +7,7 @@ dependencies {
 
     implementation("io.quarkus:quarkus-resteasy-reactive")
     implementation("io.quarkus:quarkus-resteasy-reactive-jackson")
+    implementation("io.quarkus:quarkus-security")
 }
 
 allOpen {

@@ -1,3 +1,10 @@
 quarkus:
   http:
+    auth:
+      basic: true
     cors: true
+
+admin:
+  client:
+    username: ${ADMIN_CLIENT_USERNAME:username}
+    password: ${ADMIN_CLIENT_PASSWORD:password}

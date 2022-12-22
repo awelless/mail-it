@@ -6,6 +6,7 @@ import io.restassured.module.kotlin.extensions.Then
 import io.restassured.module.kotlin.extensions.When
 import it.mail.admin.client.http.PAGE_PARAM
 import it.mail.admin.client.http.SIZE_PARAM
+import it.mail.admin.client.security.UserCredentials
 import it.mail.core.model.MailMessage
 import it.mail.core.spi.MailMessageRepository
 import it.mail.core.spi.MailMessageTypeRepository
@@ -23,6 +24,8 @@ class MailMessageResourceTest {
 
     private val mailsUrl = "/api/admin/mails"
 
+    @Inject
+    lateinit var userCredentials: UserCredentials
     @Inject
     lateinit var mailMessageTypeRepository: MailMessageTypeRepository
 
@@ -51,6 +54,8 @@ class MailMessageResourceTest {
         Given {
             param(PAGE_PARAM, 0)
             param(SIZE_PARAM, 10)
+
+            auth().preemptive().basic(userCredentials.username, String(userCredentials.password))
         } When {
             get(mailsUrl)
         } Then {
