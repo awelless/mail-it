@@ -3,7 +3,7 @@
     :model-value='slice.page + 1'
     :max='maxPage'
     direction-links
-    @update:model-value='fetchFunction'
+    @update:model-value='updateFunction'
   />
 </template>
 
@@ -16,13 +16,11 @@ const props = defineProps<{
   fetchFunction: (page: number) => Promise<void>,
 }>()
 
-const maxPage = computed(() => {
-  if (props.slice.page == 0 && props.slice.content) {
-    return 1
-  }
+const maxPage = computed(() => props.slice.page + 1 + (props.slice.last ? 0 : 1))
 
-  return props.slice.page + 1 + (props.slice.last ? 0 : 1)
-})
+async function updateFunction(page: number) {
+  await props.fetchFunction(page - 1)
+}
 </script>
 
 <style scoped></style>
