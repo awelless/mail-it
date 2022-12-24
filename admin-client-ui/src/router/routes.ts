@@ -23,12 +23,9 @@ const routes: RouteRecordRaw[] = [
     component: () => import('pages/type/EditMailMessageType.vue'),
     props: true,
   },
-
-  // Always leave this as last one,
-  // but you can also remove it
   {
     path: '/:catchAll(.*)*',
-    component: () => import('pages/ErrorNotFound.vue'),
+    redirect: '/',
   },
 ]
 

@@ -18,7 +18,10 @@ import { useRouter } from 'vue-router'
 import { api } from 'boot/axios'
 import { useQuasar } from 'quasar'
 
+const router = useRouter()
 const quasar = useQuasar()
+
+const user = userStore()
 
 const username = ref<string>('')
 const password = ref<string>('')
@@ -27,14 +30,14 @@ async function login() {
   const loginResult = await authClient.login(username.value, password.value)
 
   if (loginResult.success) {
-    userStore().$patch({ user: loginResult.user })
+    user.$patch({ user: loginResult.user })
 
     api.defaults.auth = {
       username: username.value,
       password: password.value,
     }
 
-    await useRouter().push('/')
+    await router.push('/')
   } else {
     quasar.notify({
       type: 'negative',
