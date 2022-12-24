@@ -18,8 +18,8 @@ class ExternalMailMessageServiceImpl(
     companion object : KLogging()
 
     override suspend fun createNewMail(command: CreateMailCommand): MailMessage {
-        val messageType = mailMessageTypeRepository.findById(command.mailMessageTypeId)
-            ?: throw ValidationException("Invalid type: ${command.mailMessageTypeId} is passed")
+        val messageType = mailMessageTypeRepository.findByName(command.mailType)
+            ?: throw ValidationException("Invalid type: ${command.mailType} is passed")
 
         validateBeforeCreate(command.emailFrom, command.emailTo)
 

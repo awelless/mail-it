@@ -52,7 +52,7 @@ class HttpConnectorTest {
             subject = "Greeting",
             emailFrom = "yoshito@gmail.com",
             emailTo = "makise@gmail.com",
-            mailMessageTypeId = mailType.id,
+            mailType = mailType.name,
         )
 
         val messageId: Int = Given {
@@ -83,7 +83,7 @@ class HttpConnectorTest {
             subject = "Purchase receipt",
             emailFrom = "yoshito@gmail.com",
             emailTo = "makise@gmail.com",
-            mailMessageTypeId = mailType.id,
+            mailType = mailType.name,
         )
 
         val messageId: Int = Given {
@@ -132,7 +132,7 @@ class HttpConnectorTest {
             subject = "Greeting",
             emailFrom = "yoshito@gmail.com",
             emailTo = "makise@gmail.com",
-            mailMessageTypeId = 999999,
+            mailType = "invalid",
         )
 
         Given {
@@ -143,7 +143,7 @@ class HttpConnectorTest {
         } Then {
             statusCode(BAD_REQUEST)
 
-            body("errorMessage", equalTo("Invalid type: ${createMailDto.mailMessageTypeId} is passed"))
+            body("errorMessage", equalTo("Invalid type: ${createMailDto.mailType} is passed"))
         }
     }
 }

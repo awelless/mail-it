@@ -13,5 +13,5 @@ data class CreateMailCommand(
     val subject: String?,
     val emailFrom: String?,
     val emailTo: String,
-    val mailMessageTypeId: Long, // todo replace with mail type name?
+    val mailType: String,
 )

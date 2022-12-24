@@ -56,11 +56,11 @@ class ExternalMailMessageServiceImplTest {
             subject = "subject",
             emailFrom = "from@gmail.com",
             emailTo = "to@mail.com",
-            mailMessageTypeId = mailType.id
+            mailType = mailType.name,
         )
 
-        coEvery { mailMessageTypeRepository.findById(mailType.id) }.returns(mailType)
-        coEvery { mailMessageRepository.create(capture(mailMessageSlot)) }.returns(createMailMessage(mailType))
+        coEvery { mailMessageTypeRepository.findByName(mailType.name) } returns mailType
+        coEvery { mailMessageRepository.create(capture(mailMessageSlot)) } returns createMailMessage(mailType)
 
         // when
         mailMessageService.createNewMail(command)
@@ -85,10 +85,10 @@ class ExternalMailMessageServiceImplTest {
             subject = "subject",
             emailFrom = "from@gmail.com",
             emailTo = "to@mail.com",
-            mailMessageTypeId = 999,
+            mailType = "invalid",
         )
 
-        coEvery { mailMessageTypeRepository.findById(command.mailMessageTypeId) }.returns(null)
+        coEvery { mailMessageTypeRepository.findByName(command.mailType) } returns null
 
         assertThrows<ValidationException> { mailMessageService.createNewMail(command) }
 
@@ -109,7 +109,7 @@ class ExternalMailMessageServiceImplTest {
             subject = subject,
             emailFrom = emailFrom,
             emailTo = emailTo,
-            mailMessageTypeId = 1,
+            mailType = "123",
         )
 
         val exception = assertThrows<ValidationException> {
