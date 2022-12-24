@@ -28,6 +28,6 @@ class AuthenticationResource(
 
     companion object {
         private const val USERNAME_PARAM = "username"
-        private const val PASSWORD_PARAM = "username"
+        private const val PASSWORD_PARAM = "password"
     }
 }

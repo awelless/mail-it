@@ -10,7 +10,7 @@
       </q-toolbar>
     </q-header>
 
-    <q-drawer show-if-above bordered>
+    <q-drawer v-if='user.user' show-if-above bordered>
       <q-list>
         <q-item clickable to='/'>
           <q-item-section>
@@ -27,10 +27,16 @@
 
     <q-page-container>
       <q-page padding>
-        <router-view />
+        <router-view v-if='user.user' />
+        <LoginPage v-else />
       </q-page>
     </q-page-container>
   </q-layout>
 </template>
 
-<script setup lang='ts'></script>
+<script setup lang='ts'>
+import { userStore } from 'stores/userStore'
+import LoginPage from 'pages/LoginPage.vue'
+
+const user = userStore()
+</script>
