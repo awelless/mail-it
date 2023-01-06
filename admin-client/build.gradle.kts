@@ -25,7 +25,15 @@ task<Copy>("copyWebUiArtifactToResources") {
     into("src/main/resources/META-INF/resources")
 }
 
+task<Exec>("installWebUiDependencies") {
+    workingDir("../admin-client-ui")
+
+    commandLine("yarn", "install")
+}
+
 task<Exec>("buildWebUiArtifact") {
+    dependsOn("installWebUiDependencies")
+
     workingDir("../admin-client-ui")
 
     commandLine("yarn", "clean")
