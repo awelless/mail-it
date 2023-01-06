@@ -1,8 +1,10 @@
 package it.mail.admin.client.http.dto
 
+import io.quarkus.runtime.annotations.RegisterForReflection
 import it.mail.core.admin.api.type.MailMessageContentType
 import it.mail.core.model.HtmlTemplateEngine
 
+@RegisterForReflection
 data class PagedMailMessageTypeResponseDto(
     val id: String,
     val name: String,
@@ -11,6 +13,7 @@ data class PagedMailMessageTypeResponseDto(
     val contentType: MailMessageContentType,
 )
 
+@RegisterForReflection
 data class SingleMailMessageTypeResponseDto(
     val id: String,
     val name: String,
