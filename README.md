@@ -2,13 +2,13 @@
 
 Open source e-mail service featuring template management and processing
 
-## Building Mail-it
+## Building mail-it
 
 ### Requirements
 - JDK 17
 - Kotlin 1.7.21
 - GraalVM 22.3.0 (for native build only)
-- Node.js and [yarn](https://yarnpkg.com/getting-started/install)
+- Node.js 16.15.0 and [yarn](https://yarnpkg.com/getting-started/install)
 
 ### Building artifact
 
