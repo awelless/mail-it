@@ -17,7 +17,7 @@ To build the artifact run the following command:
 ./gradlew clean distribution:build -Dquarkus.package.type=${PACKAGE_TYPE} -PdatabaseProvider=${DATABASE_PROVIDER} -Pconnectors=${CONNECTORS}
 ```
 
-To skip tests replace `distribution:build` step with `distribution:assemble`
+To skip tests replace `distribution:build` with `distribution:assemble`
 
 | Variable name     | Description                                                                                                |
 |-------------------|------------------------------------------------------------------------------------------------------------|
@@ -25,7 +25,6 @@ To skip tests replace `distribution:build` step with `distribution:assemble`
 | DATABASE_PROVIDER | Database that will be used be this application. Possible values are `h2` (set by default) and `postgresql` |
 | CONNECTORS        | List of connectors for this application. Only `http` is supported (set by default)                         |
 
-Please, not that `h2` database runs in embedded mode only, thus all data is lost on each application restart, so this mode is appropriate only for dev purposes.
-Also, `native` packaging doesn't support `h2` database 
+Please, not that `h2` database runs in embedded mode only, thus all data is lost on every application restart, so this mode is appropriate only for dev purposes. Also, `native` packaging doesn't support `h2` database 
 
 Resulting artifact path is `distribution/build/mail-it-VERSION-runner.jar` in case of `uber-jar` or `distribution/build/mail-it-VERSION-runner` in case of `native` 
