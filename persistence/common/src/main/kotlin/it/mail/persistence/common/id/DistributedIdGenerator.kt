@@ -24,7 +24,7 @@ class DistributedIdGenerator(
 
         private const val MAX_SEQUENCE_VALUE = 1L shl SEQUENCE_BITS - 1
 
-        private const val EPOCH_START = 1640995200000 // 2022-01-01 00:00:00 UTC
+        private const val EPOCH_START = 1672531200000 // 2023-01-01 00:00:00 UTC
     }
 
     private val idSequence = AtomicReference(IdSequence(0))

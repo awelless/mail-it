@@ -22,7 +22,7 @@ import MailMessageType, { MailMessageContentType } from 'src/models/MailMessageT
 import mailMessageTypeClient from 'src/client/mailMessageTypeClient'
 
 const props = defineProps<{
-  id: number
+  id: string
 }>()
 
 const type = ref<MailMessageType | null>(null)

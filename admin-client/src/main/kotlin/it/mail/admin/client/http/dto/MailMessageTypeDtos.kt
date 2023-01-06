@@ -4,7 +4,7 @@ import it.mail.core.admin.api.type.MailMessageContentType
 import it.mail.core.model.HtmlTemplateEngine
 
 data class PagedMailMessageTypeResponseDto(
-    val id: Long,
+    val id: String,
     val name: String,
     val description: String?,
     val maxRetriesCount: Int?,
@@ -12,7 +12,7 @@ data class PagedMailMessageTypeResponseDto(
 )
 
 data class SingleMailMessageTypeResponseDto(
-    val id: Long,
+    val id: String,
     val name: String,
     val description: String?,
     val maxRetriesCount: Int?,

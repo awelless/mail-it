@@ -1,7 +1,7 @@
 import IdName from 'src/models/IdName'
 
 export default interface MailMessage {
-  id: number
+  id: string
   emailFrom?: string
   emailTo: string
   /**

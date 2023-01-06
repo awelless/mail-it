@@ -23,7 +23,7 @@ import { useRouter } from 'vue-router'
 const router = useRouter()
 
 const props = defineProps<{
-  id: number
+  id: string
 }>()
 
 const type = ref<MailMessageType | null>(null)

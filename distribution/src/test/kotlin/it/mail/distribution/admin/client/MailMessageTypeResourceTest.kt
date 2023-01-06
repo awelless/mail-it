@@ -65,7 +65,7 @@ class MailMessageTypeResourceTest {
             statusCode(OK)
 
             body(
-                idPath, equalTo(mailType.id.toInt()),
+                idPath, equalTo(mailType.id.toString()),
                 namePath, equalTo(mailType.name),
                 descriptionPath, equalTo(mailType.description),
                 maxRetriesCountPath, equalTo(mailType.maxRetriesCount),
@@ -88,7 +88,7 @@ class MailMessageTypeResourceTest {
             body(
                 "content.size()", equalTo(1),
 
-                "content[0].$idPath", equalTo(mailType.id.toInt()),
+                "content[0].$idPath", equalTo(mailType.id.toString()),
                 "content[0].$namePath", equalTo(mailType.name),
                 "content[0].$descriptionPath", equalTo(mailType.description),
                 "content[0].$maxRetriesCountPath", equalTo(mailType.maxRetriesCount),
@@ -112,7 +112,7 @@ class MailMessageTypeResourceTest {
             body(
                 "content.size()", equalTo(1),
 
-                "content[0].$idPath", equalTo(mailType.id.toInt()),
+                "content[0].$idPath", equalTo(mailType.id.toString()),
                 "content[0].$namePath", equalTo(mailType.name),
                 "content[0].$descriptionPath", equalTo(mailType.description),
                 "content[0].$maxRetriesCountPath", equalTo(mailType.maxRetriesCount),

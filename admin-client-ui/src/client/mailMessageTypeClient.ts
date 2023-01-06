@@ -2,7 +2,7 @@ import MailMessageType from 'src/models/MailMessageType'
 import { api } from 'boot/axios'
 import Slice from 'src/models/Slice'
 
-async function getById(id: number): Promise<MailMessageType> {
+async function getById(id: string): Promise<MailMessageType> {
   const { data, status } = await api.get<MailMessageType>(`/mails/types/${id}`)
 
   if (status != 200) {

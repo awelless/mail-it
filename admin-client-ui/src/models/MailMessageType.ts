@@ -1,5 +1,5 @@
 export default interface MailMessageType {
-  id: number
+  id: string
   name: string
   description?: string
   maxRetriesCount?: number

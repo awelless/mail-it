@@ -4,8 +4,7 @@ import it.mail.core.model.MailMessageStatus
 import java.time.Instant
 
 data class AdminSlicedMailDto(
-
-    val id: Long,
+    val id: String,
     val emailFrom: String?,
     val emailTo: String,
     val type: IdNameDto,

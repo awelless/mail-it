@@ -27,10 +27,10 @@ class MailMessageResource(
     }
 
     private fun MailMessage.toDto() = AdminSlicedMailDto(
-        id = id,
+        id = id.toString(),
         emailFrom = emailFrom,
         emailTo = emailTo,
-        type = IdNameDto(type.id, type.name),
+        type = IdNameDto(type.id.toString(), type.name),
         createdAt = createdAt,
         sendingStartedAt = sendingStartedAt,
         sentAt = sentAt,
