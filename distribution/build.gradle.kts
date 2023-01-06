@@ -1,5 +1,11 @@
+import io.quarkus.gradle.extension.QuarkusPluginExtension
+
 apply {
     plugin("io.quarkus")
+}
+
+extensions.getByType<QuarkusPluginExtension>().apply {
+    finalName.set("mail-it-${project.version}")
 }
 
 val freemarkerVersion: String by project

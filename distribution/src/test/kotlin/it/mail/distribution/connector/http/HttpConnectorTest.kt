@@ -55,7 +55,7 @@ class HttpConnectorTest {
             mailType = mailType.name,
         )
 
-        val messageId: Int = Given {
+        val messageId: Number = Given {
             contentType(JSON)
             body(createMailDto)
         } When {
@@ -86,7 +86,7 @@ class HttpConnectorTest {
             mailType = mailType.name,
         )
 
-        val messageId: Int = Given {
+        val messageId: Number = Given {
             contentType(JSON)
             body(createMailDto)
         } When {
