@@ -28,7 +28,7 @@ task<Copy>("copyWebUiArtifactToResources") {
 task<Exec>("installWebUiDependencies") {
     workingDir("../admin-client-ui")
 
-    commandLine("yarn", "install")
+    commandLine("npm", "install")
 }
 
 task<Exec>("buildWebUiArtifact") {
@@ -36,8 +36,8 @@ task<Exec>("buildWebUiArtifact") {
 
     workingDir("../admin-client-ui")
 
-    commandLine("yarn", "clean")
-    commandLine("yarn", "build")
+    commandLine("npm", "run", "clean")
+    commandLine("npm", "run", "build")
 }
 
 tasks.clean {

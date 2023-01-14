@@ -8,7 +8,7 @@ Open source e-mail service featuring template management and processing
 - JDK 17
 - Kotlin 1.7.21
 - GraalVM 22.3.0 (for native build only)
-- Node.js 18 and [yarn](https://yarnpkg.com/getting-started/install)
+- Node.js 18
 - Docker (for tests only)
 
 ### Building artifact
