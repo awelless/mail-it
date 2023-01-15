@@ -1,3 +1,5 @@
+import org.apache.tools.ant.taskdefs.condition.Os
+
 plugins {
     id("org.jetbrains.kotlin.plugin.allopen")
 }
@@ -25,10 +27,12 @@ task<Copy>("copyWebUiArtifactToResources") {
     into("src/main/resources/META-INF/resources")
 }
 
+val npmCommand = if (Os.isFamily(Os.FAMILY_WINDOWS)) "npm.cmd" else "npm"
+
 task<Exec>("installWebUiDependencies") {
     workingDir("../admin-client-ui")
 
-    commandLine("npm", "install")
+    commandLine(npmCommand, "install")
 }
 
 task<Exec>("buildWebUiArtifact") {
@@ -36,8 +40,8 @@ task<Exec>("buildWebUiArtifact") {
 
     workingDir("../admin-client-ui")
 
-    commandLine("npm", "run", "clean")
-    commandLine("npm", "run", "build")
+    commandLine(npmCommand, "run", "clean")
+    commandLine(npmCommand, "run", "build")
 }
 
 tasks.clean {
