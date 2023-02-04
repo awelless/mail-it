@@ -32,7 +32,8 @@ private const val FIND_BY_ID_SQL = """
            template_engine mt_template_engine,
            template mt_template
       FROM mail_message_type
-     WHERE mail_message_type_id = ?"""
+     WHERE mail_message_type_id = ?
+       AND state = 'ENABLED'"""
 
 private const val FIND_BY_NAME_SQL = """
     SELECT mail_message_type_id mt_mail_message_type_id,
@@ -46,7 +47,8 @@ private const val FIND_BY_NAME_SQL = """
            template_engine mt_template_engine,
            template mt_template
       FROM mail_message_type
-     WHERE name = ?"""
+     WHERE name = ?
+       AND state = 'ENABLED'"""
 
 private const val FIND_ALL_SLICED_SQL = """
     SELECT mail_message_type_id mt_mail_message_type_id,
@@ -60,6 +62,7 @@ private const val FIND_ALL_SLICED_SQL = """
            template_engine mt_template_engine,
            template mt_template
       FROM mail_message_type
+     WHERE state = 'ENABLED'
      ORDER BY mt_mail_message_type_id DESC
      LIMIT ? OFFSET ?"""
 
