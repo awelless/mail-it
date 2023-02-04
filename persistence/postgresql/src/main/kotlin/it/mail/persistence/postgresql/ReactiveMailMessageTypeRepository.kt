@@ -169,7 +169,7 @@ class ReactiveMailMessageTypeRepository(
     }
 
     override suspend fun updateState(id: Long, state: MailMessageTypeState, updatedAt: Instant): Int =
-        client.preparedQuery(UPDATE_STATE_SQL).execute(Tuple.of(state, updatedAt, id))
+        client.preparedQuery(UPDATE_STATE_SQL).execute(Tuple.of(state.name, updatedAt, id))
             .onItem().transform { it.rowCount() }
             .awaitSuspending()
 

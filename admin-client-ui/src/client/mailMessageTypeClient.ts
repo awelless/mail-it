@@ -40,9 +40,20 @@ async function update(type: MailMessageType): Promise<void> {
   }
 }
 
+async function deleteType(id: string, force: boolean): Promise<void> {
+  const { data, status } = await api.delete(`/mails/types/${id}`, {
+    params: { force },
+  })
+
+  if (status != 202) {
+    throw Error(`Failed to delete MailMessageType: ${JSON.stringify(data)}`)
+  }
+}
+
 export default {
   getById,
   getAllSliced,
   create,
   update,
+  deleteType,
 }

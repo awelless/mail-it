@@ -81,10 +81,6 @@ class MailMessageTypeResource(
     @ResponseStatus(ACCEPTED)
     @DELETE
     @Path("/{id}")
-    suspend fun delete(@PathParam("id") id: Long) = mailMessageTypeService.deleteMailType(id, false)
-
-    @ResponseStatus(ACCEPTED)
-    @DELETE
-    @Path("/{id}/force")
-    suspend fun forceDelete(@PathParam("id") id: Long) = mailMessageTypeService.deleteMailType(id, true)
+    suspend fun delete(@PathParam("id") id: Long, @QueryParam("force") force: Boolean?) =
+        mailMessageTypeService.deleteMailType(id, force ?: false)
 }

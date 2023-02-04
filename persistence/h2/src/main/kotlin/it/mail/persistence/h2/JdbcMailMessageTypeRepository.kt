@@ -189,7 +189,7 @@ class JdbcMailMessageTypeRepository(
         dataSource.connection.use {
             queryRunner.update(
                 it, UPDATE_STATE_SQL,
-                state,
+                state.name,
                 updatedAt,
                 id
             )
