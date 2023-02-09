@@ -1,5 +1,3 @@
-val freemarkerVersion: String by project
-
 dependencies {
     implementation(project(":core:admin-api"))
     implementation(project(":core:connector-api"))
@@ -7,16 +5,14 @@ dependencies {
     implementation(project(":core:model"))
     implementation(project(":core:spi"))
 
+    implementation("io.github.microutils:kotlin-logging-jvm")
+
+    implementation("io.quarkus:quarkus-config-yaml")
+    implementation("io.quarkus:quarkus-kotlin")
     implementation("io.quarkus:quarkus-mailer")
     implementation("io.quarkus:quarkus-quartz")
 
-    implementation("io.smallrye.reactive:mutiny-kotlin")
-
-    implementation("org.freemarker:freemarker:$freemarkerVersion")
+    implementation("org.freemarker:freemarker")
 
     testImplementation(project(":common-test"))
-}
-
-tasks.withType<Test> {
-    useJUnitPlatform()
 }

@@ -5,10 +5,15 @@ plugins {
     kotlin("plugin.allopen") apply false
 
     id("io.quarkus") apply false
+    id("org.kordamp.gradle.jandex") apply false
 
     id("org.jlleitschuh.gradle.ktlint") apply false
 
-    id("org.kordamp.gradle.jandex") apply false
+    id("io.spring.dependency-management") apply true
+}
+
+repositories {
+    mavenCentral()
 }
 
 subprojects {
@@ -16,30 +21,53 @@ subprojects {
         plugin("org.jetbrains.kotlin.jvm")
         plugin("org.jlleitschuh.gradle.ktlint")
         plugin("org.kordamp.gradle.jandex")
+        plugin("io.spring.dependency-management")
     }
 
     repositories {
         mavenCentral()
-        mavenLocal()
     }
 
     group = "it.mail"
     version = "0.1.0"
 
-    val kotlinLoggingVersion: String by project
-    val quarkusVersion: String by project
+    val dbUtilsVersion = "1.7" // https://mvnrepository.com/artifact/commons-dbutils/commons-dbutils
+    val freemarkerVersion = "2.3.31" // https://mvnrepository.com/artifact/org.freemarker/freemarker
+    val jsoupVersion = "1.15.3" // https://mvnrepository.com/artifact/org.jsoup/jsoup
+    val kotlinLoggingVersion = "3.0.4" // https://mvnrepository.com/artifact/io.github.microutils/kotlin-logging
+    val kryoVersion = "5.3.0" // https://mvnrepository.com/artifact/com.esotericsoftware/kryo
+    val quarkusVersion = "2.15.1.Final" // https://mvnrepository.com/artifact/io.quarkus.platform/quarkus-bom
+    val restAssuredKotlinExtensionsVersion = "5.3.0" // https://mvnrepository.com/artifact/io.rest-assured/kotlin-extensions
+    val svmVersion = "22.3.0" // https://mvnrepository.com/artifact/org.graalvm.nativeimage/svm
+
+    val mockkVersion = "1.13.3" // https://mvnrepository.com/artifact/io.mockk/mockk
+
+    dependencyManagement {
+        dependencies {
+            // persistence
+            dependency("com.esotericsoftware:kryo:$kryoVersion")
+            dependency("commons-dbutils:commons-dbutils:$dbUtilsVersion")
+
+            // logging
+            dependency("io.github.microutils:kotlin-logging-jvm:$kotlinLoggingVersion")
+
+            // templates
+            dependency("org.freemarker:freemarker:$freemarkerVersion")
+
+            // native
+            dependency("org.graalvm.nativeimage:svm:$svmVersion")
+
+            // tests
+            dependency("io.mockk:mockk:$mockkVersion")
+            dependency("io.rest-assured:kotlin-extensions:$restAssuredKotlinExtensionsVersion")
+            dependency("org.jsoup:jsoup:$jsoupVersion")
+        }
+    }
 
     dependencies {
         implementation(enforcedPlatform("io.quarkus.platform:quarkus-bom:$quarkusVersion"))
 
-        implementation("io.github.microutils:kotlin-logging-jvm:$kotlinLoggingVersion")
-
-        implementation("io.quarkus:quarkus-arc")
-        implementation("io.quarkus:quarkus-config-yaml")
-        implementation("io.quarkus:quarkus-kotlin")
-
-        implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-        implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
+        implementation("org.jetbrains.kotlin:kotlin-stdlib")
     }
 
     java {
@@ -58,6 +86,10 @@ subprojects {
                 languageSettings.optIn("kotlinx.coroutines.ExperimentalCoroutinesApi")
             }
         }
+    }
+
+    tasks.withType<Test> {
+        useJUnitPlatform()
     }
 }
 

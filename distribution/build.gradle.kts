@@ -8,18 +8,17 @@ extensions.getByType<QuarkusPluginExtension>().apply {
     finalName.set("mail-it-${project.version}")
 }
 
-val freemarkerVersion: String by project
-val svmVersion: String by project
-
 dependencies {
-    compileOnly("org.freemarker:freemarker:$freemarkerVersion")
-    compileOnly("org.graalvm.nativeimage:svm:$svmVersion")
+    compileOnly("org.freemarker:freemarker")
+    compileOnly("org.graalvm.nativeimage:svm")
 
     implementation(project(":core:service")) // core implementation
     implementation(project(":admin-client")) // admin web-ui implementation
     databaseProviderImplementation()
     connectorsImplementation()
 
+    implementation("io.quarkus:quarkus-config-yaml")
+    implementation("io.quarkus:quarkus-kotlin")
     implementation("io.quarkus:quarkus-smallrye-health")
 
     testImplementation(project(":common-test"))

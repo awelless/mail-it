@@ -5,6 +5,9 @@ plugins {
 dependencies {
     implementation(project(":core:connector-api"))
 
+    implementation("io.github.microutils:kotlin-logging-jvm")
+
+    implementation("io.quarkus:quarkus-kotlin")
     implementation("io.quarkus:quarkus-resteasy-reactive")
     implementation("io.quarkus:quarkus-resteasy-reactive-jackson")
 }

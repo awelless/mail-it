@@ -7,6 +7,9 @@ dependencies {
     implementation(project(":persistence:common"))
     implementation(project(":persistence:liquibase"))
 
+    implementation("io.quarkus:quarkus-config-yaml")
+    implementation("io.quarkus:quarkus-kotlin")
+
     implementation("io.quarkus:quarkus-jdbc-postgresql")
     implementation("io.quarkus:quarkus-reactive-pg-client")
 

@@ -2,18 +2,13 @@ apply {
     plugin("io.quarkus")
 }
 
-val dbUtilsVersion: String by project
-val kryoVersion: String by project
-
 dependencies {
-    api("commons-dbutils:commons-dbutils:$dbUtilsVersion")
+    api("commons-dbutils:commons-dbutils")
 
     implementation(project(":core:model"))
-    implementation("com.esotericsoftware:kryo:$kryoVersion")
+    implementation("com.esotericsoftware:kryo")
+
+    implementation("io.quarkus:quarkus-kotlin")
 
     testImplementation(project(":common-test"))
-}
-
-tasks.withType<Test> {
-    useJUnitPlatform()
 }

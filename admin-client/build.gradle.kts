@@ -7,6 +7,10 @@ plugins {
 dependencies {
     implementation(project(":core:admin-api"))
 
+    implementation("io.github.microutils:kotlin-logging-jvm")
+
+    implementation("io.quarkus:quarkus-config-yaml")
+    implementation("io.quarkus:quarkus-kotlin")
     implementation("io.quarkus:quarkus-resteasy-reactive")
     implementation("io.quarkus:quarkus-resteasy-reactive-jackson")
     implementation("io.quarkus:quarkus-security")
