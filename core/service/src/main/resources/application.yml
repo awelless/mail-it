@@ -12,6 +12,10 @@ quarkus:
     clustered: false
     store-type: ram
     thread-count: 2 # should be configured according to an amount of scheduled tasks
+  log:
+    category:
+      quarkus-mailer:
+        level: WARN
 
 application:
   database:

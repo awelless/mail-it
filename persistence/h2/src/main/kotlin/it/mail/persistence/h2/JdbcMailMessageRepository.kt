@@ -117,10 +117,17 @@ private const val INSERT_SQL = """
    VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"""
 
 private const val UPDATE_STATUS_SQL = "UPDATE mail_message SET status = ? WHERE mail_message_id = ?"
-private const val UPDATE_STATUS_AND_SENDING_START_SQL = "UPDATE mail_message SET status = ?, sending_started_at = ? WHERE mail_message_id = ? AND status IN (?)"
+
+private const val UPDATE_STATUS_AND_SENDING_START_SQL = """
+    UPDATE mail_message 
+       SET status = ?, 
+           sending_started_at = ? 
+     WHERE mail_message_id = ? 
+       AND status IN (SELECT * FROM TABLE(x VARCHAR = ?))"""
+
 private const val UPDATE_STATUS_AND_SENT_AT_SQL = "UPDATE mail_message SET status = ?, sent_at = ? WHERE mail_message_id = ?"
 
-private const val UPDATE_STATUS_FILED_COUNT_AND_SENDING_START_SQL = """
+private const val UPDATE_STATUS_FAILED_COUNT_AND_SENDING_START_SQL = """
     UPDATE mail_message SET 
         status = ?, 
         failed_count = ?, 
@@ -215,7 +222,7 @@ class JdbcMailMessageRepository(
         dataSource.connection.use {
             queryRunner.update(
                 it, UPDATE_STATUS_SQL,
-                status, id
+                status.name, id
             )
         }
 
@@ -232,7 +239,7 @@ class JdbcMailMessageRepository(
         return dataSource.connection.use {
             queryRunner.update(
                 it, UPDATE_STATUS_AND_SENDING_START_SQL,
-                status, sendingStartedAt, id, it.createArrayOf("VARCHAR", statusNames)
+                status.name, sendingStartedAt, id, statusNames
             )
         }
     }
@@ -241,7 +248,7 @@ class JdbcMailMessageRepository(
         dataSource.connection.use {
             queryRunner.update(
                 it, UPDATE_STATUS_AND_SENT_AT_SQL,
-                status, sentAt, id
+                status.name, sentAt, id
             )
         }
 
@@ -253,8 +260,8 @@ class JdbcMailMessageRepository(
     ): Int =
         dataSource.connection.use {
             queryRunner.update(
-                it, UPDATE_STATUS_FILED_COUNT_AND_SENDING_START_SQL,
-                status, failedCount, sendingStartedAt, id
+                it, UPDATE_STATUS_FAILED_COUNT_AND_SENDING_START_SQL,
+                status.name, failedCount, sendingStartedAt, id
             )
         }
 }
