@@ -132,10 +132,10 @@ private const val UPDATE_STATUS_AND_SENT_AT_SQL = "UPDATE mail_message SET statu
 
 private const val UPDATE_STATUS_FAILED_COUNT_AND_SENDING_START_SQL = """
     UPDATE mail_message SET 
-        status = ?, 
-        failed_count = ?, 
-        sending_started_at = ? 
-    WHERE mail_message_id = ?"""
+        status = $1, 
+        failed_count = $2, 
+        sending_started_at = $3 
+    WHERE mail_message_id = $4"""
 
 class ReactiveMailMessageRepository(
     private val idGenerator: IdGenerator,
@@ -230,13 +230,13 @@ class ReactiveMailMessageRepository(
             .map { it.name }
             .toTypedArray()
 
-        return client.preparedQuery(UPDATE_STATUS_AND_SENDING_START_SQL).execute(Tuple.of(status.name, sendingStartedAt, id, statusNames))
+        return client.preparedQuery(UPDATE_STATUS_AND_SENDING_START_SQL).execute(Tuple.of(status.name, sendingStartedAt.toLocalDateTime(), id, statusNames))
             .onItem().transform { it.rowCount() }
             .awaitSuspending()
     }
 
     override suspend fun updateMessageStatusAndSentTime(id: Long, status: MailMessageStatus, sentAt: Instant): Int =
-        client.preparedQuery(UPDATE_STATUS_AND_SENT_AT_SQL).execute(Tuple.of(status.name, sentAt, id))
+        client.preparedQuery(UPDATE_STATUS_AND_SENT_AT_SQL).execute(Tuple.of(status.name, sentAt.toLocalDateTime(), id))
             .onItem().transform { it.rowCount() }
             .awaitSuspending()
 
@@ -247,7 +247,7 @@ class ReactiveMailMessageRepository(
         sendingStartedAt: Instant?
     ): Int =
         client.preparedQuery(UPDATE_STATUS_FAILED_COUNT_AND_SENDING_START_SQL)
-            .execute(Tuple.of(status.name, failedCount, sendingStartedAt, id))
+            .execute(Tuple.of(status.name, failedCount, sendingStartedAt?.toLocalDateTime(), id))
             .onItem().transform { it.rowCount() }
             .awaitSuspending()
 }
