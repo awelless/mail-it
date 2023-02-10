@@ -32,7 +32,7 @@ subprojects {
     version = "0.1.0"
 
     val dbUtilsVersion = "1.7" // https://mvnrepository.com/artifact/commons-dbutils/commons-dbutils
-    val freemarkerVersion = "2.3.31" // https://mvnrepository.com/artifact/org.freemarker/freemarker
+    val freemarkerVersion = "2.3.32" // https://mvnrepository.com/artifact/org.freemarker/freemarker
     val jsoupVersion = "1.15.3" // https://mvnrepository.com/artifact/org.jsoup/jsoup
     val kotlinLoggingVersion = "3.0.4" // https://mvnrepository.com/artifact/io.github.microutils/kotlin-logging
     val kryoVersion = "5.3.0" // https://mvnrepository.com/artifact/com.esotericsoftware/kryo
