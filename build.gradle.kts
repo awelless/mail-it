@@ -91,6 +91,10 @@ subprojects {
     tasks.withType<Test> {
         useJUnitPlatform()
     }
+
+    tasks.withType<Jar> {
+        duplicatesStrategy = DuplicatesStrategy.INCLUDE
+    }
 }
 
 task<Copy>("setUpGitHooks") {

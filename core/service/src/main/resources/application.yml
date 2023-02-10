@@ -20,3 +20,8 @@ quarkus:
 application:
   database:
     type: h2
+
+"%test":
+  quarkus:
+    scheduler:
+      enabled: false
