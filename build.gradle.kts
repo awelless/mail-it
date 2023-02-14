@@ -28,7 +28,7 @@ subprojects {
         mavenCentral()
     }
 
-    group = "it.mail"
+    group = "io.mailit"
     version = "0.1.0"
 
     val dbUtilsVersion = "1.7" // https://mvnrepository.com/artifact/commons-dbutils/commons-dbutils
