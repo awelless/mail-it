@@ -80,6 +80,10 @@ subprojects {
         kotlinOptions.javaParameters = true
     }
 
+    tasks.getByName("compileTestKotlin") {
+        dependsOn("jandex")
+    }
+
     kotlin {
         sourceSets {
             test {
