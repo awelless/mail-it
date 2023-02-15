@@ -38,7 +38,7 @@ nb-configuration.xml
 out/
 
 # Client app libs and artifacts
-admin-client-ui/.quasar/
-admin-client-ui/dist/
-admin-client-ui/node_modules/
-admin-client/src/main/resources/META-INF/resources/
+admin-console-ui/.quasar/
+admin-console-ui/dist/
+admin-console-ui/node_modules/
+admin-console/src/main/resources/META-INF/resources/

@@ -27,7 +27,7 @@ pluginManagement {
 rootProject.name = "mail-it"
 
 include(
-    "admin-client",
+    "admin-console",
     "common-test",
     "connector:http",
     "core:admin-api",

@@ -27,14 +27,14 @@ tasks.processResources {
 task<Copy>("copyWebUiArtifactToResources") {
     dependsOn("buildWebUiArtifact")
 
-    from("../admin-client-ui/dist/spa")
+    from("../admin-console-ui/dist/spa")
     into("src/main/resources/META-INF/resources")
 }
 
 val npmCommand = if (Os.isFamily(Os.FAMILY_WINDOWS)) "npm.cmd" else "npm"
 
 task<Exec>("installWebUiDependencies") {
-    workingDir("../admin-client-ui")
+    workingDir("../admin-console-ui")
 
     commandLine(npmCommand, "install")
 }
@@ -42,7 +42,7 @@ task<Exec>("installWebUiDependencies") {
 task<Exec>("buildWebUiArtifact") {
     dependsOn("installWebUiDependencies")
 
-    workingDir("../admin-client-ui")
+    workingDir("../admin-console-ui")
 
     commandLine(npmCommand, "run", "clean")
     commandLine(npmCommand, "run", "build")

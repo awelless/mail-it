@@ -13,7 +13,7 @@ dependencies {
     compileOnly("org.graalvm.nativeimage:svm")
 
     implementation(project(":core:service")) // core implementation
-    implementation(project(":admin-client")) // admin web-ui implementation
+    implementation(project(":admin-console")) // admin console implementation
     databaseProviderImplementation()
     connectorsImplementation()
 
