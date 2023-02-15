@@ -1,12 +1,12 @@
 package io.mailit.distribution.admin.client
 
-import io.mailit.admin.client.http.DEFAULT_PAGE
-import io.mailit.admin.client.http.DEFAULT_SIZE
-import io.mailit.admin.client.http.PAGE_PARAM
-import io.mailit.admin.client.http.SIZE_PARAM
-import io.mailit.admin.client.http.dto.MailMessageTypeCreateDto
-import io.mailit.admin.client.http.dto.MailMessageTypeUpdateDto
-import io.mailit.admin.client.security.UserCredentials
+import io.mailit.admin.console.http.DEFAULT_PAGE
+import io.mailit.admin.console.http.DEFAULT_SIZE
+import io.mailit.admin.console.http.PAGE_PARAM
+import io.mailit.admin.console.http.SIZE_PARAM
+import io.mailit.admin.console.http.dto.MailMessageTypeCreateDto
+import io.mailit.admin.console.http.dto.MailMessageTypeUpdateDto
+import io.mailit.admin.console.security.UserCredentials
 import io.mailit.core.admin.api.type.MailMessageContentType
 import io.mailit.core.model.MailMessageType
 import io.mailit.core.model.MailMessageTypeState.DELETED

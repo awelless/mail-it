@@ -5,6 +5,6 @@ quarkus:
     cors: false
 
 admin:
-  client:
+  console:
     username: ${ADMIN_CLIENT_USERNAME:username}
     password: ${ADMIN_CLIENT_PASSWORD:password}

@@ -1,4 +1,4 @@
-package io.mailit.admin.client.security
+package io.mailit.admin.console.security
 
 import org.eclipse.microprofile.config.spi.Converter
 

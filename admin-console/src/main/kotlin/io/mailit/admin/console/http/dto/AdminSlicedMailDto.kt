@@ -1,4 +1,4 @@
-package io.mailit.admin.client.http.dto
+package io.mailit.admin.console.http.dto
 
 import io.mailit.core.model.MailMessageStatus
 import io.quarkus.runtime.annotations.RegisterForReflection

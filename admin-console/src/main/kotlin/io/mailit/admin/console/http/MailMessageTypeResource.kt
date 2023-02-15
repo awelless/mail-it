@@ -1,10 +1,10 @@
-package io.mailit.admin.client.http
+package io.mailit.admin.console.http
 
-import io.mailit.admin.client.http.dto.MailMessageTypeCreateDto
-import io.mailit.admin.client.http.dto.MailMessageTypeUpdateDto
-import io.mailit.admin.client.http.dto.PagedMailMessageTypeResponseDto
-import io.mailit.admin.client.http.dto.SingleMailMessageTypeResponseDto
-import io.mailit.admin.client.security.Roles.ADMIN
+import io.mailit.admin.console.http.dto.MailMessageTypeCreateDto
+import io.mailit.admin.console.http.dto.MailMessageTypeUpdateDto
+import io.mailit.admin.console.http.dto.PagedMailMessageTypeResponseDto
+import io.mailit.admin.console.http.dto.SingleMailMessageTypeResponseDto
+import io.mailit.admin.console.security.Roles.ADMIN
 import io.mailit.core.admin.api.type.CreateMailMessageTypeCommand
 import io.mailit.core.admin.api.type.MailMessageTypeService
 import io.mailit.core.admin.api.type.UpdateMailMessageTypeCommand

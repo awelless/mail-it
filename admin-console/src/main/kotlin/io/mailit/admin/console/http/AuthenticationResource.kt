@@ -1,6 +1,6 @@
-package io.mailit.admin.client.http
+package io.mailit.admin.console.http
 
-import io.mailit.admin.client.security.UserCredentials
+import io.mailit.admin.console.security.UserCredentials
 import javax.annotation.security.PermitAll
 import javax.ws.rs.POST
 import javax.ws.rs.Path

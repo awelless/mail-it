@@ -1,8 +1,8 @@
-package io.mailit.admin.client.http
+package io.mailit.admin.console.http
 
-import io.mailit.admin.client.http.dto.AdminSlicedMailDto
-import io.mailit.admin.client.http.dto.IdNameDto
-import io.mailit.admin.client.security.Roles.ADMIN
+import io.mailit.admin.console.http.dto.AdminSlicedMailDto
+import io.mailit.admin.console.http.dto.IdNameDto
+import io.mailit.admin.console.security.Roles.ADMIN
 import io.mailit.core.admin.api.mail.AdminMailMessageService
 import io.mailit.core.model.MailMessage
 import io.mailit.core.model.Slice

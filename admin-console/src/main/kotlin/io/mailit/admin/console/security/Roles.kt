@@ -1,4 +1,4 @@
-package io.mailit.admin.client.security
+package io.mailit.admin.console.security
 
 internal object Roles {
     internal const val ADMIN = "admin"

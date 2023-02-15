@@ -1,4 +1,4 @@
-package io.mailit.admin.client.reflection
+package io.mailit.admin.console.reflection
 
 import io.mailit.core.model.Slice
 import io.quarkus.runtime.annotations.RegisterForReflection

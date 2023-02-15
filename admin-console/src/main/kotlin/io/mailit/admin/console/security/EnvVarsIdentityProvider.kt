@@ -1,4 +1,4 @@
-package io.mailit.admin.client.security
+package io.mailit.admin.console.security
 
 import io.quarkus.security.AuthenticationFailedException
 import io.quarkus.security.credential.Credential

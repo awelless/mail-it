@@ -1,4 +1,4 @@
-package io.mailit.admin.client.http
+package io.mailit.admin.console.http
 
 import io.mailit.core.exception.NotFoundException
 import io.mailit.core.exception.ValidationException

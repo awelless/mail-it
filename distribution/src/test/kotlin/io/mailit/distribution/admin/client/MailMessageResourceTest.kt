@@ -1,8 +1,8 @@
 package io.mailit.distribution.admin.client
 
-import io.mailit.admin.client.http.PAGE_PARAM
-import io.mailit.admin.client.http.SIZE_PARAM
-import io.mailit.admin.client.security.UserCredentials
+import io.mailit.admin.console.http.PAGE_PARAM
+import io.mailit.admin.console.http.SIZE_PARAM
+import io.mailit.admin.console.security.UserCredentials
 import io.mailit.core.model.MailMessage
 import io.mailit.core.spi.MailMessageRepository
 import io.mailit.core.spi.MailMessageTypeRepository

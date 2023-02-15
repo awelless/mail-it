@@ -1,4 +1,4 @@
-package io.mailit.admin.client.http
+package io.mailit.admin.console.http
 
 const val PAGE_PARAM = "page"
 const val SIZE_PARAM = "size"
