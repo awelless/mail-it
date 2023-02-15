@@ -2,7 +2,7 @@ quarkus:
   http:
     auth:
       basic: true
-    cors: true
+    cors: false
 
 admin:
   client:
