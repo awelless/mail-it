@@ -2,13 +2,13 @@ package io.mailit.distribution.admin.client
 
 import io.mailit.admin.console.http.PAGE_PARAM
 import io.mailit.admin.console.http.SIZE_PARAM
-import io.mailit.admin.console.security.UserCredentials
 import io.mailit.core.model.MailMessage
 import io.mailit.core.spi.MailMessageRepository
 import io.mailit.core.spi.MailMessageTypeRepository
 import io.mailit.test.createMailMessage
 import io.mailit.test.createPlainMailMessageType
 import io.quarkus.test.junit.QuarkusTest
+import io.quarkus.test.security.TestSecurity
 import io.restassured.module.kotlin.extensions.Given
 import io.restassured.module.kotlin.extensions.Then
 import io.restassured.module.kotlin.extensions.When
@@ -20,12 +20,11 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 @QuarkusTest
+@TestSecurity(authorizationEnabled = false)
 class MailMessageResourceTest {
 
     private val mailsUrl = "/api/admin/mails"
 
-    @Inject
-    lateinit var userCredentials: UserCredentials
     @Inject
     lateinit var mailMessageTypeRepository: MailMessageTypeRepository
 
@@ -54,8 +53,6 @@ class MailMessageResourceTest {
         Given {
             param(PAGE_PARAM, 0)
             param(SIZE_PARAM, 10)
-
-            auth().preemptive().basic(userCredentials.username, String(userCredentials.password))
         } When {
             get(mailsUrl)
         } Then {

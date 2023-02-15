@@ -51,10 +51,11 @@ The service is configured via environment variables. List of all possible variab
 | DEFAULT_EMAIL_FROM | `none`        | Default sender address for all emails                                                                                                                                                                                                                             |
 
 ### Admin client
-| Variable name         | Default value | Description                                      |
-|-----------------------|---------------|--------------------------------------------------|
-| ADMIN_CLIENT_USERNAME | username      | Username of a "user" to access the admin console |
-| ADMIN_CLIENT_PASSWORD | password      | Password of a "user" to access the admin console |
+| Variable name          | Default value                 | Description                                                             |
+|------------------------|-------------------------------|-------------------------------------------------------------------------|
+| ADMIN_CLIENT_USERNAME  | username                      | Username of a "user" to access the admin console                        |
+| ADMIN_CLIENT_PASSWORD  | password                      | Password of a "user" to access the admin console                        |
+| SESSION_ENCRYPTION_KEY | change-me-change-me-change-me | Encryption key for session cookies. Must be at least 16 characters long |
 
 ### Connectors
 

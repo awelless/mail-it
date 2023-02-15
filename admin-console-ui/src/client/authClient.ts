@@ -2,10 +2,14 @@ import { api } from 'boot/axios'
 import User from 'src/models/User'
 
 async function login(username: string, password: string): Promise<LoginResponse> {
-  const { data, status } = await api.post('/login', null, {
-    params: {
-      username,
-      password,
+  const credentials = {
+    username,
+    password,
+  }
+
+  const { data, status } = await api.post('/login', credentials, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
     },
     validateStatus: statusCode => statusCode == 200 || statusCode == 401,
   })

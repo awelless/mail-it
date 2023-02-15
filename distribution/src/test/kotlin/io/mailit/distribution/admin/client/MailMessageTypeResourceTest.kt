@@ -6,42 +6,31 @@ import io.mailit.admin.console.http.PAGE_PARAM
 import io.mailit.admin.console.http.SIZE_PARAM
 import io.mailit.admin.console.http.dto.MailMessageTypeCreateDto
 import io.mailit.admin.console.http.dto.MailMessageTypeUpdateDto
-import io.mailit.admin.console.security.UserCredentials
 import io.mailit.core.admin.api.type.MailMessageContentType
 import io.mailit.core.model.MailMessageType
-import io.mailit.core.model.MailMessageTypeState.DELETED
-import io.mailit.core.model.MailMessageTypeState.FORCE_DELETED
 import io.mailit.core.spi.MailMessageTypeRepository
 import io.mailit.test.createPlainMailMessageType
 import io.quarkus.test.junit.QuarkusTest
+import io.quarkus.test.security.TestSecurity
 import io.restassured.http.ContentType.JSON
 import io.restassured.module.kotlin.extensions.Given
 import io.restassured.module.kotlin.extensions.Then
 import io.restassured.module.kotlin.extensions.When
 import javax.inject.Inject
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runTest
 import org.hamcrest.Matchers.equalTo
 import org.jboss.resteasy.reactive.RestResponse.StatusCode.ACCEPTED
 import org.jboss.resteasy.reactive.RestResponse.StatusCode.CREATED
 import org.jboss.resteasy.reactive.RestResponse.StatusCode.OK
-import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 @QuarkusTest
+@TestSecurity(authorizationEnabled = false)
 class MailMessageTypeResourceTest {
 
-    private val mailTypesUrl = "/api/admin/mails/types"
-    private val mailTypeUrl = "$mailTypesUrl/{id}"
-    private val mailTypeForceDeleteUrl = "$mailTypeUrl/force"
-
-    private val idPath = "id"
-    private val namePath = "name"
-    private val descriptionPath = "description"
-    private val maxRetriesCountPath = "maxRetriesCount"
-
-    @Inject
-    lateinit var userCredentials: UserCredentials
     @Inject
     lateinit var mailMessageTypeRepository: MailMessageTypeRepository
 
@@ -57,18 +46,16 @@ class MailMessageTypeResourceTest {
 
     @Test
     fun getById() {
-        Given {
-            auth().preemptive().basic(userCredentials.username, String(userCredentials.password))
-        } When {
-            get(mailTypeUrl, mailType.id)
+        When {
+            get(MAIL_TYPE_URL, mailType.id)
         } Then {
             statusCode(OK)
 
             body(
-                idPath, equalTo(mailType.id.toString()),
-                namePath, equalTo(mailType.name),
-                descriptionPath, equalTo(mailType.description),
-                maxRetriesCountPath, equalTo(mailType.maxRetriesCount),
+                ID, equalTo(mailType.id.toString()),
+                NAME, equalTo(mailType.name),
+                DESCRIPTION, equalTo(mailType.description),
+                MAX_RETRIES_COUNT, equalTo(mailType.maxRetriesCount),
             )
         }
     }
@@ -78,20 +65,18 @@ class MailMessageTypeResourceTest {
         Given {
             param(PAGE_PARAM, 0)
             param(SIZE_PARAM, 10)
-
-            auth().preemptive().basic(userCredentials.username, String(userCredentials.password))
         } When {
-            get(mailTypesUrl)
+            get(MAIL_TYPES_URL)
         } Then {
             statusCode(OK)
 
             body(
                 "content.size()", equalTo(1),
 
-                "content[0].$idPath", equalTo(mailType.id.toString()),
-                "content[0].$namePath", equalTo(mailType.name),
-                "content[0].$descriptionPath", equalTo(mailType.description),
-                "content[0].$maxRetriesCountPath", equalTo(mailType.maxRetriesCount),
+                "content[0].$ID", equalTo(mailType.id.toString()),
+                "content[0].$NAME", equalTo(mailType.name),
+                "content[0].$DESCRIPTION", equalTo(mailType.description),
+                "content[0].$MAX_RETRIES_COUNT", equalTo(mailType.maxRetriesCount),
 
                 "page", equalTo(0),
                 "size", equalTo(10),
@@ -103,19 +88,17 @@ class MailMessageTypeResourceTest {
 
     @Test
     fun `getAllSliced with no page and size - uses default`() {
-        Given {
-            auth().preemptive().basic(userCredentials.username, String(userCredentials.password))
-        } When {
-            get(mailTypesUrl)
+        When {
+            get(MAIL_TYPES_URL)
         } Then {
             statusCode(OK)
             body(
                 "content.size()", equalTo(1),
 
-                "content[0].$idPath", equalTo(mailType.id.toString()),
-                "content[0].$namePath", equalTo(mailType.name),
-                "content[0].$descriptionPath", equalTo(mailType.description),
-                "content[0].$maxRetriesCountPath", equalTo(mailType.maxRetriesCount),
+                "content[0].$ID", equalTo(mailType.id.toString()),
+                "content[0].$NAME", equalTo(mailType.name),
+                "content[0].$DESCRIPTION", equalTo(mailType.description),
+                "content[0].$MAX_RETRIES_COUNT", equalTo(mailType.maxRetriesCount),
 
                 "page", equalTo(DEFAULT_PAGE),
                 "size", equalTo(DEFAULT_SIZE),
@@ -137,17 +120,15 @@ class MailMessageTypeResourceTest {
         Given {
             contentType(JSON)
             body(createDto)
-
-            auth().preemptive().basic(userCredentials.username, String(userCredentials.password))
         } When {
-            post(mailTypesUrl)
+            post(MAIL_TYPES_URL)
         } Then {
             statusCode(CREATED)
 
             body(
-                namePath, equalTo(createDto.name),
-                descriptionPath, equalTo(createDto.description),
-                maxRetriesCountPath, equalTo(createDto.maxRetriesCount),
+                NAME, equalTo(createDto.name),
+                DESCRIPTION, equalTo(createDto.description),
+                MAX_RETRIES_COUNT, equalTo(createDto.maxRetriesCount),
             )
         }
     }
@@ -162,47 +143,57 @@ class MailMessageTypeResourceTest {
         Given {
             contentType(JSON)
             body(updateDto)
-
-            auth().preemptive().basic(userCredentials.username, String(userCredentials.password))
         } When {
-            put(mailTypeUrl, mailType.id)
+            put(MAIL_TYPE_URL, mailType.id)
         } Then {
             statusCode(OK)
 
             body(
-                descriptionPath, equalTo(updateDto.description),
-                maxRetriesCountPath, equalTo(updateDto.maxRetriesCount),
+                DESCRIPTION, equalTo(updateDto.description),
+                MAX_RETRIES_COUNT, equalTo(updateDto.maxRetriesCount),
             )
         }
     }
 
     @Test
-    suspend fun delete_marksAsDeleted() {
+    fun delete() = runTest {
         Given {
-            auth().preemptive().basic(userCredentials.username, String(userCredentials.password))
+            param(FORCE_PARAM, "true")
         } When {
-            delete(mailTypeUrl, mailType.id)
+            delete(MAIL_TYPE_URL, mailType.id)
         } Then {
             statusCode(ACCEPTED)
         }
 
-        val actual = mailMessageTypeRepository.findById(mailType.id)!!
+        val actual = mailMessageTypeRepository.findById(mailType.id)
 
-        assertEquals(DELETED, actual.state)
+        assertNull(actual)
     }
 
     @Test
-    suspend fun delete_force_marksAsForceDeleted() {
+    fun delete_force() = runTest {
         Given {
-            auth().preemptive().basic(userCredentials.username, String(userCredentials.password))
+            param(FORCE_PARAM, "true")
         } When {
-            delete(mailTypeForceDeleteUrl, mailType.id)
+            delete(MAIL_TYPE_URL, mailType.id)
         } Then {
             statusCode(ACCEPTED)
         }
 
-        val actual = mailMessageTypeRepository.findById(mailType.id)!!
+        val actual = mailMessageTypeRepository.findById(mailType.id)
 
-        assertEquals(FORCE_DELETED, actual.state)
+        assertNull(actual)
+    }
+
+    companion object {
+        private const val MAIL_TYPES_URL = "/api/admin/mails/types"
+        private const val MAIL_TYPE_URL = "$MAIL_TYPES_URL/{id}"
+
+        private const val FORCE_PARAM = "force"
+
+        private const val ID = "id"
+        private const val NAME = "name"
+        private const val DESCRIPTION = "description"
+        private const val MAX_RETRIES_COUNT = "maxRetriesCount"
     }
 }

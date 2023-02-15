@@ -1,8 +1,21 @@
 quarkus:
   http:
     auth:
-      basic: true
-    cors: false
+      form:
+        enabled: true
+        cookie-name: SESSION
+        post-location: /api/admin/login
+        username-parameter: username
+        password-parameter: password
+        login-page: '' # disabled
+        error-page: '' # disabled
+        landing-page: '' # disabled
+      session:
+        encryption-key: ${SESSION_ENCRYPTION_KEY:change-me-change-me-change-me}
+    cors:
+      ~: false # 'true' for development
+      origins: 'http://localhost:8080,http://localhost:9001'
+      access-control-allow-credentials: true
 
 admin:
   console:
