@@ -11,7 +11,7 @@ async function login(username: string, password: string): Promise<LoginResponse>
     headers: {
       'Content-Type': 'multipart/form-data',
     },
-    validateStatus: statusCode => statusCode == 200 || statusCode == 401,
+    validateStatus: (statusCode) => statusCode == 200 || statusCode == 401,
   })
 
   if (status == 401) {
@@ -29,7 +29,7 @@ async function login(username: string, password: string): Promise<LoginResponse>
     success: true,
     user: {
       username,
-    }
+    },
   }
 }
 
@@ -38,7 +38,7 @@ export default {
 }
 
 export interface LoginResponse {
-  success: boolean,
-  user?: User,
-  error?: string,
+  success: boolean
+  user?: User
+  error?: string
 }

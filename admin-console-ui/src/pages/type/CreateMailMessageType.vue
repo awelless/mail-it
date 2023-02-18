@@ -1,13 +1,9 @@
 <template>
-  <p class='text-h4 text-primary text-bold q-pb-md'>Create new Mail Message Type</p>
-  <MailMessageTypeEditor
-    submission-button-message='Create'
-    :submission-action='create'
-    back-path='/types'
-  />
+  <p class="text-h4 text-primary text-bold q-pb-md">Create new Mail Message Type</p>
+  <MailMessageTypeEditor submission-button-message="Create" :submission-action="create" back-path="/types" />
 </template>
 
-<script setup lang='ts'>
+<script setup lang="ts">
 import MailMessageTypeEditor from 'components/type/MailMessageTypeEditor.vue'
 import MailMessageType from 'src/models/MailMessageType'
 import mailMessageTypeClient from 'src/client/mailMessageTypeClient'
@@ -21,6 +17,4 @@ async function create(type: MailMessageType) {
 }
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

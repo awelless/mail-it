@@ -1,19 +1,12 @@
 <template>
-  <q-spinner v-if='!type' color='primary' size='3em' />
+  <q-spinner v-if="!type" color="primary" size="3em" />
   <div v-else>
-    <p class='text-h4 text-primary text-bold q-pb-md'>
-      Edit Mail Message Type: {{ type.name }} #{{ type.id }}
-    </p>
-    <MailMessageTypeEditor
-      :mail-message-type='type'
-      submission-button-message='Edit'
-      :submission-action='update'
-      :back-path='`/types/${type.id}`'
-    />
+    <p class="text-h4 text-primary text-bold q-pb-md">Edit Mail Message Type: {{ type.name }} #{{ type.id }}</p>
+    <MailMessageTypeEditor :mail-message-type="type" submission-button-message="Edit" :submission-action="update" :back-path="`/types/${type.id}`" />
   </div>
 </template>
 
-<script setup lang='ts'>
+<script setup lang="ts">
 import MailMessageTypeEditor from 'components/type/MailMessageTypeEditor.vue'
 import MailMessageType from 'src/models/MailMessageType'
 import { ref } from 'vue'
@@ -40,6 +33,4 @@ async function update(type: MailMessageType) {
 }
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>
