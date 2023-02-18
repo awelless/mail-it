@@ -8,9 +8,11 @@
 
         <q-space />
 
-        <div v-if="user.user">
-          <p class="text-body1">{{ user.user.username }}</p>
-        </div>
+        <template v-if="user.user">
+          <div class="q-mr-sm text-subtitle1">{{ user.user.username }}</div>
+          <!-- todo should be icon-->
+          <q-btn flat @click="logout">logout</q-btn>
+        </template>
       </q-toolbar>
     </q-header>
 
@@ -42,6 +44,7 @@ import { userStore } from 'stores/userStore'
 import LoginPage from 'pages/LoginPage.vue'
 import userClient from 'src/client/userClient'
 import { ref } from 'vue'
+import cookies from 'src/cookies/cookies'
 
 const loaded = ref(false)
 
@@ -57,4 +60,9 @@ async function tryLoadUser() {
 }
 
 tryLoadUser()
+
+function logout() {
+  cookies.deleteByName('SESSION')
+  user.$patch({ user: null })
+}
 </script>
