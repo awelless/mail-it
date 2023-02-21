@@ -16,6 +16,6 @@ class HttpConnector(
     @POST
     suspend fun sendMail(command: CreateMailCommand): IdDto {
         val savedMail = mailMessageService.createNewMail(command)
-        return IdDto(savedMail.id)
+        return IdDto(savedMail.id.toString())
     }
 }

@@ -1,0 +1,74 @@
+openapi: 3.0.3
+info:
+  title: Mail-it http connector
+  contact:
+    url: https://github.com/awelless/mail-it
+    email: apiteam@swagger.io
+  license:
+    name: MIT
+    url: https://opensource.org/license/mit/
+  version: 0.1.0
+paths:
+  /api/connector/mail:
+    post:
+      summary: Send mail
+      operationId: updatePet
+      requestBody:
+        description: Update an existent pet in the store
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Mail'
+        required: true
+      responses:
+        '202':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IdObject'
+        '400':
+          description: Invalid email supplied
+
+components:
+  schemas:
+    Mail:
+      type: object
+      required:
+        - emailTo
+        - mailType
+      properties:
+        text:
+          type: string
+          description: Mail text. Used only for PlainTextMailMessageType
+          example: Hello, user. You security code is 14356
+        data:
+          type: object
+          description: Data to be inserted into a template. Used only for HtmlMailMessageType
+          example:
+            username: user
+            code: 14356
+        subject:
+          type: string
+          description: Mail subject
+          example: Your security code
+        emailFrom:
+          type: string
+          format: email
+          description: Email address on behalf of which this mail will be sent. If not specified a default system-wide address is used
+          example: no-reply@some-service.org
+        emailTo:
+          type: string
+          format: email
+          description: Destination email address
+          example: some-user@some-mail.org
+        mailType:
+          type: string
+          description: Name of MailMessageType this mail belongs to
+          example: Authorization mail
+    IdObject:
+      type: object
+      properties:
+        id:
+          type: string
+          example: 654325215
