@@ -1,4 +1,4 @@
-package io.mailit.persistence.common.id
+package io.mailit.core.service.id
 
 fun interface InstanceIdProvider {
 

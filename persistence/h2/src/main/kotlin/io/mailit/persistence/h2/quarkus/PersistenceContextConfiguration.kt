@@ -1,7 +1,5 @@
 package io.mailit.persistence.h2.quarkus
 
-import io.mailit.persistence.common.id.IdGenerator
-import io.mailit.persistence.common.id.InMemoryIdGenerator
 import io.mailit.persistence.common.serialization.MailMessageDataSerializer
 import io.mailit.persistence.h2.JdbcMailMessageRepository
 import io.mailit.persistence.h2.JdbcMailMessageTypeRepository
@@ -12,21 +10,17 @@ import org.apache.commons.dbutils.QueryRunner
 class PersistenceContextConfiguration {
 
     @Singleton
-    fun idGenerator() = InMemoryIdGenerator()
-
-    @Singleton
     fun queryRunner() = QueryRunner()
 }
 
 class RepositoriesConfiguration(
-    private val idGenerator: IdGenerator,
     private val queryRunner: QueryRunner,
     private val dataSource: DataSource,
 ) {
 
     @Singleton
-    fun mailMessageTypeRepository() = JdbcMailMessageTypeRepository(idGenerator, dataSource, queryRunner)
+    fun mailMessageTypeRepository() = JdbcMailMessageTypeRepository(dataSource, queryRunner)
 
     @Singleton
-    fun mailMessageRepository(dataSerializer: MailMessageDataSerializer) = JdbcMailMessageRepository(idGenerator, dataSource, queryRunner, dataSerializer)
+    fun mailMessageRepository(dataSerializer: MailMessageDataSerializer) = JdbcMailMessageRepository(dataSource, queryRunner, dataSerializer)
 }

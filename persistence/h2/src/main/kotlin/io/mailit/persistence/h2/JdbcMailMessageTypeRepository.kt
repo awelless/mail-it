@@ -9,7 +9,6 @@ import io.mailit.core.spi.DuplicateUniqueKeyException
 import io.mailit.core.spi.MailMessageTypeRepository
 import io.mailit.core.spi.PersistenceException
 import io.mailit.persistence.common.createSlice
-import io.mailit.persistence.common.id.IdGenerator
 import io.mailit.persistence.h2.MailMessageContent.HTML
 import io.mailit.persistence.h2.MailMessageContent.PLAIN_TEXT
 import java.sql.ResultSet
@@ -96,7 +95,6 @@ private const val UPDATE_STATE_SQL = """
     WHERE mail_message_type_id = ?"""
 
 class JdbcMailMessageTypeRepository(
-    private val idGenerator: IdGenerator,
     private val dataSource: DataSource,
     private val queryRunner: QueryRunner,
 ) : MailMessageTypeRepository {
@@ -137,13 +135,11 @@ class JdbcMailMessageTypeRepository(
     }
 
     override suspend fun create(mailMessageType: MailMessageType): MailMessageType {
-        val id = idGenerator.generateId()
-
         try {
             dataSource.connection.use {
                 queryRunner.update(
                     it, INSERT_SQL,
-                    id,
+                    mailMessageType.id,
                     mailMessageType.name,
                     mailMessageType.description,
                     mailMessageType.maxRetriesCount,
@@ -164,7 +160,6 @@ class JdbcMailMessageTypeRepository(
             }
         }
 
-        mailMessageType.id = id
         return mailMessageType
     }
 

@@ -9,7 +9,6 @@ import io.mailit.core.spi.DuplicateUniqueKeyException
 import io.mailit.core.spi.MailMessageTypeRepository
 import io.mailit.core.spi.PersistenceException
 import io.mailit.persistence.common.createSlice
-import io.mailit.persistence.common.id.IdGenerator
 import io.mailit.persistence.common.toLocalDateTime
 import io.mailit.persistence.postgresql.MailMessageContent.HTML
 import io.smallrye.mutiny.Multi
@@ -97,7 +96,6 @@ private const val UPDATE_STATE_SQL = """
     WHERE mail_message_type_id = $3"""
 
 class ReactiveMailMessageTypeRepository(
-    private val idGenerator: IdGenerator,
     private val client: PgPool,
 ) : MailMessageTypeRepository {
 
@@ -125,10 +123,8 @@ class ReactiveMailMessageTypeRepository(
     }
 
     override suspend fun create(mailMessageType: MailMessageType): MailMessageType {
-        val id = idGenerator.generateId()
-
         val argumentsArray = arrayOf(
-            id,
+            mailMessageType.id,
             mailMessageType.name,
             mailMessageType.description,
             mailMessageType.maxRetriesCount,
@@ -146,7 +142,6 @@ class ReactiveMailMessageTypeRepository(
             }
             .awaitSuspending()
 
-        mailMessageType.id = id
         return mailMessageType
     }
 

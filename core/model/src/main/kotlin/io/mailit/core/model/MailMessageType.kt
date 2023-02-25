@@ -7,7 +7,7 @@ import java.time.Instant
  */
 sealed class MailMessageType(
 
-    open var id: Long,
+    open val id: Long,
 
     /**
      * Name of actual mail type. Used in external API
@@ -43,7 +43,7 @@ enum class MailMessageTypeState {
  */
 data class PlainTextMailMessageType(
 
-    override var id: Long = 0,
+    override val id: Long,
     override val name: String,
     override var description: String? = null,
     override var maxRetriesCount: Int? = null,
@@ -58,7 +58,7 @@ data class PlainTextMailMessageType(
  */
 data class HtmlMailMessageType(
 
-    override var id: Long = 0,
+    override val id: Long,
     override val name: String,
     override var description: String? = null,
     override var maxRetriesCount: Int? = null,

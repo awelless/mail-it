@@ -37,6 +37,7 @@ open class MailMessageRepositoryTest {
             mailMessageType = mailMessageTypeRepository.findByName(mailMessageType.name)!! // to get actual datetime values
 
             mailMessage = MailMessage(
+                id = 1,
                 text = "text",
                 data = emptyMap(),
                 subject = null,
@@ -77,6 +78,7 @@ open class MailMessageRepositoryTest {
         val messageSendingStartedAt = Instant.now().minusSeconds(10)
 
         val sendingMessage = MailMessage(
+            id = 2,
             text = "text2",
             data = emptyMap(),
             subject = null,
@@ -101,6 +103,7 @@ open class MailMessageRepositoryTest {
     fun findAllIdsByStatusIn_returnsIdsOnly() = runTest {
         // given
         val message2 = MailMessage(
+            id = 2,
             text = "text2",
             data = emptyMap(),
             subject = null,

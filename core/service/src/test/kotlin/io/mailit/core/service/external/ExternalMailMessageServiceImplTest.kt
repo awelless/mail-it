@@ -5,6 +5,7 @@ import io.mailit.core.external.api.CreateMailCommand
 import io.mailit.core.model.MailMessage
 import io.mailit.core.model.MailMessageStatus.PENDING
 import io.mailit.core.model.MailMessageType
+import io.mailit.core.service.id.IdGenerator
 import io.mailit.core.spi.MailMessageRepository
 import io.mailit.core.spi.MailMessageTypeRepository
 import io.mailit.test.createMailMessage
@@ -13,6 +14,7 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.RelaxedMockK
+import io.mockk.impl.annotations.SpyK
 import io.mockk.junit5.MockKExtension
 import io.mockk.slot
 import kotlinx.coroutines.test.runTest
@@ -29,9 +31,14 @@ import org.junit.jupiter.params.provider.MethodSource
 @ExtendWith(MockKExtension::class)
 class ExternalMailMessageServiceImplTest {
 
+    private val mailId = 1L
+
+    @SpyK
+    var idGenerator = object : IdGenerator { // spyk doesn't work well with lambdas
+        override fun generateId() = mailId
+    }
     @RelaxedMockK
     lateinit var mailMessageRepository: MailMessageRepository
-
     @RelaxedMockK
     lateinit var mailMessageTypeRepository: MailMessageTypeRepository
 
@@ -69,6 +76,7 @@ class ExternalMailMessageServiceImplTest {
         coVerify(exactly = 1) { mailMessageRepository.create(any()) }
 
         val savedMailMessage = mailMessageSlot.captured
+        assertEquals(mailId, savedMailMessage.id)
         assertEquals(command.text, savedMailMessage.text)
         assertEquals(command.subject, savedMailMessage.subject)
         assertEquals(command.emailFrom, savedMailMessage.emailFrom)

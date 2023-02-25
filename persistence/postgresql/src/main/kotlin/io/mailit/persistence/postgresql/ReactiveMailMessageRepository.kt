@@ -5,7 +5,6 @@ import io.mailit.core.model.MailMessageStatus
 import io.mailit.core.model.Slice
 import io.mailit.core.spi.MailMessageRepository
 import io.mailit.persistence.common.createSlice
-import io.mailit.persistence.common.id.IdGenerator
 import io.mailit.persistence.common.serialization.MailMessageDataSerializer
 import io.mailit.persistence.common.toLocalDateTime
 import io.smallrye.mutiny.Multi
@@ -138,7 +137,6 @@ private const val UPDATE_STATUS_FAILED_COUNT_AND_SENDING_START_SQL = """
     WHERE mail_message_id = $4"""
 
 class ReactiveMailMessageRepository(
-    private val idGenerator: IdGenerator,
     private val client: PgPool,
     private val dataSerializer: MailMessageDataSerializer,
 ) : MailMessageRepository {
@@ -190,11 +188,10 @@ class ReactiveMailMessageRepository(
     }
 
     override suspend fun create(mailMessage: MailMessage): MailMessage {
-        val id = idGenerator.generateId()
         val data = dataSerializer.write(mailMessage.data)
 
         val argumentsArray = arrayOf(
-            id,
+            mailMessage.id,
             mailMessage.text,
             data,
             mailMessage.subject,
@@ -211,7 +208,6 @@ class ReactiveMailMessageRepository(
         client.preparedQuery(INSERT_SQL).execute(Tuple.from(argumentsArray))
             .awaitSuspending()
 
-        mailMessage.id = id
         return mailMessage
     }
 

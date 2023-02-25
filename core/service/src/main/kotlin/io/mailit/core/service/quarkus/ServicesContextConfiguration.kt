@@ -12,6 +12,9 @@ import io.mailit.core.service.admin.type.MailMessageTypeStateUpdaterManager
 import io.mailit.core.service.admin.type.PlainTextMailMessageTypeFactory
 import io.mailit.core.service.admin.type.PlainTextMailMessageTypeStateUpdater
 import io.mailit.core.service.external.ExternalMailMessageServiceImpl
+import io.mailit.core.service.id.DistributedIdGenerator
+import io.mailit.core.service.id.IdGenerator
+import io.mailit.core.service.id.InstanceIdProvider
 import io.mailit.core.service.mailing.HungMailsResetManager
 import io.mailit.core.service.mailing.MailMessageService
 import io.mailit.core.service.mailing.MailSender
@@ -34,9 +37,9 @@ import javax.inject.Singleton
 class AdminServicesContextConfiguration {
 
     @Singleton
-    fun mailMessageTypeFactory() = MailMessageTypeFactoryManager(
-        PlainTextMailMessageTypeFactory(),
-        HtmlMailMessageTypeFactory(),
+    fun mailMessageTypeFactory(idGenerator: IdGenerator) = MailMessageTypeFactoryManager(
+        PlainTextMailMessageTypeFactory(idGenerator),
+        HtmlMailMessageTypeFactory(idGenerator),
     )
 
     @Singleton
@@ -60,9 +63,10 @@ class ExternalServicesContextConfiguration {
 
     @Singleton
     fun externalMailMessageService(
+        idGenerator: IdGenerator,
         mailMessageRepository: MailMessageRepository,
         mailMessageTypeRepository: MailMessageTypeRepository,
-    ) = ExternalMailMessageServiceImpl(mailMessageRepository, mailMessageTypeRepository)
+    ) = ExternalMailMessageServiceImpl(idGenerator, mailMessageRepository, mailMessageTypeRepository)
 }
 
 class MailingContextConfiguration {
@@ -109,4 +113,15 @@ class MailingContextConfiguration {
 
         return FreemarkerTemplateProcessor(configuration)
     }
+}
+
+class IdGeneratorConfiguration {
+
+    @Singleton
+    fun idGenerator(instanceIdProvider: InstanceIdProvider) = DistributedIdGenerator(instanceIdProvider)
+
+    // instanceIdProvider is constant
+    // should be replaced with a real implementation to scale horizontally
+    @Singleton
+    fun instanceIdProvider() = InstanceIdProvider { 1 }
 }

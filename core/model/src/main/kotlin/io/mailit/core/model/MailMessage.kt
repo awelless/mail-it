@@ -4,7 +4,7 @@ import java.time.Instant
 
 data class MailMessage(
 
-    var id: Long = 0,
+    val id: Long,
 
     /**
      * Text that is used for [PlainTextMailMessageType]

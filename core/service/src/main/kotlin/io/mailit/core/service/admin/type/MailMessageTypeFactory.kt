@@ -7,6 +7,7 @@ import io.mailit.core.exception.ValidationException
 import io.mailit.core.model.HtmlMailMessageType
 import io.mailit.core.model.MailMessageType
 import io.mailit.core.model.PlainTextMailMessageType
+import io.mailit.core.service.id.IdGenerator
 import java.time.Instant
 
 interface MailMessageTypeFactory<T : MailMessageType> {
@@ -26,12 +27,15 @@ class MailMessageTypeFactoryManager(
         }
 }
 
-class PlainTextMailMessageTypeFactory : MailMessageTypeFactory<PlainTextMailMessageType> {
+class PlainTextMailMessageTypeFactory(
+    private val idGenerator: IdGenerator,
+) : MailMessageTypeFactory<PlainTextMailMessageType> {
 
     override fun create(command: CreateMailMessageTypeCommand): PlainTextMailMessageType {
         val now = Instant.now()
 
         return PlainTextMailMessageType(
+            id = idGenerator.generateId(),
             name = command.name,
             description = command.description,
             maxRetriesCount = command.maxRetriesCount,
@@ -41,7 +45,9 @@ class PlainTextMailMessageTypeFactory : MailMessageTypeFactory<PlainTextMailMess
     }
 }
 
-class HtmlMailMessageTypeFactory : MailMessageTypeFactory<HtmlMailMessageType> {
+class HtmlMailMessageTypeFactory(
+    private val idGenerator: IdGenerator,
+) : MailMessageTypeFactory<HtmlMailMessageType> {
 
     override fun create(command: CreateMailMessageTypeCommand): HtmlMailMessageType {
         val templateEngine = command.templateEngine
@@ -58,6 +64,7 @@ class HtmlMailMessageTypeFactory : MailMessageTypeFactory<HtmlMailMessageType> {
         val now = Instant.now()
 
         return HtmlMailMessageType(
+            id = idGenerator.generateId(),
             name = command.name,
             description = command.description,
             maxRetriesCount = command.maxRetriesCount,

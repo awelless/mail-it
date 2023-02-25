@@ -5,6 +5,7 @@ import io.mailit.core.external.api.CreateMailCommand
 import io.mailit.core.external.api.ExternalMailMessageService
 import io.mailit.core.model.MailMessage
 import io.mailit.core.model.MailMessageStatus.PENDING
+import io.mailit.core.service.id.IdGenerator
 import io.mailit.core.service.isEmail
 import io.mailit.core.spi.MailMessageRepository
 import io.mailit.core.spi.MailMessageTypeRepository
@@ -12,6 +13,7 @@ import java.time.Instant
 import mu.KLogging
 
 class ExternalMailMessageServiceImpl(
+    private val idGenerator: IdGenerator,
     private val mailMessageRepository: MailMessageRepository,
     private val mailMessageTypeRepository: MailMessageTypeRepository,
 ) : ExternalMailMessageService {
@@ -24,6 +26,7 @@ class ExternalMailMessageServiceImpl(
         validateBeforeCreate(command.emailFrom, command.emailTo)
 
         val message = MailMessage(
+            id = idGenerator.generateId(),
             text = command.text,
             data = command.data,
             subject = command.subject,

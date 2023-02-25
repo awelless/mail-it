@@ -7,19 +7,19 @@ import io.mailit.core.exception.ValidationException
 import io.mailit.core.model.HtmlMailMessageType
 import io.mailit.core.model.HtmlTemplateEngine.FREEMARKER
 import io.mailit.core.model.PlainTextMailMessageType
-import io.mockk.junit5.MockKExtension
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import org.junit.jupiter.api.extension.ExtendWith
 
-@ExtendWith(MockKExtension::class)
 class MailMessageTypeFactoryTest {
 
+    private val plainTextMailTypeId = 1L
+    private val htmlMailTypeId = 2L
+
     val mailMessageTypeFactory = MailMessageTypeFactoryManager(
-        PlainTextMailMessageTypeFactory(),
-        HtmlMailMessageTypeFactory(),
+        PlainTextMailMessageTypeFactory() { plainTextMailTypeId },
+        HtmlMailMessageTypeFactory() { htmlMailTypeId },
     )
 
     @Nested
@@ -41,6 +41,7 @@ class MailMessageTypeFactoryTest {
             val mailType = mailMessageTypeFactory.create(command) as PlainTextMailMessageType
 
             // then
+            assertEquals(plainTextMailTypeId, mailType.id)
             assertEquals(command.name, mailType.name)
             assertEquals(command.description, mailType.description)
             assertEquals(command.maxRetriesCount, mailType.maxRetriesCount)
@@ -66,6 +67,7 @@ class MailMessageTypeFactoryTest {
             val mailType = mailMessageTypeFactory.create(command) as HtmlMailMessageType
 
             // then
+            assertEquals(htmlMailTypeId, mailType.id)
             assertEquals(command.name, mailType.name)
             assertEquals(command.description, mailType.description)
             assertEquals(command.maxRetriesCount, mailType.maxRetriesCount)

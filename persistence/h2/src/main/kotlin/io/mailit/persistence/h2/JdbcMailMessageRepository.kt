@@ -5,7 +5,6 @@ import io.mailit.core.model.MailMessageStatus
 import io.mailit.core.model.Slice
 import io.mailit.core.spi.MailMessageRepository
 import io.mailit.persistence.common.createSlice
-import io.mailit.persistence.common.id.IdGenerator
 import io.mailit.persistence.common.serialization.MailMessageDataSerializer
 import java.sql.ResultSet
 import java.time.Instant
@@ -135,7 +134,6 @@ private const val UPDATE_STATUS_FAILED_COUNT_AND_SENDING_START_SQL = """
     WHERE mail_message_id = ?"""
 
 class JdbcMailMessageRepository(
-    private val idGenerator: IdGenerator,
     private val dataSource: DataSource,
     private val queryRunner: QueryRunner,
     private val dataSerializer: MailMessageDataSerializer,
@@ -200,7 +198,6 @@ class JdbcMailMessageRepository(
     }
 
     override suspend fun create(mailMessage: MailMessage): MailMessage {
-        val id = idGenerator.generateId()
         val data = dataSerializer.write(mailMessage.data)
 
         dataSource.connection.use {
@@ -209,12 +206,11 @@ class JdbcMailMessageRepository(
 
             queryRunner.update(
                 it, INSERT_SQL,
-                id, mailMessage.text, dataBlob, mailMessage.subject, mailMessage.emailFrom, mailMessage.emailTo, mailMessage.type.id,
+                mailMessage.id, mailMessage.text, dataBlob, mailMessage.subject, mailMessage.emailFrom, mailMessage.emailTo, mailMessage.type.id,
                 mailMessage.createdAt, mailMessage.sendingStartedAt, mailMessage.sentAt, mailMessage.status.name, mailMessage.failedCount
             )
         }
 
-        mailMessage.id = id
         return mailMessage
     }
 
