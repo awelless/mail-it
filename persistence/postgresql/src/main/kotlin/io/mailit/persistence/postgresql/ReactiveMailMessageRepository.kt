@@ -150,7 +150,7 @@ class ReactiveMailMessageRepository(
     override suspend fun findAllWithTypeByStatusesAndSendingStartedBefore(
         statuses: Collection<MailMessageStatus>,
         sendingStartedBefore: Instant,
-        maxListSize: Int
+        maxListSize: Int,
     ): List<MailMessage> {
         val statusNames = statuses
             .map { it.name }
@@ -220,7 +220,7 @@ class ReactiveMailMessageRepository(
         id: Long,
         statuses: Collection<MailMessageStatus>,
         status: MailMessageStatus,
-        sendingStartedAt: Instant
+        sendingStartedAt: Instant,
     ): Int {
         val statusNames = statuses
             .map { it.name }
@@ -240,7 +240,7 @@ class ReactiveMailMessageRepository(
         id: Long,
         status: MailMessageStatus,
         failedCount: Int,
-        sendingStartedAt: Instant?
+        sendingStartedAt: Instant?,
     ): Int =
         client.preparedQuery(UPDATE_STATUS_FAILED_COUNT_AND_SENDING_START_SQL)
             .execute(Tuple.of(status.name, failedCount, sendingStartedAt?.toLocalDateTime(), id))

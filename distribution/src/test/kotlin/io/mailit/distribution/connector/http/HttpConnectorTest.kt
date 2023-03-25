@@ -115,7 +115,7 @@ class HttpConnectorTest {
                     {
                         "subject":"a"
                     }
-                """
+                """,
             )
         } When {
             post(baseUrl)

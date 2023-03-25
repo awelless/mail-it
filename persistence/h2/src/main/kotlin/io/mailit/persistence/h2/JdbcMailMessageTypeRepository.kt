@@ -105,18 +105,20 @@ class JdbcMailMessageTypeRepository(
     override suspend fun findById(id: Long): MailMessageType? =
         dataSource.connection.use {
             queryRunner.query(
-                it, FIND_BY_ID_SQL,
+                it,
+                FIND_BY_ID_SQL,
                 singleItemMapper,
-                id
+                id,
             )
         }
 
     override suspend fun findByName(name: String): MailMessageType? =
         dataSource.connection.use {
             queryRunner.query(
-                it, FIND_BY_NAME_SQL,
+                it,
+                FIND_BY_NAME_SQL,
                 singleItemMapper,
-                name
+                name,
             )
         }
 
@@ -125,9 +127,11 @@ class JdbcMailMessageTypeRepository(
 
         val content = dataSource.connection.use {
             queryRunner.query(
-                it, FIND_ALL_SLICED_SQL,
+                it,
+                FIND_ALL_SLICED_SQL,
                 multipleItemsMapper,
-                size + 1, offset
+                size + 1,
+                offset,
             )
         }
 
@@ -166,7 +170,8 @@ class JdbcMailMessageTypeRepository(
     override suspend fun update(mailMessageType: MailMessageType): MailMessageType {
         val updatedRowsCount = dataSource.connection.use {
             queryRunner.update(
-                it, UPDATE_SQL,
+                it,
+                UPDATE_SQL,
                 mailMessageType.description,
                 mailMessageType.maxRetriesCount,
                 mailMessageType.updatedAt,
@@ -186,10 +191,11 @@ class JdbcMailMessageTypeRepository(
     override suspend fun updateState(id: Long, state: MailMessageTypeState, updatedAt: Instant): Int =
         dataSource.connection.use {
             queryRunner.update(
-                it, UPDATE_STATE_SQL,
+                it,
+                UPDATE_STATE_SQL,
                 state.name,
                 updatedAt,
-                id
+                id,
             )
         }
 
