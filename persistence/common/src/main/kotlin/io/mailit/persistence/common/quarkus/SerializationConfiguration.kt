@@ -50,7 +50,7 @@ import javax.inject.Singleton
         DefaultSerializers.PriorityQueueSerializer::class,
         DefaultSerializers.BitSetSerializer::class,
         DefaultSerializers.KryoSerializableSerializer::class,
-    ]
+    ],
 )
 class SerializationConfiguration {
 

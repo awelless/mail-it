@@ -145,16 +145,17 @@ class JdbcMailMessageRepository(
     override suspend fun findOneWithTypeById(id: Long): MailMessage? =
         dataSource.connection.use {
             queryRunner.query(
-                it, FIND_WITH_TYPE_BY_ID_SQL,
+                it,
+                FIND_WITH_TYPE_BY_ID_SQL,
                 singleMailWithTypeMapper,
-                id
+                id,
             )
         }
 
     override suspend fun findAllWithTypeByStatusesAndSendingStartedBefore(
         statuses: Collection<MailMessageStatus>,
         sendingStartedBefore: Instant,
-        maxListSize: Int
+        maxListSize: Int,
     ): List<MailMessage> {
         val statusNames = statuses
             .map { it.name }
@@ -162,9 +163,12 @@ class JdbcMailMessageRepository(
 
         return dataSource.connection.use {
             queryRunner.query(
-                it, FIND_WITH_TYPE_BY_SENDING_STARTED_BEFORE_AND_STATUSES_SQL,
+                it,
+                FIND_WITH_TYPE_BY_SENDING_STARTED_BEFORE_AND_STATUSES_SQL,
                 multipleMailWithTypeMapper,
-                sendingStartedBefore, statusNames, maxListSize
+                sendingStartedBefore,
+                statusNames,
+                maxListSize,
             )
         }
     }
@@ -176,9 +180,11 @@ class JdbcMailMessageRepository(
 
         return dataSource.connection.use {
             queryRunner.query(
-                it, FIND_IDS_BY_STATUSES_SQL,
+                it,
+                FIND_IDS_BY_STATUSES_SQL,
                 IDS_MAPPER,
-                statusNames, maxListSize
+                statusNames,
+                maxListSize,
             )
         }
     }
@@ -188,9 +194,11 @@ class JdbcMailMessageRepository(
 
         val content = dataSource.connection.use {
             queryRunner.query(
-                it, FIND_ALL_SLICED_SQL,
+                it,
+                FIND_ALL_SLICED_SQL,
                 multipleMailWithTypeMapper,
-                size + 1, offset
+                size + 1,
+                offset,
             )
         }
 
@@ -207,7 +215,7 @@ class JdbcMailMessageRepository(
             queryRunner.update(
                 it, INSERT_SQL,
                 mailMessage.id, mailMessage.text, dataBlob, mailMessage.subject, mailMessage.emailFrom, mailMessage.emailTo, mailMessage.type.id,
-                mailMessage.createdAt, mailMessage.sendingStartedAt, mailMessage.sentAt, mailMessage.status.name, mailMessage.failedCount
+                mailMessage.createdAt, mailMessage.sendingStartedAt, mailMessage.sentAt, mailMessage.status.name, mailMessage.failedCount,
             )
         }
 
@@ -217,8 +225,10 @@ class JdbcMailMessageRepository(
     override suspend fun updateMessageStatus(id: Long, status: MailMessageStatus): Int =
         dataSource.connection.use {
             queryRunner.update(
-                it, UPDATE_STATUS_SQL,
-                status.name, id
+                it,
+                UPDATE_STATUS_SQL,
+                status.name,
+                id,
             )
         }
 
@@ -226,7 +236,7 @@ class JdbcMailMessageRepository(
         id: Long,
         statuses: Collection<MailMessageStatus>,
         status: MailMessageStatus,
-        sendingStartedAt: Instant
+        sendingStartedAt: Instant,
     ): Int {
         val statusNames = statuses
             .map { it.name }
@@ -234,8 +244,12 @@ class JdbcMailMessageRepository(
 
         return dataSource.connection.use {
             queryRunner.update(
-                it, UPDATE_STATUS_AND_SENDING_START_SQL,
-                status.name, sendingStartedAt, id, statusNames
+                it,
+                UPDATE_STATUS_AND_SENDING_START_SQL,
+                status.name,
+                sendingStartedAt,
+                id,
+                statusNames,
             )
         }
     }
@@ -243,8 +257,11 @@ class JdbcMailMessageRepository(
     override suspend fun updateMessageStatusAndSentTime(id: Long, status: MailMessageStatus, sentAt: Instant): Int =
         dataSource.connection.use {
             queryRunner.update(
-                it, UPDATE_STATUS_AND_SENT_AT_SQL,
-                status.name, sentAt, id
+                it,
+                UPDATE_STATUS_AND_SENT_AT_SQL,
+                status.name,
+                sentAt,
+                id,
             )
         }
 
@@ -252,12 +269,16 @@ class JdbcMailMessageRepository(
         id: Long,
         status: MailMessageStatus,
         failedCount: Int,
-        sendingStartedAt: Instant?
+        sendingStartedAt: Instant?,
     ): Int =
         dataSource.connection.use {
             queryRunner.update(
-                it, UPDATE_STATUS_FAILED_COUNT_AND_SENDING_START_SQL,
-                status.name, failedCount, sendingStartedAt, id
+                it,
+                UPDATE_STATUS_FAILED_COUNT_AND_SENDING_START_SQL,
+                status.name,
+                failedCount,
+                sendingStartedAt,
+                id,
             )
         }
 }

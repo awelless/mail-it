@@ -10,6 +10,8 @@ import io.mailit.core.admin.api.type.MailMessageContentType
 import io.mailit.core.model.MailMessageType
 import io.mailit.core.spi.MailMessageTypeRepository
 import io.mailit.test.createPlainMailMessageType
+import io.mailit.test.restassured.body
+import io.mailit.test.restassured.equalTo
 import io.quarkus.test.junit.QuarkusTest
 import io.quarkus.test.security.TestSecurity
 import io.restassured.http.ContentType.JSON
@@ -19,7 +21,6 @@ import io.restassured.module.kotlin.extensions.When
 import javax.inject.Inject
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
-import org.hamcrest.Matchers.equalTo
 import org.jboss.resteasy.reactive.RestResponse.StatusCode.ACCEPTED
 import org.jboss.resteasy.reactive.RestResponse.StatusCode.CREATED
 import org.jboss.resteasy.reactive.RestResponse.StatusCode.OK
@@ -52,10 +53,10 @@ class MailMessageTypeResourceTest {
             statusCode(OK)
 
             body(
-                ID, equalTo(mailType.id.toString()),
-                NAME, equalTo(mailType.name),
-                DESCRIPTION, equalTo(mailType.description),
-                MAX_RETRIES_COUNT, equalTo(mailType.maxRetriesCount),
+                ID equalTo mailType.id.toString(),
+                NAME equalTo mailType.name,
+                DESCRIPTION equalTo mailType.description,
+                MAX_RETRIES_COUNT equalTo mailType.maxRetriesCount,
             )
         }
     }
@@ -71,17 +72,17 @@ class MailMessageTypeResourceTest {
             statusCode(OK)
 
             body(
-                "content.size()", equalTo(1),
+                "content.size()" equalTo 1,
 
-                "content[0].$ID", equalTo(mailType.id.toString()),
-                "content[0].$NAME", equalTo(mailType.name),
-                "content[0].$DESCRIPTION", equalTo(mailType.description),
-                "content[0].$MAX_RETRIES_COUNT", equalTo(mailType.maxRetriesCount),
+                "content[0].$ID" equalTo mailType.id.toString(),
+                "content[0].$NAME" equalTo mailType.name,
+                "content[0].$DESCRIPTION" equalTo mailType.description,
+                "content[0].$MAX_RETRIES_COUNT" equalTo mailType.maxRetriesCount,
 
-                "page", equalTo(0),
-                "size", equalTo(10),
+                "page" equalTo 0,
+                "size" equalTo 10,
 
-                "last", equalTo(true),
+                "last" equalTo true,
             )
         }
     }
@@ -93,17 +94,17 @@ class MailMessageTypeResourceTest {
         } Then {
             statusCode(OK)
             body(
-                "content.size()", equalTo(1),
+                "content.size()" equalTo 1,
 
-                "content[0].$ID", equalTo(mailType.id.toString()),
-                "content[0].$NAME", equalTo(mailType.name),
-                "content[0].$DESCRIPTION", equalTo(mailType.description),
-                "content[0].$MAX_RETRIES_COUNT", equalTo(mailType.maxRetriesCount),
+                "content[0].$ID" equalTo mailType.id.toString(),
+                "content[0].$NAME" equalTo mailType.name,
+                "content[0].$DESCRIPTION" equalTo mailType.description,
+                "content[0].$MAX_RETRIES_COUNT" equalTo mailType.maxRetriesCount,
 
-                "page", equalTo(DEFAULT_PAGE),
-                "size", equalTo(DEFAULT_SIZE),
+                "page" equalTo DEFAULT_PAGE,
+                "size" equalTo DEFAULT_SIZE,
 
-                "last", equalTo(true),
+                "last" equalTo true,
             )
         }
     }
@@ -126,9 +127,9 @@ class MailMessageTypeResourceTest {
             statusCode(CREATED)
 
             body(
-                NAME, equalTo(createDto.name),
-                DESCRIPTION, equalTo(createDto.description),
-                MAX_RETRIES_COUNT, equalTo(createDto.maxRetriesCount),
+                NAME equalTo createDto.name,
+                DESCRIPTION equalTo createDto.description,
+                MAX_RETRIES_COUNT equalTo createDto.maxRetriesCount,
             )
         }
     }
@@ -149,8 +150,8 @@ class MailMessageTypeResourceTest {
             statusCode(OK)
 
             body(
-                DESCRIPTION, equalTo(updateDto.description),
-                MAX_RETRIES_COUNT, equalTo(updateDto.maxRetriesCount),
+                DESCRIPTION equalTo updateDto.description,
+                MAX_RETRIES_COUNT equalTo updateDto.maxRetriesCount,
             )
         }
     }

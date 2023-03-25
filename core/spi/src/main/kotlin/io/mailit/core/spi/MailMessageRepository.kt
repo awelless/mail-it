@@ -12,7 +12,7 @@ interface MailMessageRepository {
     suspend fun findAllWithTypeByStatusesAndSendingStartedBefore(
         statuses: Collection<MailMessageStatus>,
         sendingStartedBefore: Instant,
-        maxListSize: Int
+        maxListSize: Int,
     ): List<MailMessage>
 
     suspend fun findAllIdsByStatusIn(statuses: Collection<MailMessageStatus>, maxListSize: Int): List<Long>
@@ -27,7 +27,7 @@ interface MailMessageRepository {
         id: Long,
         statuses: Collection<MailMessageStatus>,
         status: MailMessageStatus,
-        sendingStartedAt: Instant
+        sendingStartedAt: Instant,
     ): Int
 
     suspend fun updateMessageStatusAndSentTime(id: Long, status: MailMessageStatus, sentAt: Instant): Int

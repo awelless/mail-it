@@ -28,8 +28,10 @@ class MailMessageTypeServiceTest {
 
     @MockK
     lateinit var mailMessageTypeRepository: MailMessageTypeRepository
+
     @MockK
     lateinit var mailMessageTypeFactory: MailMessageTypeFactory<MailMessageType>
+
     @RelaxedMockK
     lateinit var mailMessageTypeStateUpdater: MailMessageTypeStateUpdater<MailMessageType>
 

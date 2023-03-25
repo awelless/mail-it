@@ -7,7 +7,6 @@ import java.io.ByteArrayOutputStream
 
 fun KryoMailMessageDataSerializer(): KryoMailMessageDataSerializer {
     val kryo = Kryo().apply {
-
         register(Map::class.java)
         register(emptyMap<Nothing, Nothing>()::class.java)
         register(mapOf(null to null)::class.java)

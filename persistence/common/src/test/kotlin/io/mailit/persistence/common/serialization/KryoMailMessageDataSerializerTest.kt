@@ -42,7 +42,7 @@ open class KryoMailMessageDataSerializerTest {
                 "purchases" to mapOf(
                     "oranges" to 2,
                     "apples" to 4,
-                )
+                ),
             ),
         )
     }

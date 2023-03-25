@@ -37,8 +37,10 @@ class ExternalMailMessageServiceImplTest {
     var idGenerator = object : IdGenerator { // spyk doesn't work well with lambdas
         override fun generateId() = mailId
     }
+
     @RelaxedMockK
     lateinit var mailMessageRepository: MailMessageRepository
+
     @RelaxedMockK
     lateinit var mailMessageTypeRepository: MailMessageTypeRepository
 
@@ -109,7 +111,7 @@ class ExternalMailMessageServiceImplTest {
         subject: String?,
         emailFrom: String?,
         emailTo: String,
-        expectedMessage: String
+        expectedMessage: String,
     ) = runTest {
         val command = CreateMailCommand(
             text = "123",
