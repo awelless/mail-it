@@ -124,4 +124,19 @@ class IdGeneratorConfiguration {
     // should be replaced with a real implementation to scale horizontally
     @Singleton
     fun instanceIdProvider() = InstanceIdProvider { 1 }
+
+//    @Singleton
+//    @DefaultBean
+//    fun instanceIdProvider(instanceIdLocks: InstanceIdLocks) = LeaseLockingInstanceIdProvider(
+//        instanceIdLocks = instanceIdLocks,
+//        lockProlongationCoroutineContext = Dispatchers.Default,
+//        lockDuration = 15.minutes,
+//        prolongationDelay = 30.seconds,
+//    ).also {
+//        Runtime.getRuntime().addShutdownHook(Thread { runBlocking { it.stop() } })
+//    }
+//
+//    fun initializeInstanceIdProvider(@Observes event: StartupEvent, instanceIdProvider: LeaseLockingInstanceIdProvider) = runBlocking {
+//        instanceIdProvider.initialize()
+//    }
 }

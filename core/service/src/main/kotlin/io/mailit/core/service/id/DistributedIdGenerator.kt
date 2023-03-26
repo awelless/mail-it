@@ -54,7 +54,7 @@ class DistributedIdGenerator(
 
         return (currentTime shl TIMESTAMP_SHIFT) or
             (sequenceValue shl SEQUENCE_SHIFT) or
-            instanceIdProvider.getInstanceId()
+            instanceIdProvider.getInstanceId().toLong()
     }
 
     private class IdSequence(

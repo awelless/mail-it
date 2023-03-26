@@ -29,7 +29,7 @@ subprojects {
     }
 
     group = "io.mailit"
-    version = "0.1.0"
+    version = "0.2.0"
 
     val dbUtilsVersion = "1.7" // https://mvnrepository.com/artifact/commons-dbutils/commons-dbutils
     val freemarkerVersion = "2.3.32" // https://mvnrepository.com/artifact/org.freemarker/freemarker

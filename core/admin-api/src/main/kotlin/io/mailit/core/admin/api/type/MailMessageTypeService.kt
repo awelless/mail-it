@@ -17,7 +17,7 @@ interface MailMessageTypeService {
     suspend fun deleteMailType(id: Long, force: Boolean)
 }
 
-class CreateMailMessageTypeCommand(
+data class CreateMailMessageTypeCommand(
     val name: String,
     val description: String? = null,
     val maxRetriesCount: Int? = null,
@@ -26,7 +26,7 @@ class CreateMailMessageTypeCommand(
     val template: String? = null,
 )
 
-class UpdateMailMessageTypeCommand(
+data class UpdateMailMessageTypeCommand(
     val id: Long,
     val description: String?,
     val maxRetriesCount: Int?,
