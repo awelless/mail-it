@@ -7,6 +7,8 @@ dependencies {
     implementation(project(":persistence:common"))
     implementation(project(":persistence:liquibase"))
 
+    implementation("io.github.microutils:kotlin-logging-jvm")
+
     implementation("io.quarkus:quarkus-config-yaml")
     implementation("io.quarkus:quarkus-kotlin")
 

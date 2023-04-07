@@ -2,6 +2,13 @@ quarkus:
   datasource:
     db-kind: postgresql
 
+"%test":
+  quarkus:
+    log:
+      category:
+        "io.mailit.persistence.postgresql":
+          level: DEBUG
+
 "%prod":
   quarkus:
     datasource:

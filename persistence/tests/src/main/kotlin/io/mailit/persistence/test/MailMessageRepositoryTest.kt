@@ -18,7 +18,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 @QuarkusTest
-open class MailMessageRepositoryTest {
+abstract class MailMessageRepositoryTest {
 
     @Inject
     lateinit var mailMessageTypeRepository: MailMessageTypeRepository

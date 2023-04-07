@@ -15,6 +15,7 @@ import io.mailit.core.service.external.ExternalMailMessageServiceImpl
 import io.mailit.core.service.id.DistributedIdGenerator
 import io.mailit.core.service.id.IdGenerator
 import io.mailit.core.service.id.InstanceIdProvider
+import io.mailit.core.service.id.LeaseLockingInstanceIdProvider
 import io.mailit.core.service.mailing.HungMailsResetManager
 import io.mailit.core.service.mailing.MailMessageService
 import io.mailit.core.service.mailing.MailSender
@@ -26,13 +27,19 @@ import io.mailit.core.service.mailing.templates.freemarker.Configuration
 import io.mailit.core.service.mailing.templates.freemarker.FreemarkerTemplateProcessor
 import io.mailit.core.service.mailing.templates.freemarker.RepositoryTemplateLoader
 import io.mailit.core.service.mailing.templates.none.NoneTemplateProcessor
+import io.mailit.core.service.quarkus.id.LeaseLockingInstanceIdProviderLifecycleManager
 import io.mailit.core.service.quarkus.mailing.MailFactory
 import io.mailit.core.service.quarkus.mailing.MailSenderImpl
 import io.mailit.core.service.quarkus.mailing.QuarkusMailSender
 import io.mailit.core.spi.MailMessageRepository
 import io.mailit.core.spi.MailMessageTypeRepository
+import io.mailit.core.spi.id.InstanceIdLocks
 import io.quarkus.mailer.reactive.ReactiveMailer
+import javax.enterprise.inject.Instance
 import javax.inject.Singleton
+import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Duration.Companion.seconds
+import kotlinx.coroutines.Dispatchers
 
 class AdminServicesContextConfiguration {
 
@@ -120,23 +127,18 @@ class IdGeneratorConfiguration {
     @Singleton
     fun idGenerator(instanceIdProvider: InstanceIdProvider) = DistributedIdGenerator(instanceIdProvider)
 
-    // instanceIdProvider is constant
-    // should be replaced with a real implementation to scale horizontally
     @Singleton
-    fun instanceIdProvider() = InstanceIdProvider { 1 }
+    fun instanceIdProvider(instanceIdLocks: Instance<InstanceIdLocks>) = if (instanceIdLocks.isUnsatisfied) {
+        InstanceIdProvider { 0 } // if h2 is the db, we have only one instance
+    } else {
+        LeaseLockingInstanceIdProvider(
+            instanceIdLocks = instanceIdLocks.get(),
+            lockProlongationCoroutineContext = Dispatchers.Default,
+            lockDuration = 15.minutes,
+            prolongationDelay = 30.seconds,
+        )
+    }
 
-//    @Singleton
-//    @DefaultBean
-//    fun instanceIdProvider(instanceIdLocks: InstanceIdLocks) = LeaseLockingInstanceIdProvider(
-//        instanceIdLocks = instanceIdLocks,
-//        lockProlongationCoroutineContext = Dispatchers.Default,
-//        lockDuration = 15.minutes,
-//        prolongationDelay = 30.seconds,
-//    ).also {
-//        Runtime.getRuntime().addShutdownHook(Thread { runBlocking { it.stop() } })
-//    }
-//
-//    fun initializeInstanceIdProvider(@Observes event: StartupEvent, instanceIdProvider: LeaseLockingInstanceIdProvider) = runBlocking {
-//        instanceIdProvider.initialize()
-//    }
+    @Singleton
+    fun leaseLockingInstanceIdProviderInitializer(instanceIdProvider: InstanceIdProvider) = LeaseLockingInstanceIdProviderLifecycleManager(instanceIdProvider)
 }

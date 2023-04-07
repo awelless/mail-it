@@ -5,11 +5,6 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
             http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
-    <!--  BLOB TYPES FOR DIFFERENT DBMS  -->
-    <property name="blob_type" value="blob" dbms="h2"/>
-    <property name="blob_type" value="bytea" dbms="postgresql"/>
-
-    <include file="initialization.xml" relativeToChangelogFile="true"/>
-    <include file="0.2/master.xml" relativeToChangelogFile="true"/>
+    <include file="instance_id_locks.xml" relativeToChangelogFile="true"/>
 
 </databaseChangeLog>
