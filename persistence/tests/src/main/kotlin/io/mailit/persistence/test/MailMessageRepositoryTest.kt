@@ -7,12 +7,14 @@ import io.mailit.core.model.MailMessageType
 import io.mailit.core.spi.MailMessageRepository
 import io.mailit.core.spi.MailMessageTypeRepository
 import io.mailit.test.createPlainMailMessageType
+import io.mailit.test.nowWithoutNanos
 import io.quarkus.test.junit.QuarkusTest
 import java.time.Instant
 import javax.inject.Inject
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -34,7 +36,6 @@ abstract class MailMessageRepositoryTest {
         runBlocking {
             mailMessageType = createPlainMailMessageType()
             mailMessageTypeRepository.create(mailMessageType)
-            mailMessageType = mailMessageTypeRepository.findByName(mailMessageType.name)!! // to get actual datetime values
 
             mailMessage = MailMessage(
                 id = 1,
@@ -44,11 +45,10 @@ abstract class MailMessageRepositoryTest {
                 emailFrom = "email@from.com",
                 emailTo = "email@to.com",
                 type = mailMessageType,
-                createdAt = Instant.now(),
+                createdAt = nowWithoutNanos(),
                 status = PENDING,
             )
-            val createdMailMessageType = mailMessageRepository.create(mailMessage)
-            mailMessage = mailMessageRepository.findOneWithTypeById(createdMailMessageType.id)!! // to get actual datetime values
+            mailMessageRepository.create(mailMessage)
         }
     }
 
@@ -121,5 +121,150 @@ abstract class MailMessageRepositoryTest {
         // then
         assertEquals(2, actual.size)
         assertTrue(actual.containsAll(listOf(mailMessage.id, message2.id)))
+    }
+
+    @Test
+    fun findAllSlicedDescendingIdSorted() = runTest {
+        // given
+        val message2 = MailMessage(
+            id = 2,
+            text = "text",
+            data = emptyMap(),
+            subject = null,
+            emailFrom = "email@from.com",
+            emailTo = "email@to.com",
+            type = mailMessageType,
+            createdAt = Instant.now(),
+            status = PENDING,
+        )
+        mailMessageRepository.create(message2)
+
+        // when
+        val actual = mailMessageRepository.findAllSlicedDescendingIdSorted(page = 1, size = 1)
+
+        // then
+        assertEquals(listOf(mailMessage), actual.content)
+        assertTrue(actual.last)
+    }
+
+    @Test
+    fun create() = runTest {
+        // given
+        val message = MailMessage(
+            id = 555,
+            text = null,
+            data = mapOf("name" to "Name", "age" to 20),
+            subject = null,
+            emailFrom = "email@from.com",
+            emailTo = "email@to.com",
+            type = mailMessageType,
+            createdAt = nowWithoutNanos(),
+            status = PENDING,
+        )
+
+        // when
+        mailMessageRepository.create(message)
+
+        val actual = mailMessageRepository.findOneWithTypeById(message.id)
+
+        // then
+        assertEquals(message, actual)
+    }
+
+    @Test
+    fun updateMessageStatus() = runTest {
+        // given
+        val status = SENDING
+
+        // when
+        mailMessageRepository.updateMessageStatus(mailMessage.id, status)
+
+        val actual = mailMessageRepository.findOneWithTypeById(mailMessage.id)
+
+        // then
+        assertEquals(status, actual?.status)
+    }
+
+    @Test
+    fun updateMessageStatusAndSendingStartedTimeByIdAndStatusIn_whenStatusesMatch_updates() = runTest {
+        // given
+        val status = SENDING
+        val startTime = nowWithoutNanos()
+
+        // when
+        mailMessageRepository.updateMessageStatusAndSendingStartedTimeByIdAndStatusIn(
+            id = mailMessage.id,
+            statuses = listOf(mailMessage.status),
+            status = status,
+            sendingStartedAt = startTime,
+        )
+
+        val actual = mailMessageRepository.findOneWithTypeById(mailMessage.id)
+
+        // then
+        assertEquals(status, actual?.status)
+        assertEquals(startTime, actual?.sendingStartedAt)
+    }
+
+    @Test
+    fun updateMessageStatusAndSendingStartedTimeByIdAndStatusIn_whenStatusesDoNotMatch_doesNothing() = runTest {
+        // given
+        val status = SENDING
+        val startTime = nowWithoutNanos()
+
+        // when
+        mailMessageRepository.updateMessageStatusAndSendingStartedTimeByIdAndStatusIn(
+            id = mailMessage.id,
+            statuses = emptyList(),
+            status = status,
+            sendingStartedAt = startTime,
+        )
+
+        val actual = mailMessageRepository.findOneWithTypeById(mailMessage.id)
+
+        // then
+        assertEquals(mailMessage.status, actual?.status)
+        assertEquals(mailMessage.sendingStartedAt, actual?.sendingStartedAt)
+    }
+
+    @Test
+    fun updateMessageStatusAndSentTime() = runTest {
+        // given
+        val status = SENDING
+        val sentAt = nowWithoutNanos()
+
+        // when
+        mailMessageRepository.updateMessageStatusAndSentTime(
+            id = mailMessage.id,
+            status = status,
+            sentAt = sentAt,
+        )
+
+        val actual = mailMessageRepository.findOneWithTypeById(mailMessage.id)
+
+        // then
+        assertEquals(status, actual?.status)
+        assertEquals(sentAt, actual?.sentAt)
+    }
+
+    @Test
+    fun updateMessageStatusFailedCountAndSendingStartedTime() = runTest {
+        // given
+        val status = SENDING
+        val failedCount = 123
+
+        // when
+        mailMessageRepository.updateMessageStatusFailedCountAndSendingStartedTime(
+            id = mailMessage.id,
+            status = status,
+            failedCount = failedCount,
+            sendingStartedAt = null,
+        )
+
+        val actual = mailMessageRepository.findOneWithTypeById(mailMessage.id)
+
+        // then
+        assertEquals(status, actual?.status)
+        assertNull(actual?.sendingStartedAt)
     }
 }

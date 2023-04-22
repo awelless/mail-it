@@ -6,42 +6,47 @@ import io.mailit.core.model.MailMessage
 import io.mailit.core.model.MailMessageStatus
 import io.mailit.core.model.MailMessageType
 import io.mailit.core.model.PlainTextMailMessageType
-import java.time.Instant
 import java.util.concurrent.atomic.AtomicLong
 
-private val COUNTER = AtomicLong()
+private val counter = AtomicLong()
 
-fun createPlainMailMessageType(): PlainTextMailMessageType =
-    PlainTextMailMessageType(
-        id = COUNTER.incrementAndGet(),
-        name = "DEFAULT",
+fun createPlainMailMessageType(): PlainTextMailMessageType {
+    val id = counter.incrementAndGet()
+
+    return PlainTextMailMessageType(
+        id = id,
+        name = "plain-type-$id",
         description = "Some description",
         maxRetriesCount = 111,
-        createdAt = Instant.now(),
-        updatedAt = Instant.now(),
+        createdAt = nowWithoutNanos(),
+        updatedAt = nowWithoutNanos(),
     )
+}
 
-fun createHtmlMailMessageType(): HtmlMailMessageType =
-    HtmlMailMessageType(
-        id = COUNTER.incrementAndGet(),
-        name = "DEFAULT",
+fun createHtmlMailMessageType(): HtmlMailMessageType {
+    val id = counter.incrementAndGet()
+
+    return HtmlMailMessageType(
+        id = id,
+        name = "html-type-$id",
         description = "Some description",
-        createdAt = Instant.now(),
-        updatedAt = Instant.now(),
+        createdAt = nowWithoutNanos(),
+        updatedAt = nowWithoutNanos(),
         maxRetriesCount = 111,
         templateEngine = NONE,
         template = "<html></html>",
     )
+}
 
 fun createMailMessage(messageType: MailMessageType): MailMessage =
     MailMessage(
-        id = COUNTER.incrementAndGet(),
+        id = counter.incrementAndGet(),
         text = "text",
         data = emptyMap(),
         subject = null,
         emailFrom = "email@from.com",
         emailTo = "email@to.com",
         type = messageType,
-        createdAt = Instant.now(),
+        createdAt = nowWithoutNanos(),
         status = MailMessageStatus.PENDING,
     )
