@@ -9,8 +9,8 @@ import io.mailit.core.spi.MailMessageTypeRepository
 import io.mailit.test.createPlainMailMessageType
 import io.mailit.test.nowWithoutNanos
 import io.quarkus.test.junit.QuarkusTest
-import java.time.Instant
 import jakarta.inject.Inject
+import java.time.Instant
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
