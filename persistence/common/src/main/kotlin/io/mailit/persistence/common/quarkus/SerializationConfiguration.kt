@@ -6,7 +6,7 @@ import com.esotericsoftware.kryo.serializers.DefaultSerializers
 import com.esotericsoftware.kryo.serializers.MapSerializer
 import io.mailit.persistence.common.serialization.KryoMailMessageDataSerializer
 import io.quarkus.runtime.annotations.RegisterForReflection
-import javax.inject.Singleton
+import jakarta.inject.Singleton
 
 @RegisterForReflection(
     targets = [

@@ -1,6 +1,6 @@
 package io.mailit.admin.console.security
 
-import javax.inject.Singleton
+import jakarta.inject.Singleton
 import org.eclipse.microprofile.config.inject.ConfigProperty
 
 @Singleton

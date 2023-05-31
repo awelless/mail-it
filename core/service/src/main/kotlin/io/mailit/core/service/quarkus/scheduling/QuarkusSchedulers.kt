@@ -5,7 +5,7 @@ import io.mailit.core.service.mailing.UnsentMailProcessor
 import io.quarkus.scheduler.Scheduled
 import io.quarkus.scheduler.Scheduled.ConcurrentExecution.PROCEED
 import io.quarkus.scheduler.Scheduled.ConcurrentExecution.SKIP
-import javax.inject.Singleton
+import jakarta.inject.Singleton
 
 const val EACH_10_SECONDS = "*/10 * * * * ?"
 const val EACH_30_SECONDS = "*/30 * * * * ?"

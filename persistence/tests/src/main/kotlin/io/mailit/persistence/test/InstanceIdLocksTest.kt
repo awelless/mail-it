@@ -2,7 +2,7 @@ package io.mailit.persistence.test
 
 import io.mailit.core.spi.id.InstanceIdLocks
 import io.quarkus.test.junit.QuarkusTest
-import javax.inject.Inject
+import jakarta.inject.Inject
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds

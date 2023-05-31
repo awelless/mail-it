@@ -7,7 +7,7 @@ import io.mailit.test.createHtmlMailMessageType
 import io.mailit.test.createPlainMailMessageType
 import io.mailit.test.nowWithoutNanos
 import io.quarkus.test.junit.QuarkusTest
-import javax.inject.Inject
+import jakarta.inject.Inject
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals

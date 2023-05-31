@@ -35,8 +35,8 @@ import io.mailit.core.spi.MailMessageRepository
 import io.mailit.core.spi.MailMessageTypeRepository
 import io.mailit.core.spi.id.InstanceIdLocks
 import io.quarkus.mailer.reactive.ReactiveMailer
-import javax.enterprise.inject.Instance
-import javax.inject.Singleton
+import jakarta.enterprise.inject.Instance
+import jakarta.inject.Singleton
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.Dispatchers

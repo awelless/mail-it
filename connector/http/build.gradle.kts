@@ -13,5 +13,5 @@ dependencies {
 }
 
 allOpen {
-    annotation("javax.ws.rs.Path")
+    annotation("jakarta.ws.rs.Path")
 }
