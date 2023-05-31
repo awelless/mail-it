@@ -21,7 +21,9 @@ allOpen {
 }
 
 tasks.processResources {
-    dependsOn("copyWebUiArtifactToResources")
+    if (project.hasProperty("withUi")) {
+        dependsOn("copyWebUiArtifactToResources")
+    }
 }
 
 task<Copy>("copyWebUiArtifactToResources") {

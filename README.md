@@ -17,7 +17,11 @@ Open source e-mail service featuring template management and processing
 To build the artifact run the following command:
 
 ```shell
-./gradlew clean distribution:build -Dquarkus.package.type=${PACKAGE_TYPE} -PdatabaseProvider=${DATABASE_PROVIDER} -Pconnectors=${CONNECTORS}
+./gradlew clean distribution:build \
+  -Dquarkus.package.type=${PACKAGE_TYPE} \
+  -PdatabaseProvider=${DATABASE_PROVIDER} \
+  -Pconnectors=${CONNECTORS} \
+  -PwithUi
 ```
 
 To skip tests replace `distribution:build` with `distribution:assemble`

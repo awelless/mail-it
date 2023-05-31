@@ -33,6 +33,10 @@ tasks.getByName("quarkusGenerateCodeTests") {
     dependsOn("jandex")
 }
 
+tasks.getByName("quarkusDependenciesBuild") {
+    dependsOn("jandex")
+}
+
 /**
  * Resolves database provider dependency, depending on property passed for task
  */
