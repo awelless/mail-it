@@ -19,3 +19,7 @@ dependencies {
 
     testImplementation(project(":persistence:tests"))
 }
+
+tasks.getByName("quarkusGenerateCodeTests") {
+    dependsOn("jandex")
+}

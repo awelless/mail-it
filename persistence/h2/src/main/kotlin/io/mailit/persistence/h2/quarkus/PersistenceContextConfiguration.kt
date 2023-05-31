@@ -3,7 +3,7 @@ package io.mailit.persistence.h2.quarkus
 import io.mailit.persistence.common.serialization.MailMessageDataSerializer
 import io.mailit.persistence.h2.JdbcMailMessageRepository
 import io.mailit.persistence.h2.JdbcMailMessageTypeRepository
-import javax.inject.Singleton
+import jakarta.inject.Singleton
 import javax.sql.DataSource
 import org.apache.commons.dbutils.QueryRunner
 

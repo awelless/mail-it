@@ -8,7 +8,7 @@ import io.mailit.core.admin.api.type.MailMessageContentType.PLAIN_TEXT
 import io.mailit.core.model.HtmlMailMessageType
 import io.mailit.core.model.MailMessageType
 import io.mailit.core.model.PlainTextMailMessageType
-import javax.inject.Singleton
+import jakarta.inject.Singleton
 
 @Singleton
 class ResponseMailMessageTypeDtoMapper {

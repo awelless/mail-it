@@ -2,8 +2,8 @@ package io.mailit.connector.http
 
 import io.mailit.core.external.api.CreateMailCommand
 import io.mailit.core.external.api.ExternalMailMessageService
-import javax.ws.rs.POST
-import javax.ws.rs.Path
+import jakarta.ws.rs.POST
+import jakarta.ws.rs.Path
 import org.jboss.resteasy.reactive.ResponseStatus
 import org.jboss.resteasy.reactive.RestResponse.StatusCode.ACCEPTED
 
