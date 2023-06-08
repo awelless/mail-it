@@ -1,4 +1,4 @@
-package io.mailit.core.model
+package io.mailit.core.model.application
 
 data class Application(
     val id: Long,

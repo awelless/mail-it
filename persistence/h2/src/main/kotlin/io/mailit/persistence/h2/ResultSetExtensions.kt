@@ -1,7 +1,5 @@
 package io.mailit.persistence.h2
 
-import io.mailit.core.model.Application
-import io.mailit.core.model.ApplicationState
 import io.mailit.core.model.HtmlMailMessageType
 import io.mailit.core.model.HtmlTemplateEngine
 import io.mailit.core.model.MailMessage
@@ -9,6 +7,8 @@ import io.mailit.core.model.MailMessageStatus
 import io.mailit.core.model.MailMessageType
 import io.mailit.core.model.MailMessageTypeState
 import io.mailit.core.model.PlainTextMailMessageType
+import io.mailit.core.model.application.Application
+import io.mailit.core.model.application.ApplicationState
 import io.mailit.persistence.common.serialization.MailMessageDataSerializer
 import io.mailit.persistence.h2.MailMessageContent.HTML
 import java.sql.ResultSet

@@ -5,10 +5,10 @@ import io.mailit.admin.console.http.DEFAULT_SIZE
 import io.mailit.admin.console.http.PAGE_PARAM
 import io.mailit.admin.console.http.SIZE_PARAM
 import io.mailit.core.admin.api.application.CreateApplicationCommand
-import io.mailit.core.model.Application
-import io.mailit.core.model.ApplicationState.DELETED
-import io.mailit.core.model.ApplicationState.ENABLED
-import io.mailit.core.spi.ApplicationRepository
+import io.mailit.core.model.application.Application
+import io.mailit.core.model.application.ApplicationState.DELETED
+import io.mailit.core.model.application.ApplicationState.ENABLED
+import io.mailit.core.spi.application.ApplicationRepository
 import io.mailit.test.restassured.body
 import io.mailit.test.restassured.equalTo
 import io.quarkus.test.junit.QuarkusTest

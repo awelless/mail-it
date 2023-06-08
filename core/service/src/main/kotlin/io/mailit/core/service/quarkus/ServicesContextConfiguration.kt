@@ -32,9 +32,9 @@ import io.mailit.core.service.quarkus.id.LeaseLockingInstanceIdProviderLifecycle
 import io.mailit.core.service.quarkus.mailing.MailFactory
 import io.mailit.core.service.quarkus.mailing.MailSenderImpl
 import io.mailit.core.service.quarkus.mailing.QuarkusMailSender
-import io.mailit.core.spi.ApplicationRepository
 import io.mailit.core.spi.MailMessageRepository
 import io.mailit.core.spi.MailMessageTypeRepository
+import io.mailit.core.spi.application.ApplicationRepository
 import io.mailit.core.spi.id.InstanceIdLocks
 import io.quarkus.mailer.reactive.ReactiveMailer
 import jakarta.enterprise.inject.Instance

@@ -1,6 +1,9 @@
 package io.mailit.test
 
+import java.time.Duration as JavaDuration
 import java.time.Instant
+import kotlin.time.Duration
+import kotlin.time.toJavaDuration
 
 fun String.readResource(): String {
     return {}::class.java.classLoader.getResource(this)?.readText()
@@ -10,4 +13,9 @@ fun String.readResource(): String {
 fun nowWithoutNanos(): Instant {
     val now = Instant.now()
     return now.minusNanos(now.nano.toLong())
+}
+
+fun Instant.within(difference: Duration, of: Instant): Boolean {
+    val actualDifference = JavaDuration.between(this, of).abs()
+    return actualDifference <= difference.toJavaDuration()
 }

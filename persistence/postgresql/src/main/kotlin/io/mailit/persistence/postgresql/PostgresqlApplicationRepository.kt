@@ -1,10 +1,10 @@
 package io.mailit.persistence.postgresql
 
-import io.mailit.core.model.Application
-import io.mailit.core.model.ApplicationState
 import io.mailit.core.model.Slice
-import io.mailit.core.spi.ApplicationRepository
+import io.mailit.core.model.application.Application
+import io.mailit.core.model.application.ApplicationState
 import io.mailit.core.spi.DuplicateUniqueKeyException
+import io.mailit.core.spi.application.ApplicationRepository
 import io.mailit.persistence.common.createSlice
 import io.smallrye.mutiny.Multi
 import io.smallrye.mutiny.coroutines.awaitSuspending

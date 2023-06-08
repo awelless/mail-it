@@ -8,6 +8,7 @@ dependencies {
     implementation("io.github.microutils:kotlin-logging-jvm")
 
     implementation("io.quarkus:quarkus-config-yaml")
+    implementation("io.quarkus:quarkus-elytron-security")
     implementation("io.quarkus:quarkus-kotlin")
     implementation("io.quarkus:quarkus-mailer")
     implementation("io.quarkus:quarkus-quartz")

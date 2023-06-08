@@ -1,6 +1,6 @@
 package io.mailit.admin.console.http.dto
 
-import io.mailit.core.model.ApplicationState
+import io.mailit.core.model.application.ApplicationState
 import io.quarkus.runtime.annotations.RegisterForReflection
 
 @RegisterForReflection

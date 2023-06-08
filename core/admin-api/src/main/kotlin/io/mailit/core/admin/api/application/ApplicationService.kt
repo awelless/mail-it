@@ -1,7 +1,7 @@
 package io.mailit.core.admin.api.application
 
-import io.mailit.core.model.Application
 import io.mailit.core.model.Slice
+import io.mailit.core.model.application.Application
 
 interface ApplicationService {
 

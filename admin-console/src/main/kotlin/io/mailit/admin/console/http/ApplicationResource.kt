@@ -4,7 +4,7 @@ import io.mailit.admin.console.http.dto.ApplicationDto
 import io.mailit.admin.console.security.Roles.ADMIN
 import io.mailit.core.admin.api.application.ApplicationService
 import io.mailit.core.admin.api.application.CreateApplicationCommand
-import io.mailit.core.model.Application
+import io.mailit.core.model.application.Application
 import jakarta.annotation.security.RolesAllowed
 import jakarta.json.JsonObject
 import jakarta.ws.rs.DELETE

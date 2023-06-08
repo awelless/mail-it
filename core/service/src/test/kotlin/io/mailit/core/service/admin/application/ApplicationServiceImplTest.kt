@@ -2,11 +2,11 @@ package io.mailit.core.service.admin.application
 
 import io.mailit.core.admin.api.application.CreateApplicationCommand
 import io.mailit.core.exception.ValidationException
-import io.mailit.core.model.Application
-import io.mailit.core.model.ApplicationState.ENABLED
+import io.mailit.core.model.application.Application
+import io.mailit.core.model.application.ApplicationState.ENABLED
 import io.mailit.core.service.test.ConstantIdGenerator
-import io.mailit.core.spi.ApplicationRepository
 import io.mailit.core.spi.DuplicateUniqueKeyException
+import io.mailit.core.spi.application.ApplicationRepository
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.impl.annotations.InjectMockKs

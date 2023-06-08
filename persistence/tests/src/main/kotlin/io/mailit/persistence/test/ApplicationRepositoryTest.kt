@@ -1,9 +1,9 @@
 package io.mailit.persistence.test
 
-import io.mailit.core.model.Application
-import io.mailit.core.model.ApplicationState.DELETED
-import io.mailit.core.model.ApplicationState.ENABLED
-import io.mailit.core.spi.ApplicationRepository
+import io.mailit.core.model.application.Application
+import io.mailit.core.model.application.ApplicationState.DELETED
+import io.mailit.core.model.application.ApplicationState.ENABLED
+import io.mailit.core.spi.application.ApplicationRepository
 import jakarta.inject.Inject
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest

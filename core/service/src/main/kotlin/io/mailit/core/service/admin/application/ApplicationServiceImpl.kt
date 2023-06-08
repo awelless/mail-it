@@ -2,14 +2,13 @@ package io.mailit.core.service.admin.application
 
 import io.mailit.core.admin.api.application.ApplicationService
 import io.mailit.core.admin.api.application.CreateApplicationCommand
-import io.mailit.core.exception.NotFoundException
 import io.mailit.core.exception.ValidationException
-import io.mailit.core.model.Application
-import io.mailit.core.model.ApplicationState.DELETED
-import io.mailit.core.model.ApplicationState.ENABLED
+import io.mailit.core.model.application.Application
+import io.mailit.core.model.application.ApplicationState.DELETED
+import io.mailit.core.model.application.ApplicationState.ENABLED
 import io.mailit.core.service.id.IdGenerator
-import io.mailit.core.spi.ApplicationRepository
 import io.mailit.core.spi.DuplicateUniqueKeyException
+import io.mailit.core.spi.application.ApplicationRepository
 import mu.KLogging
 
 class ApplicationServiceImpl(
@@ -17,8 +16,7 @@ class ApplicationServiceImpl(
     private val idGenerator: IdGenerator,
 ) : ApplicationService {
 
-    override suspend fun getById(id: Long) =
-        applicationRepository.findById(id) ?: throw NotFoundException("Application with id: $id is not found")
+    override suspend fun getById(id: Long) = applicationRepository.findByIdOrThrow(id)
 
     override suspend fun getAllSliced(page: Int, size: Int) = applicationRepository.findAllSliced(page, size)
 
