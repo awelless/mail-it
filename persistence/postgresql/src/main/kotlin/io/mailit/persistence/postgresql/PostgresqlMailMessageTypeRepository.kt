@@ -95,7 +95,7 @@ private const val UPDATE_STATE_SQL = """
         updated_at = $2
     WHERE mail_message_type_id = $3"""
 
-class ReactiveMailMessageTypeRepository(
+class PostgresqlMailMessageTypeRepository(
     private val client: PgPool,
 ) : MailMessageTypeRepository {
 
