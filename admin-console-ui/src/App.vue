@@ -24,6 +24,9 @@
         <q-item clickable to="/types">
           <q-item-section> Mail Types </q-item-section>
         </q-item>
+        <q-item clickable to="/applications">
+          <q-item-section> Applications </q-item-section>
+        </q-item>
       </q-list>
     </q-drawer>
 

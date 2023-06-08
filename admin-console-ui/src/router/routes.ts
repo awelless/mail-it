@@ -24,6 +24,19 @@ const routes: RouteRecordRaw[] = [
     props: true,
   },
   {
+    path: '/applications',
+    component: () => import('pages/application/ApplicationsPage.vue'),
+  },
+  {
+    path: '/applications/create',
+    component: () => import('pages/application/CreateApplicationPage.vue'),
+  },
+  {
+    path: '/applications/:id',
+    component: () => import('pages/application/ApplicationPage.vue'),
+    props: true,
+  },
+  {
     path: '/:catchAll(.*)*',
     redirect: '/',
   },
