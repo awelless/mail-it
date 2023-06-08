@@ -7,5 +7,6 @@
 
     <include file="instance_id_locks.xml" relativeToChangelogFile="true"/>
     <include file="application.xml" relativeToChangelogFile="true"/>
+    <include file="api_key.xml" relativeToChangelogFile="true"/>
 
 </databaseChangeLog>

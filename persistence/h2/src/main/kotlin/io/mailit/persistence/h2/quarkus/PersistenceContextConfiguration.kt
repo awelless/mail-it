@@ -1,6 +1,7 @@
 package io.mailit.persistence.h2.quarkus
 
 import io.mailit.persistence.common.serialization.MailMessageDataSerializer
+import io.mailit.persistence.h2.H2ApiKeyRepository
 import io.mailit.persistence.h2.H2ApplicationRepository
 import io.mailit.persistence.h2.H2MailMessageRepository
 import io.mailit.persistence.h2.H2MailMessageTypeRepository
@@ -18,6 +19,9 @@ class RepositoriesConfiguration(
     private val queryRunner: QueryRunner,
     private val dataSource: DataSource,
 ) {
+
+    @Singleton
+    fun apiKeyRepository() = H2ApiKeyRepository(dataSource, queryRunner)
 
     @Singleton
     fun applicationRepository() = H2ApplicationRepository(dataSource, queryRunner)
