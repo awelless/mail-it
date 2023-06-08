@@ -94,7 +94,7 @@ private const val UPDATE_STATE_SQL = """
         updated_at = ?
     WHERE mail_message_type_id = ?"""
 
-class JdbcMailMessageTypeRepository(
+class H2MailMessageTypeRepository(
     private val dataSource: DataSource,
     private val queryRunner: QueryRunner,
 ) : MailMessageTypeRepository {

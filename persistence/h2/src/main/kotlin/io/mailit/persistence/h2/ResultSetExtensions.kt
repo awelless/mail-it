@@ -1,5 +1,7 @@
 package io.mailit.persistence.h2
 
+import io.mailit.core.model.Application
+import io.mailit.core.model.ApplicationState
 import io.mailit.core.model.HtmlMailMessageType
 import io.mailit.core.model.HtmlTemplateEngine
 import io.mailit.core.model.MailMessage
@@ -20,9 +22,16 @@ import java.time.Instant
  * Entity shortnames:
  * | class            | entityShortName |
  * |------------------|-----------------|
+ * | Application      | app             |
  * | MailMessage      | m               |
  * | MailMessageType  | mt              |
  */
+
+internal fun ResultSet.getApplicationFromRow() = Application(
+    id = getLong("app_application_id"),
+    name = getString("app_name"),
+    state = ApplicationState.valueOf(getString("app_state")),
+)
 
 internal fun ResultSet.getMailMessageTypeFromRow(): MailMessageType {
     val typeId = getLong("mt_mail_message_type_id")
@@ -54,6 +63,7 @@ internal fun ResultSet.getMailMessageTypeFromRow(): MailMessageType {
             createdAt = createdAt,
             updatedAt = updatedAt,
         )
+
         HTML -> HtmlMailMessageType(
             id = typeId,
             name = typeName,

@@ -133,7 +133,7 @@ private const val UPDATE_STATUS_FAILED_COUNT_AND_SENDING_START_SQL = """
         sending_started_at = ? 
     WHERE mail_message_id = ?"""
 
-class JdbcMailMessageRepository(
+class H2MailMessageRepository(
     private val dataSource: DataSource,
     private val queryRunner: QueryRunner,
     private val dataSerializer: MailMessageDataSerializer,

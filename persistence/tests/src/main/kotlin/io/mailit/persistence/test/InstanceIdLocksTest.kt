@@ -1,7 +1,6 @@
 package io.mailit.persistence.test
 
 import io.mailit.core.spi.id.InstanceIdLocks
-import io.quarkus.test.junit.QuarkusTest
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.minutes
@@ -18,7 +17,6 @@ import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
-@QuarkusTest
 abstract class InstanceIdLocksTest {
 
     private val instanceId = 15

@@ -1,6 +1,7 @@
 package io.mailit.core.service.quarkus
 
 import io.mailit.core.model.MailMessageType
+import io.mailit.core.service.admin.application.ApplicationServiceImpl
 import io.mailit.core.service.admin.mail.AdminMailMessageServiceImpl
 import io.mailit.core.service.admin.type.HtmlMailMessageTypeFactory
 import io.mailit.core.service.admin.type.HtmlMailMessageTypeStateUpdater
@@ -31,6 +32,7 @@ import io.mailit.core.service.quarkus.id.LeaseLockingInstanceIdProviderLifecycle
 import io.mailit.core.service.quarkus.mailing.MailFactory
 import io.mailit.core.service.quarkus.mailing.MailSenderImpl
 import io.mailit.core.service.quarkus.mailing.QuarkusMailSender
+import io.mailit.core.spi.ApplicationRepository
 import io.mailit.core.spi.MailMessageRepository
 import io.mailit.core.spi.MailMessageTypeRepository
 import io.mailit.core.spi.id.InstanceIdLocks
@@ -61,6 +63,12 @@ class AdminServicesContextConfiguration {
         mailMessageTypeFactory: MailMessageTypeFactory<MailMessageType>,
         mailMessageTypeStateUpdated: MailMessageTypeStateUpdater<MailMessageType>,
     ) = MailMessageTypeServiceImpl(mailMessageTypeRepository, mailMessageTypeFactory, mailMessageTypeStateUpdated)
+
+    @Singleton
+    fun applicationService(
+        applicationRepository: ApplicationRepository,
+        idGenerator: IdGenerator,
+    ) = ApplicationServiceImpl(applicationRepository, idGenerator)
 
     @Singleton
     fun adminMailMessageService(mailMessageRepository: MailMessageRepository) = AdminMailMessageServiceImpl(mailMessageRepository)

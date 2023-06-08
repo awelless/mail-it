@@ -1,6 +1,7 @@
 package io.mailit.persistence.postgresql.quarkus
 
 import io.mailit.persistence.common.serialization.MailMessageDataSerializer
+import io.mailit.persistence.postgresql.PostgresqlApplicationRepository
 import io.mailit.persistence.postgresql.PostgresqlInstanceIdLocks
 import io.mailit.persistence.postgresql.PostgresqlMailMessageRepository
 import io.mailit.persistence.postgresql.PostgresqlMailMessageTypeRepository
@@ -10,6 +11,9 @@ import javax.inject.Singleton
 class RepositoriesConfiguration(
     private val pgPool: PgPool,
 ) {
+
+    @Singleton
+    fun applicationRepository() = PostgresqlApplicationRepository(pgPool)
 
     @Singleton
     fun mailMessageTypeRepository() = PostgresqlMailMessageTypeRepository(pgPool)

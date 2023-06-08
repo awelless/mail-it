@@ -8,7 +8,6 @@ import io.mailit.core.spi.MailMessageRepository
 import io.mailit.core.spi.MailMessageTypeRepository
 import io.mailit.test.createPlainMailMessageType
 import io.mailit.test.nowWithoutNanos
-import io.quarkus.test.junit.QuarkusTest
 import java.time.Instant
 import javax.inject.Inject
 import kotlinx.coroutines.runBlocking
@@ -19,7 +18,6 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
-@QuarkusTest
 abstract class MailMessageRepositoryTest {
 
     @Inject
