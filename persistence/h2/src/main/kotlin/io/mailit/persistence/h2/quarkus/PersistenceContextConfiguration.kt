@@ -4,7 +4,7 @@ import io.mailit.persistence.common.serialization.MailMessageDataSerializer
 import io.mailit.persistence.h2.H2ApplicationRepository
 import io.mailit.persistence.h2.H2MailMessageRepository
 import io.mailit.persistence.h2.H2MailMessageTypeRepository
-import javax.inject.Singleton
+import jakarta.inject.Singleton
 import javax.sql.DataSource
 import org.apache.commons.dbutils.QueryRunner
 

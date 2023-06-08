@@ -4,7 +4,7 @@ import io.mailit.core.service.id.InstanceIdProvider
 import io.mailit.core.service.id.LeaseLockingInstanceIdProvider
 import io.quarkus.runtime.ShutdownEvent
 import io.quarkus.runtime.StartupEvent
-import javax.enterprise.event.Observes
+import jakarta.enterprise.event.Observes
 import kotlinx.coroutines.runBlocking
 
 /**

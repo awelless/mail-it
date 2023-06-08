@@ -12,3 +12,7 @@ dependencies {
 
     testImplementation(project(":common-test"))
 }
+
+tasks.getByName("quarkusGenerateCodeTests") {
+    dependsOn("jandex")
+}

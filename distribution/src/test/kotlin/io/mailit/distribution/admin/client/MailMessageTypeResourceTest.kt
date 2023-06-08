@@ -18,7 +18,7 @@ import io.restassured.http.ContentType.JSON
 import io.restassured.module.kotlin.extensions.Given
 import io.restassured.module.kotlin.extensions.Then
 import io.restassured.module.kotlin.extensions.When
-import javax.inject.Inject
+import jakarta.inject.Inject
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import org.jboss.resteasy.reactive.RestResponse.StatusCode.ACCEPTED

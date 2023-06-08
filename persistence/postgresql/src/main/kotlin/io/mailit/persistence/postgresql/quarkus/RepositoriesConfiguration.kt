@@ -6,7 +6,7 @@ import io.mailit.persistence.postgresql.PostgresqlInstanceIdLocks
 import io.mailit.persistence.postgresql.PostgresqlMailMessageRepository
 import io.mailit.persistence.postgresql.PostgresqlMailMessageTypeRepository
 import io.vertx.mutiny.pgclient.PgPool
-import javax.inject.Singleton
+import jakarta.inject.Singleton
 
 class RepositoriesConfiguration(
     private val pgPool: PgPool,

@@ -8,8 +8,8 @@ import io.mailit.core.spi.MailMessageRepository
 import io.mailit.core.spi.MailMessageTypeRepository
 import io.mailit.test.createPlainMailMessageType
 import io.mailit.test.nowWithoutNanos
+import jakarta.inject.Inject
 import java.time.Instant
-import javax.inject.Inject
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals

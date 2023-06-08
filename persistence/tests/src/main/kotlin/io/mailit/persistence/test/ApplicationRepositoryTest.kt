@@ -4,7 +4,7 @@ import io.mailit.core.model.Application
 import io.mailit.core.model.ApplicationState.DELETED
 import io.mailit.core.model.ApplicationState.ENABLED
 import io.mailit.core.spi.ApplicationRepository
-import javax.inject.Inject
+import jakarta.inject.Inject
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals

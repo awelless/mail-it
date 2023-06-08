@@ -2,12 +2,12 @@ package io.mailit.admin.console.http
 
 import io.mailit.core.exception.NotFoundException
 import io.mailit.core.exception.ValidationException
-import javax.ws.rs.core.MediaType.APPLICATION_JSON
-import javax.ws.rs.core.Response
-import javax.ws.rs.core.Response.Status.BAD_REQUEST
-import javax.ws.rs.core.Response.Status.NOT_FOUND
-import javax.ws.rs.ext.ExceptionMapper
-import javax.ws.rs.ext.Provider
+import jakarta.ws.rs.core.MediaType.APPLICATION_JSON
+import jakarta.ws.rs.core.Response
+import jakarta.ws.rs.core.Response.Status.BAD_REQUEST
+import jakarta.ws.rs.core.Response.Status.NOT_FOUND
+import jakarta.ws.rs.ext.ExceptionMapper
+import jakarta.ws.rs.ext.Provider
 import mu.KLogging
 
 @Provider

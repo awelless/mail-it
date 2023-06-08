@@ -1,9 +1,9 @@
 pluginManagement {
     val jandexPluginVersion = "1.1.0" // https://plugins.gradle.org/plugin/org.kordamp.gradle.jandex
-    val kotlinVersion = "1.8.10" // https://mvnrepository.com/artifact/org.jetbrains.kotlin/kotlin-stdlib
-    val ktlintVersion = "11.3.1" // https://mvnrepository.com/artifact/org.jlleitschuh.gradle/ktlint-gradle
+    val kotlinVersion = "1.8.21" // https://mvnrepository.com/artifact/org.jetbrains.kotlin/kotlin-stdlib
+    val ktlintVersion = "11.3.2" // https://mvnrepository.com/artifact/org.jlleitschuh.gradle/ktlint-gradle
     val springDependencyManagementVersion = "1.1.0" // // https://mvnrepository.com/artifact/io.spring.gradle/dependency-management-plugin
-    val quarkusVersion = "2.16.6.Final" // https://mvnrepository.com/artifact/io.quarkus.platform/quarkus-bom
+    val quarkusVersion = "3.1.0.Final" // https://mvnrepository.com/artifact/io.quarkus.platform/quarkus-bom
 
     repositories {
         mavenCentral()

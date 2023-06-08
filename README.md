@@ -7,8 +7,8 @@ Open source e-mail service featuring template management and processing
 ### Requirements
 
 - JDK 17
-- Kotlin 1.8.10
-- GraalVM 22.3.0 (for native build only)
+- Kotlin 1.8
+- GraalVM 22.3 (for native build only)
 - Node.js 18
 - Docker (for tests only)
 
@@ -17,7 +17,11 @@ Open source e-mail service featuring template management and processing
 To build the artifact run the following command:
 
 ```shell
-./gradlew clean distribution:build -Dquarkus.package.type=${PACKAGE_TYPE} -PdatabaseProvider=${DATABASE_PROVIDER} -Pconnectors=${CONNECTORS}
+./gradlew clean distribution:build \
+  -Dquarkus.package.type=${PACKAGE_TYPE} \
+  -PdatabaseProvider=${DATABASE_PROVIDER} \
+  -Pconnectors=${CONNECTORS} \
+  -PwithUi
 ```
 
 To skip tests replace `distribution:build` with `distribution:assemble`

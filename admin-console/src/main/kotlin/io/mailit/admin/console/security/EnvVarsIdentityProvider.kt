@@ -6,7 +6,7 @@ import io.quarkus.security.identity.IdentityProvider
 import io.quarkus.security.identity.SecurityIdentity
 import io.quarkus.security.identity.request.UsernamePasswordAuthenticationRequest
 import io.smallrye.mutiny.Uni
-import javax.inject.Singleton
+import jakarta.inject.Singleton
 
 @Singleton
 class EnvVarsIdentityProvider(private val userCredentials: UserCredentials) : IdentityProvider<UsernamePasswordAuthenticationRequest> {

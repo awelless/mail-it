@@ -5,7 +5,7 @@ import io.quarkus.security.identity.IdentityProvider
 import io.quarkus.security.identity.SecurityIdentity
 import io.quarkus.security.identity.request.TrustedAuthenticationRequest
 import io.smallrye.mutiny.Uni
-import javax.inject.Singleton
+import jakarta.inject.Singleton
 
 @Singleton
 class TrustedRequestIdentityProvider(userCredentials: UserCredentials) : IdentityProvider<TrustedAuthenticationRequest> {
