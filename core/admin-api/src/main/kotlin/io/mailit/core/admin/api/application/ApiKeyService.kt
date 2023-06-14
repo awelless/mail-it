@@ -10,7 +10,7 @@ interface ApiKeyService {
 
     suspend fun getAll(applicationId: Long): List<ApiKey>
 
-    suspend fun delete(id: String)
+    suspend fun delete(applicationId: Long, id: String)
 }
 
 data class CreateApiKeyCommand(

@@ -62,7 +62,7 @@ class PostgresqlApplicationRepository(
     override suspend fun create(application: Application) {
         client.preparedQuery(INSERT_SQL).execute(Tuple.of(application.id, application.name, application.state.name))
             .onFailure(PgException::class.java).transform {
-                if ((it as? PgException)?.code == "23505") DuplicateUniqueKeyException(it.message, it) else it
+                if ((it as? PgException)?.sqlState == "23505") DuplicateUniqueKeyException(it.message, it) else it
             }
             .awaitSuspending()
     }

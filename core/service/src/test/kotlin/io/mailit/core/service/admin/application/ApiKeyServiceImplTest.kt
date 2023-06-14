@@ -1,6 +1,7 @@
 package io.mailit.core.service.admin.application
 
 import io.mailit.core.admin.api.application.CreateApiKeyCommand
+import io.mailit.core.exception.NotFoundException
 import io.mailit.core.external.api.InvalidApiKeyException
 import io.mailit.core.model.application.ApiKey
 import io.mailit.core.model.application.ApiKeyToken
@@ -154,6 +155,17 @@ internal class ApiKeyServiceImplTest {
 
         // when + then
         assertThrows<InvalidApiKeyException> { apiKeyService.validate(token) }
+    }
+
+    @Test
+    fun `delete when doesn't exist`() = runTest {
+        // given
+        val invalidApplicationId = 999L
+
+        coEvery { apiKeyRepository.delete(invalidApplicationId, apiKey.id) } returns false
+
+        // when + then
+        assertThrows<NotFoundException> { apiKeyService.delete(invalidApplicationId, apiKey.id) }
     }
 
     companion object {

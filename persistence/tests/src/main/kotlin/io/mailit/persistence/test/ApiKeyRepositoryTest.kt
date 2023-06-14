@@ -12,7 +12,10 @@ import kotlin.time.toJavaDuration
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertNull
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
@@ -104,13 +107,29 @@ abstract class ApiKeyRepositoryTest {
     }
 
     @Test
-    fun delete() = runTest {
+    fun `delete when exists for application`() = runTest {
         // when
-        apiKeyRepository.delete(apiKey.id)
+        val deleted = apiKeyRepository.delete(application.id, apiKey.id)
 
         val actual = apiKeyRepository.findById(apiKey.id)
 
         // then
+        assertTrue(deleted)
         assertNull(actual)
+    }
+
+    @Test
+    fun `delete when doesn't exist for application`() = runTest {
+        // when
+        val deleted = apiKeyRepository.delete(
+            applicationId = 9999,
+            id = apiKey.id,
+        )
+
+        val actual = apiKeyRepository.findById(apiKey.id)
+
+        // then
+        assertFalse(deleted)
+        assertNotNull(actual)
     }
 }

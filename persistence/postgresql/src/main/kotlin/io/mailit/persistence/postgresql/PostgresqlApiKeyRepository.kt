@@ -43,7 +43,7 @@ private const val INSERT_SQL = """
         expires_at)
     VALUES($1, $2, $3, $4, $5)"""
 
-private const val DELETE_SQL = "DELETE FROM api_key WHERE api_key_id = $1"
+private const val DELETE_SQL = "DELETE FROM api_key WHERE api_key_id = $1 AND application_id = $2"
 
 class PostgresqlApiKeyRepository(
     private val client: PgPool,
@@ -70,9 +70,9 @@ class PostgresqlApiKeyRepository(
             .awaitSuspending()
     }
 
-    override suspend fun delete(id: String) {
+    override suspend fun delete(applicationId: Long, id: String): Boolean =
         client.preparedQuery(DELETE_SQL)
-            .execute(Tuple.of(id))
+            .execute(Tuple.of(id, applicationId))
+            .onItem().transform { it.rowCount() > 0 }
             .awaitSuspending()
-    }
 }

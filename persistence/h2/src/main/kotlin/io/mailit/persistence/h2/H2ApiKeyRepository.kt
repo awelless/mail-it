@@ -42,7 +42,7 @@ private const val INSERT_SQL = """
         expires_at)
     VALUES(?, ?, ?, ?, ?)"""
 
-private const val DELETE_SQL = "DELETE FROM api_key WHERE api_key_id = ?"
+private const val DELETE_SQL = "DELETE FROM api_key WHERE api_key_id = ? AND application_id = ?"
 
 class H2ApiKeyRepository(
     private val dataSource: DataSource,
@@ -80,14 +80,15 @@ class H2ApiKeyRepository(
         }
     }
 
-    override suspend fun delete(id: String) {
-        dataSource.connection.use {
-            queryRunner.update(
-                it,
-                DELETE_SQL,
-                id,
-            )
-        }
+    override suspend fun delete(applicationId: Long, id: String) = dataSource.connection.use {
+        val updatedRows = queryRunner.update(
+            it,
+            DELETE_SQL,
+            id,
+            applicationId,
+        )
+
+        updatedRows > 0
     }
 }
 

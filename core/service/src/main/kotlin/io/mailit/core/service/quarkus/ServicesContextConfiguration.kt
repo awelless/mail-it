@@ -1,6 +1,8 @@
 package io.mailit.core.service.quarkus
 
 import io.mailit.core.model.MailMessageType
+import io.mailit.core.service.admin.application.ApiKeyGenerator
+import io.mailit.core.service.admin.application.ApiKeyServiceImpl
 import io.mailit.core.service.admin.application.ApplicationServiceImpl
 import io.mailit.core.service.admin.mail.AdminMailMessageServiceImpl
 import io.mailit.core.service.admin.type.HtmlMailMessageTypeFactory
@@ -28,17 +30,20 @@ import io.mailit.core.service.mailing.templates.freemarker.Configuration
 import io.mailit.core.service.mailing.templates.freemarker.FreemarkerTemplateProcessor
 import io.mailit.core.service.mailing.templates.freemarker.RepositoryTemplateLoader
 import io.mailit.core.service.mailing.templates.none.NoneTemplateProcessor
+import io.mailit.core.service.quarkus.application.BCryptSecretHasher
 import io.mailit.core.service.quarkus.id.LeaseLockingInstanceIdProviderLifecycleManager
 import io.mailit.core.service.quarkus.mailing.MailFactory
 import io.mailit.core.service.quarkus.mailing.MailSenderImpl
 import io.mailit.core.service.quarkus.mailing.QuarkusMailSender
 import io.mailit.core.spi.MailMessageRepository
 import io.mailit.core.spi.MailMessageTypeRepository
+import io.mailit.core.spi.application.ApiKeyRepository
 import io.mailit.core.spi.application.ApplicationRepository
 import io.mailit.core.spi.id.InstanceIdLocks
 import io.quarkus.mailer.reactive.ReactiveMailer
 import jakarta.enterprise.inject.Instance
 import jakarta.inject.Singleton
+import java.security.SecureRandom
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.Dispatchers
@@ -72,6 +77,14 @@ class AdminServicesContextConfiguration {
 
     @Singleton
     fun adminMailMessageService(mailMessageRepository: MailMessageRepository) = AdminMailMessageServiceImpl(mailMessageRepository)
+
+    @Singleton
+    internal fun apiKeyService(apiKeyRepository: ApiKeyRepository, applicationRepository: ApplicationRepository) = ApiKeyServiceImpl(
+        apiKeyGenerator = ApiKeyGenerator(SecureRandom.getInstance("SHA1PRNG")),
+        apiKeyRepository = apiKeyRepository,
+        applicationRepository = applicationRepository,
+        secretHasher = BCryptSecretHasher,
+    )
 }
 
 class ExternalServicesContextConfiguration {

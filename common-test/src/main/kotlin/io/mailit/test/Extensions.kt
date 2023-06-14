@@ -15,6 +15,8 @@ fun nowWithoutNanos(): Instant {
     return now.minusNanos(now.nano.toLong())
 }
 
+operator fun Instant.plus(duration: Duration): Instant = plus(duration.toJavaDuration())
+
 fun Instant.within(difference: Duration, of: Instant): Boolean {
     val actualDifference = JavaDuration.between(this, of).abs()
     return actualDifference <= difference.toJavaDuration()

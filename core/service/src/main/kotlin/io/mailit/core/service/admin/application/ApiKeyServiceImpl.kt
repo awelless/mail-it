@@ -2,6 +2,7 @@ package io.mailit.core.service.admin.application
 
 import io.mailit.core.admin.api.application.ApiKeyService
 import io.mailit.core.admin.api.application.CreateApiKeyCommand
+import io.mailit.core.exception.NotFoundException
 import io.mailit.core.external.api.ApiKeyService as ExternalApiKeyService
 import io.mailit.core.external.api.InvalidApiKeyException
 import io.mailit.core.model.application.ApiKey
@@ -45,8 +46,14 @@ internal class ApiKeyServiceImpl(
 
     override suspend fun getAll(applicationId: Long) = apiKeyRepository.findAll(applicationId)
 
-    override suspend fun delete(id: String) = apiKeyRepository.delete(id).also {
-        logger.info { "ApiKey: $id has been deleted" }
+    override suspend fun delete(applicationId: Long, id: String) {
+        val deleted = apiKeyRepository.delete(applicationId, id)
+
+        if (!deleted) {
+            throw NotFoundException("Api key with id: $id is not found")
+        }
+
+        logger.info { "ApiKey: $id fro application: $applicationId has been deleted" }
     }
 
     override suspend fun validate(token: ApiKeyToken): Application {

@@ -10,5 +10,5 @@ interface ApiKeyRepository {
 
     suspend fun create(apiKey: ApiKey)
 
-    suspend fun delete(id: String)
+    suspend fun delete(applicationId: Long, id: String): Boolean
 }
