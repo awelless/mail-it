@@ -6,6 +6,7 @@ import io.mailit.core.model.application.Application
 import io.mailit.core.model.application.ApplicationState
 import io.mailit.core.spi.application.ApiKeyRepository
 import io.mailit.core.spi.application.ApplicationRepository
+import io.mailit.test.minus
 import io.mailit.test.nowWithoutNanos
 import io.mailit.test.plus
 import io.mailit.test.restassured.Null
@@ -47,7 +48,8 @@ class ApiKeyResourceTest {
     lateinit var applicationRepository: ApplicationRepository
 
     lateinit var application: Application
-    lateinit var apiKey: ApiKey
+    lateinit var apiKey1: ApiKey
+    lateinit var apiKey2: ApiKey
 
     @BeforeEach
     fun setUp() {
@@ -56,19 +58,27 @@ class ApiKeyResourceTest {
                 id = 1,
                 name = "Application",
                 state = ApplicationState.ENABLED,
-            )
+            ).also { applicationRepository.create(it) }
 
-            applicationRepository.create(application)
+            val now = nowWithoutNanos()
 
-            apiKey = ApiKey(
+            apiKey1 = ApiKey(
                 id = "111",
                 name = "test api key",
                 secret = "s3cr3t",
                 application = application,
+                createdAt = now - 1.days,
                 expiresAt = nowWithoutNanos() + 30.days,
-            )
+            ).also { apiKeyRepository.create(it) }
 
-            apiKeyRepository.create(apiKey)
+            apiKey2 = ApiKey(
+                id = "112",
+                name = "test api key 2",
+                secret = "s3cr3t33",
+                application = application,
+                createdAt = now,
+                expiresAt = nowWithoutNanos() + 30.days,
+            ).also { apiKeyRepository.create(it) }
         }
     }
 
@@ -80,11 +90,17 @@ class ApiKeyResourceTest {
             statusCode(OK)
 
             body(
-                "size()" equalTo 1,
+                "size()" equalTo 2,
 
-                "[0].$ID" equalTo apiKey.id,
-                "[0].$NAME" equalTo apiKey.name,
+                "[0].$ID" equalTo apiKey2.id,
+                "[0].$NAME" equalTo apiKey2.name,
+                "[0].$CREATED_AT" not Null,
                 "[0].$EXPIRES_AT" not Null,
+
+                "[1].$ID" equalTo apiKey1.id,
+                "[1].$NAME" equalTo apiKey1.name,
+                "[1].$CREATED_AT" not Null,
+                "[1].$EXPIRES_AT" not Null,
             )
         }
     }
@@ -122,12 +138,12 @@ class ApiKeyResourceTest {
     @Test
     fun delete() = runTest {
         When {
-            delete(API_KEY_URL, application.id, apiKey.id)
+            delete(API_KEY_URL, application.id, apiKey1.id)
         } Then {
             statusCode(NO_CONTENT)
         }
 
-        val actual = apiKeyRepository.findById(apiKey.id)
+        val actual = apiKeyRepository.findById(apiKey1.id)
 
         assertNull(actual)
     }
@@ -138,6 +154,7 @@ class ApiKeyResourceTest {
 
         private const val ID = "id"
         private const val NAME = "name"
+        private const val CREATED_AT = "createdAt"
         private const val EXPIRES_AT = "expiresAt"
         private const val TOKEN = "token"
     }

@@ -62,6 +62,7 @@ internal class ApiKeyServiceImplTest {
         name = "my api key",
         secret = "secret",
         application = application,
+        createdAt = Instant.now(),
         expiresAt = Instant.now().plus(30.days.toJavaDuration()),
     )
 
@@ -146,6 +147,7 @@ internal class ApiKeyServiceImplTest {
             name = "expired",
             secret = "123",
             application = application,
+            createdAt = Instant.now(),
             expiresAt = Instant.now().minus(1.days.toJavaDuration()),
         )
         val token = ApiKeyToken("token")

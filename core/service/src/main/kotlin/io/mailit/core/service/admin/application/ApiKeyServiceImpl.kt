@@ -29,12 +29,15 @@ internal class ApiKeyServiceImpl(
         val id = apiKeyGenerator.generateId()
         val secret = apiKeyGenerator.generateSecret()
 
+        val now = Instant.now()
+
         val apiKey = ApiKey(
             id = id,
             name = command.name,
             secret = secretHasher.hash(secret),
             application = application,
-            expiresAt = Instant.now().plus(command.expiration.toJavaDuration()),
+            createdAt = now,
+            expiresAt = now.plus(command.expiration.toJavaDuration()),
         )
 
         apiKeyRepository.create(apiKey)

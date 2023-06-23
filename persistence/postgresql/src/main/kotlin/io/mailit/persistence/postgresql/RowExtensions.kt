@@ -40,6 +40,7 @@ internal fun Row.getApiKeyFromRow() = ApiKey(
     name = getString("api_name"),
     secret = getString("api_secret"),
     application = getApplicationFromRow(),
+    createdAt = getInstant("api_created_at"),
     expiresAt = getInstant("api_expires_at"),
 )
 

@@ -12,6 +12,7 @@ private const val FIND_BY_ID_SQL = """
            api.name api_name,
            api.secret api_secret,
            api.application_id api_application_id,
+           api.created_at api_created_at,
            api.expires_at api_expires_at,
            app.application_id app_application_id,
            app.name app_name,
@@ -25,13 +26,14 @@ private const val FIND_ALL_SQL = """
            api.name api_name,
            api.secret api_secret,
            api.application_id api_application_id,
+           api.created_at api_created_at,
            api.expires_at api_expires_at,
            app.application_id app_application_id,
            app.name app_name,
            app.state app_state
       FROM api_key api
      INNER JOIN application app ON app.application_id = api.application_id
-     ORDER BY api.api_key_id DESC"""
+     ORDER BY api.created_at DESC"""
 
 private const val INSERT_SQL = """
     INSERT INTO api_key(
@@ -39,8 +41,9 @@ private const val INSERT_SQL = """
         name,
         secret,
         application_id,
+        created_at,
         expires_at)
-    VALUES(?, ?, ?, ?, ?)"""
+    VALUES(?, ?, ?, ?, ?, ?)"""
 
 private const val DELETE_SQL = "DELETE FROM api_key WHERE api_key_id = ? AND application_id = ?"
 
@@ -75,6 +78,7 @@ class H2ApiKeyRepository(
                 apiKey.name,
                 apiKey.secret,
                 apiKey.application.id,
+                apiKey.createdAt,
                 apiKey.expiresAt,
             )
         }

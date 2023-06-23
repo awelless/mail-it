@@ -15,6 +15,7 @@ fun nowWithoutNanos(): Instant {
     return now.minusNanos(now.nano.toLong())
 }
 
+operator fun Instant.minus(duration: Duration): Instant = minus(duration.toJavaDuration())
 operator fun Instant.plus(duration: Duration): Instant = plus(duration.toJavaDuration())
 
 fun Instant.within(difference: Duration, of: Instant): Boolean {

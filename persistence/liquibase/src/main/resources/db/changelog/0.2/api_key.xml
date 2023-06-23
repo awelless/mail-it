@@ -20,6 +20,9 @@
             <column name="application_id" type="bigint">
                 <constraints nullable="false" foreignKeyName="fk_apikey_application" references="application(application_id)"/>
             </column>
+            <column name="created_at" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
             <column name="expires_at" type="timestamp">
                 <constraints nullable="false"/>
             </column>

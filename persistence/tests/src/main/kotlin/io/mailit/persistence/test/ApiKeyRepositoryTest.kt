@@ -5,10 +5,11 @@ import io.mailit.core.model.application.Application
 import io.mailit.core.model.application.ApplicationState.ENABLED
 import io.mailit.core.spi.application.ApiKeyRepository
 import io.mailit.core.spi.application.ApplicationRepository
+import io.mailit.test.minus
 import io.mailit.test.nowWithoutNanos
+import io.mailit.test.plus
 import jakarta.inject.Inject
 import kotlin.time.Duration.Companion.days
-import kotlin.time.toJavaDuration
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -38,7 +39,8 @@ abstract class ApiKeyRepositoryTest {
         name = "api key",
         secret = "s3cr3t",
         application = application,
-        expiresAt = nowWithoutNanos().plus(30.days.toJavaDuration()),
+        createdAt = nowWithoutNanos() - 1.days,
+        expiresAt = nowWithoutNanos() + 30.days,
     )
 
     @BeforeEach
@@ -71,13 +73,13 @@ abstract class ApiKeyRepositoryTest {
     fun findAll() = runTest {
         // given
         val apiKey2 = ApiKey(
-            id = "id2",
+            id = "a",
             name = "Another Api Key",
             secret = "s3cr3t",
             application = application,
-            expiresAt = nowWithoutNanos().plus(30.days.toJavaDuration()),
-        )
-        apiKeyRepository.create(apiKey2)
+            createdAt = nowWithoutNanos(),
+            expiresAt = nowWithoutNanos() + 30.days,
+        ).also { apiKeyRepository.create(it) }
 
         // when
         val actual = apiKeyRepository.findAll(application.id)
@@ -94,7 +96,8 @@ abstract class ApiKeyRepositoryTest {
             name = "Another Api Key",
             secret = "s3cr3t",
             application = application,
-            expiresAt = nowWithoutNanos().plus(30.days.toJavaDuration()),
+            createdAt = nowWithoutNanos(),
+            expiresAt = nowWithoutNanos() + 30.days,
         )
 
         // when

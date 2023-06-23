@@ -10,6 +10,7 @@ data class ApiKey(
      */
     val secret: String,
     val application: Application,
+    val createdAt: Instant,
     val expiresAt: Instant,
 ) {
     fun isExpired(time: Instant) = expiresAt < time

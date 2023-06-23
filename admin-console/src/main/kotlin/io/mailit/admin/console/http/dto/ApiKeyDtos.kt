@@ -6,6 +6,7 @@ import java.time.Instant
 data class ApiKeyDto(
     val id: String,
     val name: String,
+    val createdAt: Instant,
     val expiresAt: Instant,
 )
 
@@ -19,5 +20,6 @@ data class ApiKeyTokenDto(val token: String)
 fun ApiKey.toDto() = ApiKeyDto(
     id = id,
     name = name,
+    createdAt = createdAt,
     expiresAt = expiresAt,
 )
