@@ -94,10 +94,10 @@ internal class ApiKeyGenerator(
     }
 
     private tailrec fun StringBuilder.appendWithAlphabeticalEncoding(value: Long) {
-        if (value > 0) {
+        if (value != 0L) {
             val idx = value and (ALPHABET_SIZE - 1L)
             append(ALPHABET[idx.toInt()])
-            appendWithAlphabeticalEncoding(value shr ALPHABET_SIZE_BITS)
+            appendWithAlphabeticalEncoding(value ushr ALPHABET_SIZE_BITS)
         }
     }
 

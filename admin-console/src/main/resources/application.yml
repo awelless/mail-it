@@ -13,7 +13,7 @@ quarkus:
       session:
         encryption-key: ${SESSION_ENCRYPTION_KEY:change-me-change-me-change-me}
     cors:
-      ~: false # 'true' for development
+      ~: true # 'true' for development
       origins: 'http://localhost:8080,http://localhost:9001'
       access-control-allow-credentials: true
 

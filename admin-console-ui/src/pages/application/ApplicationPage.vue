@@ -19,6 +19,8 @@
       </q-card>
     </q-dialog>
 
+    <ApiKeys :application-id="application.id" />
+
     <div class="row">
       <div class="col-md-4 q-gutter-sm">
         <q-btn to="/applications" class="text-black bg-white" style="width: 20%">Back</q-btn>
@@ -33,6 +35,7 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { Application } from 'src/models/Application'
 import applicationClient from 'src/client/applicationClient'
+import ApiKeys from 'components/application/ApiKeys.vue'
 
 const router = useRouter()
 
