@@ -13,7 +13,7 @@
           Created ApiKey. Make sure to copy it. You won't be able to see this key again!
           <div>
             <b>{{ token }}</b>
-            <q-btn class="q-ml-md" :icon="copyTokenIcon" @click="copyToken"/>
+            <q-btn dense class="q-ml-md" :icon="copyTokenIcon" @click="copyToken"/>
           </div>
         </div>
       </div>
@@ -33,7 +33,7 @@ import { name } from 'axios'
 
 const props = defineProps<{
   applicationId: string,
-  loadAllFunction: () => void,
+  onCreate: () => void,
 }>()
 
 const expirationDaysOptions = [7, 30, 90, 365]
@@ -53,7 +53,12 @@ async function create() {
 
   token.value = await apiKeyClient.create(props.applicationId, keyName, expirationDays.value)
 
-  props.loadAllFunction()
+  props.onCreate()
+
+  name.value = ''
+  expirationDays.value = expirationDaysOptions[0]
+  token.value = ''
+  copyTokenIcon.value = 'content_copy'
 }
 
 function copyToken() {
