@@ -10,7 +10,7 @@ interface ApiKeyRepository {
      * Returns all api keys for the [applicationId].
      * Results are sorted by [ApiKey.createdAt], descending
      */
-    suspend fun findAll(applicationId: Long): List<ApiKey>
+    suspend fun findAllByApplicationId(applicationId: Long): List<ApiKey>
 
     suspend fun create(apiKey: ApiKey)
 

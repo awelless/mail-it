@@ -70,7 +70,7 @@ abstract class ApiKeyRepositoryTest {
     }
 
     @Test
-    fun findAll() = runTest {
+    fun findAllByApplicationId() = runTest {
         // given
         val apiKey2 = ApiKey(
             id = "a",
@@ -81,8 +81,23 @@ abstract class ApiKeyRepositoryTest {
             expiresAt = nowWithoutNanos() + 30.days,
         ).also { apiKeyRepository.create(it) }
 
+        val anotherApplication = Application(
+            id = 2,
+            name = "another",
+            state = ENABLED,
+        ).also { applicationRepository.create(it) }
+
+        ApiKey(
+            id = "another app id",
+            name = "Another Api Key2222",
+            secret = "s3cr3t",
+            application = anotherApplication,
+            createdAt = nowWithoutNanos(),
+            expiresAt = nowWithoutNanos() + 30.days,
+        ).also { apiKeyRepository.create(it) }
+
         // when
-        val actual = apiKeyRepository.findAll(application.id)
+        val actual = apiKeyRepository.findAllByApplicationId(application.id)
 
         // then
         assertEquals(listOf(apiKey2, apiKey), actual)

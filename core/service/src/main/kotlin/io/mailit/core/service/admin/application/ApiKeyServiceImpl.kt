@@ -47,7 +47,7 @@ internal class ApiKeyServiceImpl(
         return ApiKeyTokenCodec.encode(id, secret)
     }
 
-    override suspend fun getAll(applicationId: Long) = apiKeyRepository.findAll(applicationId)
+    override suspend fun getAll(applicationId: Long) = apiKeyRepository.findAllByApplicationId(applicationId)
 
     override suspend fun delete(applicationId: Long, id: String) {
         val deleted = apiKeyRepository.delete(applicationId, id)

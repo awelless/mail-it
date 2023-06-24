@@ -32,12 +32,9 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { useRouter } from 'vue-router'
 import { Application } from 'src/models/Application'
 import applicationClient from 'src/client/applicationClient'
 import ApiKeys from 'components/application/ApiKeys.vue'
-
-const router = useRouter()
 
 const props = defineProps<{
   id: string
@@ -56,7 +53,9 @@ async function deleteApp() {
   }
 
   await applicationClient.deleteApp(application.value.id)
-  await router.push('/types')
+  await load()
+
+  showDelete.value = false
 }
 
 load()

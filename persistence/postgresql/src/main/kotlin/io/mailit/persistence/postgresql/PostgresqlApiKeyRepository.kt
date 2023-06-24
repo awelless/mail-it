@@ -22,7 +22,7 @@ private const val FIND_BY_ID_SQL = """
      INNER JOIN application app ON app.application_id = api.application_id
      WHERE api.api_key_id = $1"""
 
-private const val FIND_ALL_SQL = """
+private const val FIND_ALL_BY_APPLICATION_ID_SQL = """
     SELECT api.api_key_id api_api_key_id,
            api.name api_name,
            api.secret api_secret,
@@ -34,6 +34,7 @@ private const val FIND_ALL_SQL = """
            app.state app_state
       FROM api_key api
      INNER JOIN application app ON app.application_id = api.application_id
+     WHERE app.application_id = $1
      ORDER BY api.created_at DESC"""
 
 private const val INSERT_SQL = """
@@ -59,9 +60,9 @@ class PostgresqlApiKeyRepository(
             .onItem().transform { if (it.hasNext()) it.next().getApiKeyFromRow() else null }
             .awaitSuspending()
 
-    override suspend fun findAll(applicationId: Long) =
-        client.query(FIND_ALL_SQL)
-            .execute()
+    override suspend fun findAllByApplicationId(applicationId: Long): List<ApiKey> =
+        client.preparedQuery(FIND_ALL_BY_APPLICATION_ID_SQL)
+            .execute(Tuple.of(applicationId))
             .onItem().transformToMulti { Multi.createFrom().iterable(it) }
             .onItem().transform { it.getApiKeyFromRow() }
             .collect().asList()

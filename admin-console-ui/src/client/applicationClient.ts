@@ -35,7 +35,7 @@ async function create(name: string): Promise<Application> {
 async function deleteApp(id: string): Promise<void> {
   const { data, status } = await api.delete(`/applications/${id}`)
 
-  if (status != 202) {
+  if (status != 204) {
     throw Error(`Failed to delete Application: ${JSON.stringify(data)}`)
   }
 }

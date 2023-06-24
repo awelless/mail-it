@@ -20,7 +20,7 @@
 
       <q-card-actions align="right">
         <q-btn v-if="!token" color="info" @click="create">Create</q-btn>
-        <q-btn class="text-black bg-white" v-close-popup>Back</q-btn>
+        <q-btn class="text-black bg-white" @click="clear" v-close-popup>Back</q-btn>
       </q-card-actions>
     </q-card>
   </q-dialog>
@@ -54,7 +54,9 @@ async function create() {
   token.value = await apiKeyClient.create(props.applicationId, keyName, expirationDays.value)
 
   props.onCreate()
+}
 
+function clear() {
   name.value = ''
   expirationDays.value = expirationDaysOptions[0]
   token.value = ''

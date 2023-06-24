@@ -21,7 +21,7 @@ private const val FIND_BY_ID_SQL = """
      INNER JOIN application app ON app.application_id = api.application_id
      WHERE api.api_key_id = ?"""
 
-private const val FIND_ALL_SQL = """
+private const val FIND_ALL_BY_APPLICATION_ID_SQL = """
     SELECT api.api_key_id api_api_key_id,
            api.name api_name,
            api.secret api_secret,
@@ -33,6 +33,7 @@ private const val FIND_ALL_SQL = """
            app.state app_state
       FROM api_key api
      INNER JOIN application app ON app.application_id = api.application_id
+     WHERE app.application_id = ?
      ORDER BY api.created_at DESC"""
 
 private const val INSERT_SQL = """
@@ -61,11 +62,12 @@ class H2ApiKeyRepository(
         )
     }
 
-    override suspend fun findAll(applicationId: Long): List<ApiKey> = dataSource.connection.use {
+    override suspend fun findAllByApplicationId(applicationId: Long): List<ApiKey> = dataSource.connection.use {
         queryRunner.query(
             it,
-            FIND_ALL_SQL,
+            FIND_ALL_BY_APPLICATION_ID_SQL,
             MultipleApiKeyResultSetMapper,
+            applicationId,
         )
     }
 
