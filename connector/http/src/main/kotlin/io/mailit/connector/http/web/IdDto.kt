@@ -1,4 +1,4 @@
-package io.mailit.connector.http
+package io.mailit.connector.http.web
 
 import io.quarkus.runtime.annotations.RegisterForReflection
 

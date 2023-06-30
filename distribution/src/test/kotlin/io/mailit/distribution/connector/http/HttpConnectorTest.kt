@@ -6,6 +6,7 @@ import io.mailit.core.spi.MailMessageRepository
 import io.mailit.core.spi.MailMessageTypeRepository
 import io.mailit.test.createPlainMailMessageType
 import io.quarkus.test.junit.QuarkusTest
+import io.quarkus.test.security.TestSecurity
 import io.restassured.http.ContentType.JSON
 import io.restassured.module.kotlin.extensions.Extract
 import io.restassured.module.kotlin.extensions.Given
@@ -23,9 +24,8 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 @QuarkusTest
+@TestSecurity(authorizationEnabled = false)
 class HttpConnectorTest {
-
-    val baseUrl = "/api/connector/mail"
 
     @Inject
     lateinit var mailMessageRepository: MailMessageRepository
@@ -59,7 +59,7 @@ class HttpConnectorTest {
             contentType(JSON)
             body(createMailDto)
         } When {
-            post(baseUrl)
+            post(SEND_URL)
         } Then {
             statusCode(ACCEPTED)
         } Extract {
@@ -90,7 +90,7 @@ class HttpConnectorTest {
             contentType(JSON)
             body(createMailDto)
         } When {
-            post(baseUrl)
+            post(SEND_URL)
         } Then {
             statusCode(ACCEPTED)
         } Extract {
@@ -118,7 +118,7 @@ class HttpConnectorTest {
                 """,
             )
         } When {
-            post(baseUrl)
+            post(SEND_URL)
         } Then {
             statusCode(BAD_REQUEST)
         }
@@ -139,11 +139,15 @@ class HttpConnectorTest {
             contentType(JSON)
             body(createMailDto)
         } When {
-            post(baseUrl)
+            post(SEND_URL)
         } Then {
             statusCode(BAD_REQUEST)
 
             body("errorMessage", equalTo("Invalid type: ${createMailDto.mailType} is passed"))
         }
+    }
+
+    companion object {
+        private const val SEND_URL = "/api/connector/mail"
     }
 }

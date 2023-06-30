@@ -14,12 +14,14 @@ class LeaseLockingInstanceIdProviderLifecycleManager(
     private val instanceIdProvider: InstanceIdProvider,
 ) {
 
+    @Suppress("UNUSED_PARAMETER")
     fun onStartup(@Observes event: StartupEvent) {
         if (instanceIdProvider is LeaseLockingInstanceIdProvider) {
             runBlocking { instanceIdProvider.initialize() }
         }
     }
 
+    @Suppress("UNUSED_PARAMETER")
     fun onShutdown(@Observes event: ShutdownEvent) {
         if (instanceIdProvider is LeaseLockingInstanceIdProvider) {
             runBlocking { instanceIdProvider.stop() }

@@ -7,6 +7,8 @@ dependencies {
 
     implementation("io.github.microutils:kotlin-logging-jvm")
 
+    implementation("io.vertx:vertx-lang-kotlin-coroutines")
+
     implementation("io.quarkus:quarkus-kotlin")
     implementation("io.quarkus:quarkus-resteasy-reactive")
     implementation("io.quarkus:quarkus-resteasy-reactive-jackson")

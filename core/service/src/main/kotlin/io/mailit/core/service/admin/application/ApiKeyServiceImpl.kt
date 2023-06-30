@@ -8,6 +8,7 @@ import io.mailit.core.external.api.InvalidApiKeyException
 import io.mailit.core.model.application.ApiKey
 import io.mailit.core.model.application.ApiKeyToken
 import io.mailit.core.model.application.Application
+import io.mailit.core.model.application.ApplicationState
 import io.mailit.core.spi.application.ApiKeyRepository
 import io.mailit.core.spi.application.ApplicationRepository
 import java.security.SecureRandom
@@ -70,6 +71,10 @@ internal class ApiKeyServiceImpl(
         }
 
         if (!secretHasher.matches(secret, apiKey.secret)) {
+            throw InvalidApiKeyException()
+        }
+
+        if (apiKey.application.state == ApplicationState.DELETED) {
             throw InvalidApiKeyException()
         }
 

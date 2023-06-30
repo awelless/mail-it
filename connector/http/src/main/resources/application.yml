@@ -1,0 +1,14 @@
+quarkus:
+  http:
+    auth:
+      permission:
+        api-key:
+          auth-mechanism: api-key
+          paths: /api/connector/mail
+          methods: POST
+          policy: authenticated
+
+admin:
+  console:
+    username: ${ADMIN_CLIENT_USERNAME:username}
+    password: ${ADMIN_CLIENT_PASSWORD:password}

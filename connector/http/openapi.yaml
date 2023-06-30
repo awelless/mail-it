@@ -3,7 +3,6 @@ info:
   title: Mail-it http connector
   contact:
     url: https://github.com/awelless/mail-it
-    email: apiteam@swagger.io
   license:
     name: MIT
     url: https://opensource.org/license/mit/
@@ -21,14 +20,18 @@ paths:
               $ref: '#/components/schemas/Mail'
         required: true
       responses:
-        '202':
+        202:
           description: Successful operation
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/IdObject'
-        '400':
-          description: Invalid email supplied
+        400:
+          description: Invalid email is supplied
+        401:
+          description: Invalid Api Key is provided
+      security:
+        - ApiKey: []
 
 components:
   schemas:
@@ -72,3 +75,8 @@ components:
         id:
           type: string
           example: 654325215
+  securitySchemes:
+    ApiKey:
+      type: apiKey
+      in: header
+      name: X-Api-Key

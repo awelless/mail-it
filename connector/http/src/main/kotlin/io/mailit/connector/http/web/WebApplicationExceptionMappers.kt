@@ -1,4 +1,4 @@
-package io.mailit.connector.http
+package io.mailit.connector.http.web
 
 import io.mailit.core.exception.ValidationException
 import jakarta.ws.rs.core.MediaType

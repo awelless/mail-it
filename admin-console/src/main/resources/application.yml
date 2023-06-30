@@ -12,6 +12,11 @@ quarkus:
         landing-page: '' # disabled
       session:
         encryption-key: ${SESSION_ENCRYPTION_KEY:change-me-change-me-change-me}
+      permission:
+        form:
+          auth-mechanism: form
+          paths: /api/admin/*
+          policy: authenticated
     cors:
       ~: true # 'true' for development
       origins: 'http://localhost:8080,http://localhost:9001'
