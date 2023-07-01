@@ -7,6 +7,8 @@ import io.mailit.core.spi.MailMessageRepository
 import io.mailit.persistence.common.createSlice
 import io.mailit.persistence.common.serialization.MailMessageDataSerializer
 import io.mailit.persistence.common.toLocalDateTime
+import io.mailit.persistence.postgresql.Columns.MailMessage as MailMessageCol
+import io.mailit.persistence.postgresql.Columns.MailMessageType as MailMessageTypeCol
 import io.smallrye.mutiny.Multi
 import io.smallrye.mutiny.coroutines.awaitSuspending
 import io.vertx.mutiny.pgclient.PgPool
@@ -16,53 +18,53 @@ import java.time.Instant
 // todo unify queries
 
 private const val FIND_WITH_TYPE_BY_ID_SQL = """
-    SELECT m.mail_message_id m_mail_message_id,
-           m.text m_text,
-           m.data m_data,
-           m.subject m_subject,
-           m.email_from m_email_from,
-           m.email_to m_email_to,
-           m.created_at m_created_at,
-           m.sending_started_at m_sending_started_at,
-           m.sent_at m_sent_at,
-           m.status m_status,
-           m.failed_count m_failed_count,
-           mt.mail_message_type_id mt_mail_message_type_id,
-           mt.name mt_name,
-           mt.description mt_description,
-           mt.max_retries_count mt_max_retries_count,
-           mt.state mt_state,
-           mt.created_at mt_created_at,
-           mt.updated_at mt_updated_at,
-           mt.content_type mt_content_type,
-           mt.template_engine mt_template_engine,
-           mt.template mt_template
+    SELECT m.mail_message_id ${MailMessageCol.ID},
+           m.text ${MailMessageCol.TEXT},
+           m.data ${MailMessageCol.DATA},
+           m.subject ${MailMessageCol.SUBJECT},
+           m.email_from ${MailMessageCol.EMAIL_FROM},
+           m.email_to ${MailMessageCol.EMAIL_TO},
+           m.created_at ${MailMessageCol.CREATED_AT},
+           m.sending_started_at ${MailMessageCol.SENDING_STARTED_AT},
+           m.sent_at ${MailMessageCol.SENT_AT},
+           m.status ${MailMessageCol.STATUS},
+           m.failed_count ${MailMessageCol.FAILED_COUNT},
+           mt.mail_message_type_id ${MailMessageTypeCol.ID},
+           mt.name ${MailMessageTypeCol.NAME},
+           mt.description ${MailMessageTypeCol.DESCRIPTION},
+           mt.max_retries_count ${MailMessageTypeCol.MAX_RETRIES_COUNT},
+           mt.state ${MailMessageTypeCol.STATE},
+           mt.created_at ${MailMessageTypeCol.CREATED_AT},
+           mt.updated_at ${MailMessageTypeCol.UPDATED_AT},
+           mt.content_type ${MailMessageTypeCol.CONTENT_TYPE},
+           mt.template_engine ${MailMessageTypeCol.TEMPLATE_ENGINE},
+           mt.template ${MailMessageTypeCol.TEMPLATE}
     FROM mail_message m
     INNER JOIN mail_message_type mt ON m.mail_message_type_id = mt.mail_message_type_id
     WHERE m.mail_message_id = $1"""
 
 private const val FIND_WITH_TYPE_BY_SENDING_STARTED_BEFORE_AND_STATUSES_SQL = """
-    SELECT m.mail_message_id m_mail_message_id,
-           m.text m_text,
-           m.data m_data,
-           m.subject m_subject,
-           m.email_from m_email_from,
-           m.email_to m_email_to,
-           m.created_at m_created_at,
-           m.sending_started_at m_sending_started_at,
-           m.sent_at m_sent_at,
-           m.status m_status,
-           m.failed_count m_failed_count,
-           mt.mail_message_type_id mt_mail_message_type_id,
-           mt.name mt_name,
-           mt.description mt_description,
-           mt.max_retries_count mt_max_retries_count,
-           mt.state mt_state,
-           mt.created_at mt_created_at,
-           mt.updated_at mt_updated_at,
-           mt.content_type mt_content_type,
-           mt.template_engine mt_template_engine,
-           mt.template mt_template
+    SELECT m.mail_message_id ${MailMessageCol.ID},
+           m.text ${MailMessageCol.TEXT},
+           m.data ${MailMessageCol.DATA},
+           m.subject ${MailMessageCol.SUBJECT},
+           m.email_from ${MailMessageCol.EMAIL_FROM},
+           m.email_to ${MailMessageCol.EMAIL_TO},
+           m.created_at ${MailMessageCol.CREATED_AT},
+           m.sending_started_at ${MailMessageCol.SENDING_STARTED_AT},
+           m.sent_at ${MailMessageCol.SENT_AT},
+           m.status ${MailMessageCol.STATUS},
+           m.failed_count ${MailMessageCol.FAILED_COUNT},
+           mt.mail_message_type_id ${MailMessageTypeCol.ID},
+           mt.name ${MailMessageTypeCol.NAME},
+           mt.description ${MailMessageTypeCol.DESCRIPTION},
+           mt.max_retries_count ${MailMessageTypeCol.MAX_RETRIES_COUNT},
+           mt.state ${MailMessageTypeCol.STATE},
+           mt.created_at ${MailMessageTypeCol.CREATED_AT},
+           mt.updated_at ${MailMessageTypeCol.UPDATED_AT},
+           mt.content_type ${MailMessageTypeCol.CONTENT_TYPE},
+           mt.template_engine ${MailMessageTypeCol.TEMPLATE_ENGINE},
+           mt.template ${MailMessageTypeCol.TEMPLATE}
     FROM mail_message m
     INNER JOIN mail_message_type mt ON m.mail_message_type_id = mt.mail_message_type_id
     WHERE m.sending_started_at < $1
@@ -76,27 +78,27 @@ private const val FIND_IDS_BY_STATUSES_SQL = """
      LIMIT $2"""
 
 private const val FIND_ALL_SLICED_SQL = """
-    SELECT m.mail_message_id m_mail_message_id,
-           m.text m_text,
-           m.data m_data,
-           m.subject m_subject,
-           m.email_from m_email_from,
-           m.email_to m_email_to,
-           m.created_at m_created_at,
-           m.sending_started_at m_sending_started_at,
-           m.sent_at m_sent_at,
-           m.status m_status,
-           m.failed_count m_failed_count,
-           mt.mail_message_type_id mt_mail_message_type_id,
-           mt.name mt_name,
-           mt.description mt_description,
-           mt.max_retries_count mt_max_retries_count,
-           mt.state mt_state,
-           mt.created_at mt_created_at,
-           mt.updated_at mt_updated_at,
-           mt.content_type mt_content_type,
-           mt.template_engine mt_template_engine,
-           mt.template mt_template
+    SELECT m.mail_message_id ${MailMessageCol.ID},
+           m.text ${MailMessageCol.TEXT},
+           m.data ${MailMessageCol.DATA},
+           m.subject ${MailMessageCol.SUBJECT},
+           m.email_from ${MailMessageCol.EMAIL_FROM},
+           m.email_to ${MailMessageCol.EMAIL_TO},
+           m.created_at ${MailMessageCol.CREATED_AT},
+           m.sending_started_at ${MailMessageCol.SENDING_STARTED_AT},
+           m.sent_at ${MailMessageCol.SENT_AT},
+           m.status ${MailMessageCol.STATUS},
+           m.failed_count ${MailMessageCol.FAILED_COUNT},
+           mt.mail_message_type_id ${MailMessageTypeCol.ID},
+           mt.name ${MailMessageTypeCol.NAME},
+           mt.description ${MailMessageTypeCol.DESCRIPTION},
+           mt.max_retries_count ${MailMessageTypeCol.MAX_RETRIES_COUNT},
+           mt.state ${MailMessageTypeCol.STATE},
+           mt.created_at ${MailMessageTypeCol.CREATED_AT},
+           mt.updated_at ${MailMessageTypeCol.UPDATED_AT},
+           mt.content_type ${MailMessageTypeCol.CONTENT_TYPE},
+           mt.template_engine ${MailMessageTypeCol.TEMPLATE_ENGINE},
+           mt.template ${MailMessageTypeCol.TEMPLATE}
      FROM mail_message m
     INNER JOIN mail_message_type mt ON m.mail_message_type_id = mt.mail_message_type_id
     ORDER BY m_mail_message_id DESC

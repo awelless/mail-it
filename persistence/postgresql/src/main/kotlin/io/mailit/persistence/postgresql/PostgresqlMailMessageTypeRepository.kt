@@ -10,6 +10,7 @@ import io.mailit.core.spi.MailMessageTypeRepository
 import io.mailit.core.spi.PersistenceException
 import io.mailit.persistence.common.createSlice
 import io.mailit.persistence.common.toLocalDateTime
+import io.mailit.persistence.postgresql.Columns.MailMessageType as MailMessageTypeCol
 import io.mailit.persistence.postgresql.MailMessageContent.HTML
 import io.smallrye.mutiny.Multi
 import io.smallrye.mutiny.coroutines.awaitSuspending
@@ -21,46 +22,46 @@ import java.time.Instant
 // todo unify queries
 
 private const val FIND_BY_ID_SQL = """
-    SELECT mail_message_type_id mt_mail_message_type_id,
-           name mt_name,
-           description mt_description,
-           max_retries_count mt_max_retries_count,
-           state mt_state,
-           created_at mt_created_at,
-           updated_at mt_updated_at,
-           content_type mt_content_type,
-           template_engine mt_template_engine,
-           template mt_template
+    SELECT mail_message_type_id ${MailMessageTypeCol.ID},
+           name ${MailMessageTypeCol.NAME},
+           description ${MailMessageTypeCol.DESCRIPTION},
+           max_retries_count ${MailMessageTypeCol.MAX_RETRIES_COUNT},
+           state ${MailMessageTypeCol.STATE},
+           created_at ${MailMessageTypeCol.CREATED_AT},
+           updated_at ${MailMessageTypeCol.UPDATED_AT},
+           content_type ${MailMessageTypeCol.CONTENT_TYPE},
+           template_engine ${MailMessageTypeCol.TEMPLATE_ENGINE},
+           template ${MailMessageTypeCol.TEMPLATE}
       FROM mail_message_type
      WHERE mail_message_type_id = $1
        AND state = 'ENABLED'"""
 
 private const val FIND_BY_NAME_SQL = """
-    SELECT mail_message_type_id mt_mail_message_type_id,
-           name mt_name,
-           description mt_description,
-           max_retries_count mt_max_retries_count,
-           state mt_state,
-           created_at mt_created_at,
-           updated_at mt_updated_at,
-           content_type mt_content_type,
-           template_engine mt_template_engine,
-           template mt_template
+    SELECT mail_message_type_id ${MailMessageTypeCol.ID},
+           name ${MailMessageTypeCol.NAME},
+           description ${MailMessageTypeCol.DESCRIPTION},
+           max_retries_count ${MailMessageTypeCol.MAX_RETRIES_COUNT},
+           state ${MailMessageTypeCol.STATE},
+           created_at ${MailMessageTypeCol.CREATED_AT},
+           updated_at ${MailMessageTypeCol.UPDATED_AT},
+           content_type ${MailMessageTypeCol.CONTENT_TYPE},
+           template_engine ${MailMessageTypeCol.TEMPLATE_ENGINE},
+           template ${MailMessageTypeCol.TEMPLATE}
       FROM mail_message_type
      WHERE name = $1
        AND state = 'ENABLED'"""
 
 private const val FIND_ALL_SLICED_SQL = """
-    SELECT mail_message_type_id mt_mail_message_type_id,
-           name mt_name,
-           description mt_description,
-           max_retries_count mt_max_retries_count,
-           state mt_state,
-           created_at mt_created_at,
-           updated_at mt_updated_at,
-           content_type mt_content_type,
-           template_engine mt_template_engine,
-           template mt_template
+    SELECT mail_message_type_id ${MailMessageTypeCol.ID},
+           name ${MailMessageTypeCol.NAME},
+           description ${MailMessageTypeCol.DESCRIPTION},
+           max_retries_count ${MailMessageTypeCol.MAX_RETRIES_COUNT},
+           state ${MailMessageTypeCol.STATE},
+           created_at ${MailMessageTypeCol.CREATED_AT},
+           updated_at ${MailMessageTypeCol.UPDATED_AT},
+           content_type ${MailMessageTypeCol.CONTENT_TYPE},
+           template_engine ${MailMessageTypeCol.TEMPLATE_ENGINE},
+           template ${MailMessageTypeCol.TEMPLATE}
       FROM mail_message_type
      WHERE state = 'ENABLED'
      ORDER BY mt_mail_message_type_id DESC

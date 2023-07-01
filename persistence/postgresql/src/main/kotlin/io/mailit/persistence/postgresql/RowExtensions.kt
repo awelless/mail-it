@@ -11,57 +11,48 @@ import io.mailit.core.model.application.ApiKey
 import io.mailit.core.model.application.Application
 import io.mailit.core.model.application.ApplicationState
 import io.mailit.persistence.common.serialization.MailMessageDataSerializer
+import io.mailit.persistence.postgresql.Columns.ApiKey as ApiKeyCol
+import io.mailit.persistence.postgresql.Columns.Application as ApplicationCol
+import io.mailit.persistence.postgresql.Columns.MailMessage as MailMessageCol
+import io.mailit.persistence.postgresql.Columns.MailMessageType as MailMessageTypeCol
 import io.mailit.persistence.postgresql.MailMessageContent.HTML
 import io.vertx.mutiny.sqlclient.Row
 import java.time.Instant
 import java.time.ZoneOffset.UTC
 
-/*
- * All these extensions require appropriate column names.
- *
- * Pattern for column name is: {entityShortName}_{columnNameSnakeCase}
- *
- * Entity shortnames:
- * | class            | entityShortName |
- * |------------------|-----------------|
- * | Application      | app             |
- * | MailMessage      | m               |
- * | MailMessageType  | mt              |
- */
-
 internal fun Row.getApplicationFromRow() = Application(
-    id = getLong("app_application_id"),
-    name = getString("app_name"),
-    state = ApplicationState.valueOf(getString("app_state")),
+    id = getLong(ApplicationCol.ID),
+    name = getString(ApplicationCol.NAME),
+    state = ApplicationState.valueOf(getString(ApplicationCol.STATE)),
 )
 
 internal fun Row.getApiKeyFromRow() = ApiKey(
-    id = getString("api_api_key_id"),
-    name = getString("api_name"),
-    secret = getString("api_secret"),
+    id = getString(ApiKeyCol.ID),
+    name = getString(ApiKeyCol.NAME),
+    secret = getString(ApiKeyCol.SECRET),
     application = getApplicationFromRow(),
-    createdAt = getInstant("api_created_at"),
-    expiresAt = getInstant("api_expires_at"),
+    createdAt = getInstant(ApiKeyCol.CREATED_AT),
+    expiresAt = getInstant(ApiKeyCol.EXPIRES_AT),
 )
 
 internal fun Row.getMailMessageTypeFromRow(): MailMessageType {
-    val typeId = getLong("mt_mail_message_type_id")
-    val typeName = getString("mt_name")
+    val typeId = getLong(MailMessageTypeCol.ID)
+    val typeName = getString(MailMessageTypeCol.NAME)
 
-    val typeDescription = getString("mt_description")
+    val typeDescription = getString(MailMessageTypeCol.DESCRIPTION)
 
-    val typeMaxRetriesCount = getInteger("mt_max_retries_count")
+    val typeMaxRetriesCount = getInteger(MailMessageTypeCol.MAX_RETRIES_COUNT)
 
-    val typeState = MailMessageTypeState.valueOf(getString("mt_state"))
+    val typeState = MailMessageTypeState.valueOf(getString(MailMessageTypeCol.STATE))
 
-    val createdAt = getInstant("mt_created_at")
-    val updatedAt = getInstant("mt_updated_at")
+    val createdAt = getInstant(MailMessageTypeCol.CREATED_AT)
+    val updatedAt = getInstant(MailMessageTypeCol.UPDATED_AT)
 
-    val contentType = MailMessageContent.valueOf(getString("mt_content_type"))
+    val contentType = MailMessageContent.valueOf(getString(MailMessageTypeCol.CONTENT_TYPE))
 
-    val templateEngine = getString("mt_template_engine")?.let { HtmlTemplateEngine.valueOf(it) }
+    val templateEngine = getString(MailMessageTypeCol.TEMPLATE_ENGINE)?.let { HtmlTemplateEngine.valueOf(it) }
 
-    val template = getString("mt_template")
+    val template = getString(MailMessageTypeCol.TEMPLATE)
 
     return when (contentType) {
         MailMessageContent.PLAIN_TEXT -> PlainTextMailMessageType(
@@ -88,22 +79,22 @@ internal fun Row.getMailMessageTypeFromRow(): MailMessageType {
 }
 
 internal fun Row.getMailMessageWithTypeFromRow(dataSerializer: MailMessageDataSerializer): MailMessage {
-    val id = getLong("m_mail_message_id")
+    val id = getLong(MailMessageCol.ID)
 
-    val text = getString("m_text")
+    val text = getString(MailMessageCol.TEXT)
 
-    val data = getBuffer("m_data")?.bytes?.let { dataSerializer.read(it) }
+    val data = getBuffer(MailMessageCol.DATA)?.bytes?.let { dataSerializer.read(it) }
 
-    val subject = getString("m_subject")
-    val emailFrom = getString("m_email_from")
-    val emailTo = getString("m_email_to")
+    val subject = getString(MailMessageCol.SUBJECT)
+    val emailFrom = getString(MailMessageCol.EMAIL_FROM)
+    val emailTo = getString(MailMessageCol.EMAIL_TO)
 
-    val createdAt = getInstant("m_created_at")
-    val sendingStartedAt = getNullableInstant("m_sending_started_at")
-    val sentAt = getNullableInstant("m_sent_at")
+    val createdAt = getInstant(MailMessageCol.CREATED_AT)
+    val sendingStartedAt = getNullableInstant(MailMessageCol.SENDING_STARTED_AT)
+    val sentAt = getNullableInstant(MailMessageCol.SENT_AT)
 
-    val status = MailMessageStatus.valueOf(getString("m_status"))
-    val failedCount = getInteger("m_failed_count")
+    val status = MailMessageStatus.valueOf(getString(MailMessageCol.STATUS))
+    val failedCount = getInteger(MailMessageCol.FAILED_COUNT)
 
     return MailMessage(
         id = id,

@@ -6,6 +6,7 @@ import io.mailit.core.model.application.ApplicationState
 import io.mailit.core.spi.DuplicateUniqueKeyException
 import io.mailit.core.spi.application.ApplicationRepository
 import io.mailit.persistence.common.createSlice
+import io.mailit.persistence.postgresql.Columns.Application as ApplicationCol
 import io.smallrye.mutiny.Multi
 import io.smallrye.mutiny.coroutines.awaitSuspending
 import io.vertx.mutiny.pgclient.PgPool
@@ -13,16 +14,16 @@ import io.vertx.mutiny.sqlclient.Tuple
 import io.vertx.pgclient.PgException
 
 private const val FIND_BY_ID_SQL = """
-    SELECT application_id app_application_id,
-           name app_name,
-           state app_state
+    SELECT application_id ${ApplicationCol.ID},
+           name ${ApplicationCol.NAME},
+           state ${ApplicationCol.STATE}
       FROM application
      WHERE application_id = $1"""
 
 private const val FIND_ALL_SLICED_SQL = """
-    SELECT application_id app_application_id,
-           name app_name,
-           state app_state
+    SELECT application_id ${ApplicationCol.ID},
+           name ${ApplicationCol.NAME},
+           state ${ApplicationCol.STATE}
       FROM application
      ORDER BY application_id DESC
      LIMIT $1 OFFSET $2"""

@@ -3,35 +3,35 @@ package io.mailit.persistence.postgresql
 import io.mailit.core.model.application.ApiKey
 import io.mailit.core.spi.application.ApiKeyRepository
 import io.mailit.persistence.common.toLocalDateTime
+import io.mailit.persistence.postgresql.Columns.ApiKey as ApiKeyCol
+import io.mailit.persistence.postgresql.Columns.Application as ApplicationCol
 import io.smallrye.mutiny.Multi
 import io.smallrye.mutiny.coroutines.awaitSuspending
 import io.vertx.mutiny.pgclient.PgPool
 import io.vertx.mutiny.sqlclient.Tuple
 
 private const val FIND_BY_ID_SQL = """
-    SELECT api.api_key_id api_api_key_id,
-           api.name api_name,
-           api.secret api_secret,
-           api.application_id api_application_id,
-           api.created_at api_created_at,
-           api.expires_at api_expires_at,
-           app.application_id app_application_id,
-           app.name app_name,
-           app.state app_state
+    SELECT api.api_key_id ${ApiKeyCol.ID},
+           api.name ${ApiKeyCol.NAME},
+           api.secret ${ApiKeyCol.SECRET},
+           api.created_at ${ApiKeyCol.CREATED_AT},
+           api.expires_at ${ApiKeyCol.EXPIRES_AT},
+           app.application_id ${ApplicationCol.ID},
+           app.name ${ApplicationCol.NAME},
+           app.state ${ApplicationCol.STATE}
       FROM api_key api
      INNER JOIN application app ON app.application_id = api.application_id
      WHERE api.api_key_id = $1"""
 
 private const val FIND_ALL_BY_APPLICATION_ID_SQL = """
-    SELECT api.api_key_id api_api_key_id,
-           api.name api_name,
-           api.secret api_secret,
-           api.application_id api_application_id,
-           api.created_at api_created_at,
-           api.expires_at api_expires_at,
-           app.application_id app_application_id,
-           app.name app_name,
-           app.state app_state
+    SELECT api.api_key_id ${ApiKeyCol.ID},
+           api.name ${ApiKeyCol.NAME},
+           api.secret ${ApiKeyCol.SECRET},
+           api.created_at ${ApiKeyCol.CREATED_AT},
+           api.expires_at ${ApiKeyCol.EXPIRES_AT},
+           app.application_id ${ApplicationCol.ID},
+           app.name ${ApplicationCol.NAME},
+           app.state ${ApplicationCol.STATE}
       FROM api_key api
      INNER JOIN application app ON app.application_id = api.application_id
      WHERE app.application_id = $1
