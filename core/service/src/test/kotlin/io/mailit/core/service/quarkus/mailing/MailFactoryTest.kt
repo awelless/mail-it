@@ -1,6 +1,6 @@
 package io.mailit.core.service.quarkus.mailing
 
-import io.mailit.core.service.mailing.templates.TemplateProcessor
+import io.mailit.core.service.mail.sending.templates.TemplateProcessor
 import io.mailit.test.createHtmlMailMessageType
 import io.mailit.test.createMailMessage
 import io.mailit.test.createPlainMailMessageType

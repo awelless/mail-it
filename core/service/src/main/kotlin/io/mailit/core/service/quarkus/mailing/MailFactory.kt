@@ -3,7 +3,7 @@ package io.mailit.core.service.quarkus.mailing
 import io.mailit.core.model.HtmlMailMessageType
 import io.mailit.core.model.MailMessage
 import io.mailit.core.model.PlainTextMailMessageType
-import io.mailit.core.service.mailing.templates.TemplateProcessor
+import io.mailit.core.service.mail.sending.templates.TemplateProcessor
 import io.quarkus.mailer.Mail
 
 class MailFactory(

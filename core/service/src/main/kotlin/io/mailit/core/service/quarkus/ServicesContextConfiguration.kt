@@ -1,35 +1,34 @@
 package io.mailit.core.service.quarkus
 
 import io.mailit.core.model.MailMessageType
-import io.mailit.core.service.admin.application.ApiKeyGenerator
-import io.mailit.core.service.admin.application.ApiKeyServiceImpl
-import io.mailit.core.service.admin.application.ApplicationServiceImpl
-import io.mailit.core.service.admin.mail.AdminMailMessageServiceImpl
-import io.mailit.core.service.admin.type.HtmlMailMessageTypeFactory
-import io.mailit.core.service.admin.type.HtmlMailMessageTypeStateUpdater
-import io.mailit.core.service.admin.type.MailMessageTypeFactory
-import io.mailit.core.service.admin.type.MailMessageTypeFactoryManager
-import io.mailit.core.service.admin.type.MailMessageTypeServiceImpl
-import io.mailit.core.service.admin.type.MailMessageTypeStateUpdater
-import io.mailit.core.service.admin.type.MailMessageTypeStateUpdaterManager
-import io.mailit.core.service.admin.type.PlainTextMailMessageTypeFactory
-import io.mailit.core.service.admin.type.PlainTextMailMessageTypeStateUpdater
-import io.mailit.core.service.external.ExternalMailMessageServiceImpl
+import io.mailit.core.service.application.ApiKeyGenerator
+import io.mailit.core.service.application.ApiKeyServiceImpl
+import io.mailit.core.service.application.ApplicationServiceImpl
 import io.mailit.core.service.id.DistributedIdGenerator
 import io.mailit.core.service.id.IdGenerator
 import io.mailit.core.service.id.InstanceIdProvider
 import io.mailit.core.service.id.LeaseLockingInstanceIdProvider
-import io.mailit.core.service.mailing.HungMailsResetManager
-import io.mailit.core.service.mailing.MailMessageService
-import io.mailit.core.service.mailing.MailSender
-import io.mailit.core.service.mailing.SendMailMessageService
-import io.mailit.core.service.mailing.UnsentMailProcessor
-import io.mailit.core.service.mailing.templates.TemplateProcessor
-import io.mailit.core.service.mailing.templates.TemplateProcessorManager
-import io.mailit.core.service.mailing.templates.freemarker.Configuration
-import io.mailit.core.service.mailing.templates.freemarker.FreemarkerTemplateProcessor
-import io.mailit.core.service.mailing.templates.freemarker.RepositoryTemplateLoader
-import io.mailit.core.service.mailing.templates.none.NoneTemplateProcessor
+import io.mailit.core.service.mail.MailMessageServiceImpl
+import io.mailit.core.service.mail.sending.HungMailsResetManager
+import io.mailit.core.service.mail.sending.MailMessageService
+import io.mailit.core.service.mail.sending.MailSender
+import io.mailit.core.service.mail.sending.SendMailMessageService
+import io.mailit.core.service.mail.sending.UnsentMailProcessor
+import io.mailit.core.service.mail.sending.templates.TemplateProcessor
+import io.mailit.core.service.mail.sending.templates.TemplateProcessorManager
+import io.mailit.core.service.mail.sending.templates.freemarker.Configuration
+import io.mailit.core.service.mail.sending.templates.freemarker.FreemarkerTemplateProcessor
+import io.mailit.core.service.mail.sending.templates.freemarker.RepositoryTemplateLoader
+import io.mailit.core.service.mail.sending.templates.none.NoneTemplateProcessor
+import io.mailit.core.service.mail.type.HtmlMailMessageTypeFactory
+import io.mailit.core.service.mail.type.HtmlMailMessageTypeStateUpdater
+import io.mailit.core.service.mail.type.MailMessageTypeFactory
+import io.mailit.core.service.mail.type.MailMessageTypeFactoryManager
+import io.mailit.core.service.mail.type.MailMessageTypeServiceImpl
+import io.mailit.core.service.mail.type.MailMessageTypeStateUpdater
+import io.mailit.core.service.mail.type.MailMessageTypeStateUpdaterManager
+import io.mailit.core.service.mail.type.PlainTextMailMessageTypeFactory
+import io.mailit.core.service.mail.type.PlainTextMailMessageTypeStateUpdater
 import io.mailit.core.service.quarkus.application.BCryptSecretHasher
 import io.mailit.core.service.quarkus.id.LeaseLockingInstanceIdProviderLifecycleManager
 import io.mailit.core.service.quarkus.mailing.MailFactory
@@ -48,7 +47,7 @@ import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.Dispatchers
 
-class AdminServicesContextConfiguration {
+class ServicesContextConfiguration {
 
     @Singleton
     fun mailMessageTypeFactory(idGenerator: IdGenerator) = MailMessageTypeFactoryManager(
@@ -76,7 +75,11 @@ class AdminServicesContextConfiguration {
     ) = ApplicationServiceImpl(applicationRepository, idGenerator)
 
     @Singleton
-    fun adminMailMessageService(mailMessageRepository: MailMessageRepository) = AdminMailMessageServiceImpl(mailMessageRepository)
+    fun mailMessageService(
+        idGenerator: IdGenerator,
+        mailMessageRepository: MailMessageRepository,
+        mailMessageTypeRepository: MailMessageTypeRepository,
+    ) = MailMessageServiceImpl(idGenerator, mailMessageRepository, mailMessageTypeRepository)
 
     @Singleton
     internal fun apiKeyService(apiKeyRepository: ApiKeyRepository, applicationRepository: ApplicationRepository) = ApiKeyServiceImpl(
@@ -85,16 +88,6 @@ class AdminServicesContextConfiguration {
         applicationRepository = applicationRepository,
         secretHasher = BCryptSecretHasher,
     )
-}
-
-class ExternalServicesContextConfiguration {
-
-    @Singleton
-    fun externalMailMessageService(
-        idGenerator: IdGenerator,
-        mailMessageRepository: MailMessageRepository,
-        mailMessageTypeRepository: MailMessageTypeRepository,
-    ) = ExternalMailMessageServiceImpl(idGenerator, mailMessageRepository, mailMessageTypeRepository)
 }
 
 class MailingContextConfiguration {

@@ -1,7 +1,7 @@
 package io.mailit.core.service.quarkus.mailing
 
 import io.mailit.core.model.MailMessage
-import io.mailit.core.service.mailing.MailSender
+import io.mailit.core.service.mail.sending.MailSender
 
 class MailSenderImpl(
     private val mailFactory: MailFactory,

@@ -3,7 +3,7 @@ package io.mailit.admin.console.http
 import io.mailit.admin.console.http.dto.AdminSlicedMailDto
 import io.mailit.admin.console.http.dto.IdNameDto
 import io.mailit.admin.console.security.Roles.ADMIN
-import io.mailit.core.admin.api.mail.AdminMailMessageService
+import io.mailit.core.admin.api.mail.MailMessageService
 import io.mailit.core.model.MailMessage
 import io.mailit.core.model.Slice
 import jakarta.annotation.security.RolesAllowed
@@ -14,7 +14,7 @@ import jakarta.ws.rs.QueryParam
 @Path("/api/admin/mails")
 @RolesAllowed(ADMIN)
 class MailMessageResource(
-    private val mailMessageService: AdminMailMessageService,
+    private val mailMessageService: MailMessageService,
 ) {
 
     @GET

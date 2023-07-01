@@ -1,6 +1,6 @@
 package io.mailit.core.service.quarkus.application
 
-import io.mailit.core.service.admin.application.SecretHasher
+import io.mailit.core.service.application.SecretHasher
 import io.quarkus.elytron.security.common.BcryptUtil
 
 object BCryptSecretHasher : SecretHasher {

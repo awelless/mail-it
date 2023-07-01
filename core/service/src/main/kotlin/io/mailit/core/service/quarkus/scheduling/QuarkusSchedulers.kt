@@ -1,7 +1,7 @@
 package io.mailit.core.service.quarkus.scheduling
 
-import io.mailit.core.service.mailing.HungMailsResetManager
-import io.mailit.core.service.mailing.UnsentMailProcessor
+import io.mailit.core.service.mail.sending.HungMailsResetManager
+import io.mailit.core.service.mail.sending.UnsentMailProcessor
 import io.quarkus.scheduler.Scheduled
 import io.quarkus.scheduler.Scheduled.ConcurrentExecution.PROCEED
 import io.quarkus.scheduler.Scheduled.ConcurrentExecution.SKIP

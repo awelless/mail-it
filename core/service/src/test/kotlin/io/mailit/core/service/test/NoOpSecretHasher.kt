@@ -1,6 +1,6 @@
 package io.mailit.core.service.test
 
-import io.mailit.core.service.admin.application.SecretHasher
+import io.mailit.core.service.application.SecretHasher
 
 object NoOpSecretHasher : SecretHasher {
     override fun hash(raw: String) = raw
