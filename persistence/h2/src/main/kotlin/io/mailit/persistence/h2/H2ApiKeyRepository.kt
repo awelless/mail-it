@@ -2,35 +2,33 @@ package io.mailit.persistence.h2
 
 import io.mailit.core.model.application.ApiKey
 import io.mailit.core.spi.application.ApiKeyRepository
-import java.sql.ResultSet
+import io.mailit.persistence.h2.Columns.ApiKey as ApiKeyCol
+import io.mailit.persistence.h2.Columns.Application as ApplicationCol
 import javax.sql.DataSource
 import org.apache.commons.dbutils.QueryRunner
-import org.apache.commons.dbutils.ResultSetHandler
 
 private const val FIND_BY_ID_SQL = """
-    SELECT api.api_key_id api_api_key_id,
-           api.name api_name,
-           api.secret api_secret,
-           api.application_id api_application_id,
-           api.created_at api_created_at,
-           api.expires_at api_expires_at,
-           app.application_id app_application_id,
-           app.name app_name,
-           app.state app_state
+    SELECT api.api_key_id ${ApiKeyCol.ID},
+           api.name ${ApiKeyCol.NAME},
+           api.secret ${ApiKeyCol.SECRET},
+           api.created_at ${ApiKeyCol.CREATED_AT},
+           api.expires_at ${ApiKeyCol.EXPIRES_AT},
+           app.application_id ${ApplicationCol.ID},
+           app.name ${ApplicationCol.NAME},
+           app.state ${ApplicationCol.STATE}
       FROM api_key api
      INNER JOIN application app ON app.application_id = api.application_id
      WHERE api.api_key_id = ?"""
 
 private const val FIND_ALL_BY_APPLICATION_ID_SQL = """
-    SELECT api.api_key_id api_api_key_id,
-           api.name api_name,
-           api.secret api_secret,
-           api.application_id api_application_id,
-           api.created_at api_created_at,
-           api.expires_at api_expires_at,
-           app.application_id app_application_id,
-           app.name app_name,
-           app.state app_state
+    SELECT api.api_key_id ${ApiKeyCol.ID},
+           api.name ${ApiKeyCol.NAME},
+           api.secret ${ApiKeyCol.SECRET},
+           api.created_at ${ApiKeyCol.CREATED_AT},
+           api.expires_at ${ApiKeyCol.EXPIRES_AT},
+           app.application_id ${ApplicationCol.ID},
+           app.name ${ApplicationCol.NAME},
+           app.state ${ApplicationCol.STATE}
       FROM api_key api
      INNER JOIN application app ON app.application_id = api.application_id
      WHERE app.application_id = ?
@@ -53,11 +51,14 @@ class H2ApiKeyRepository(
     private val queryRunner: QueryRunner,
 ) : ApiKeyRepository {
 
+    private val singleMapper = SingleResultSetMapper { it.getApiKeyFromRow() }
+    private val multipleMapper = MultipleResultSetMapper { it.getApiKeyFromRow() }
+
     override suspend fun findById(id: String) = dataSource.connection.use {
         queryRunner.query(
             it,
             FIND_BY_ID_SQL,
-            SingleApiKeyResultSetMapper,
+            singleMapper,
             id,
         )
     }
@@ -66,7 +67,7 @@ class H2ApiKeyRepository(
         queryRunner.query(
             it,
             FIND_ALL_BY_APPLICATION_ID_SQL,
-            MultipleApiKeyResultSetMapper,
+            multipleMapper,
             applicationId,
         )
     }
@@ -95,36 +96,5 @@ class H2ApiKeyRepository(
         )
 
         updatedRows > 0
-    }
-}
-
-/**
- * Used to extract single [ApiKey]. Thread safe
- */
-private object SingleApiKeyResultSetMapper : ResultSetHandler<ApiKey?> {
-
-    override fun handle(rs: ResultSet?) =
-        if (rs?.next() == true) {
-            rs.getApiKeyFromRow()
-        } else {
-            null
-        }
-}
-
-/**
- * Used to extract list of [ApiKey]s. Thread safe
- */
-private object MultipleApiKeyResultSetMapper : ResultSetHandler<List<ApiKey>> {
-
-    override fun handle(rs: ResultSet?): List<ApiKey> {
-        if (rs == null) {
-            return emptyList()
-        }
-
-        val apiKeys = mutableListOf<ApiKey>()
-        while (rs.next()) {
-            apiKeys += rs.getApiKeyFromRow()
-        }
-        return apiKeys
     }
 }

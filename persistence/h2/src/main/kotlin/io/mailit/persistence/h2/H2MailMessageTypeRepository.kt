@@ -9,57 +9,56 @@ import io.mailit.core.spi.DuplicateUniqueKeyException
 import io.mailit.core.spi.MailMessageTypeRepository
 import io.mailit.core.spi.PersistenceException
 import io.mailit.persistence.common.createSlice
+import io.mailit.persistence.h2.Columns.MailMessageType as MailMessageTypeCol
 import io.mailit.persistence.h2.MailMessageContent.HTML
 import io.mailit.persistence.h2.MailMessageContent.PLAIN_TEXT
-import java.sql.ResultSet
 import java.sql.SQLException
 import java.time.Instant
 import javax.sql.DataSource
 import org.apache.commons.dbutils.QueryRunner
-import org.apache.commons.dbutils.ResultSetHandler
 import org.h2.api.ErrorCode
 
 private const val FIND_BY_ID_SQL = """
-    SELECT mail_message_type_id mt_mail_message_type_id,
-           name mt_name,
-           description mt_description,
-           max_retries_count mt_max_retries_count,
-           state mt_state,
-           created_at mt_created_at,
-           updated_at mt_updated_at,
-           content_type mt_content_type,
-           template_engine mt_template_engine,
-           template mt_template
+    SELECT mail_message_type_id ${MailMessageTypeCol.ID},
+           name ${MailMessageTypeCol.NAME},
+           description ${MailMessageTypeCol.DESCRIPTION},
+           max_retries_count ${MailMessageTypeCol.MAX_RETRIES_COUNT},
+           state ${MailMessageTypeCol.STATE},
+           created_at ${MailMessageTypeCol.CREATED_AT},
+           updated_at ${MailMessageTypeCol.UPDATED_AT},
+           content_type ${MailMessageTypeCol.CONTENT_TYPE},
+           template_engine ${MailMessageTypeCol.TEMPLATE_ENGINE},
+           template ${MailMessageTypeCol.TEMPLATE}
       FROM mail_message_type
      WHERE mail_message_type_id = ?
        AND state = 'ENABLED'"""
 
 private const val FIND_BY_NAME_SQL = """
-    SELECT mail_message_type_id mt_mail_message_type_id,
-           name mt_name,
-           description mt_description,
-           max_retries_count mt_max_retries_count,
-           state mt_state,
-           created_at mt_created_at,
-           updated_at mt_updated_at,
-           content_type mt_content_type,
-           template_engine mt_template_engine,
-           template mt_template
+    SELECT mail_message_type_id ${MailMessageTypeCol.ID},
+           name ${MailMessageTypeCol.NAME},
+           description ${MailMessageTypeCol.DESCRIPTION},
+           max_retries_count ${MailMessageTypeCol.MAX_RETRIES_COUNT},
+           state ${MailMessageTypeCol.STATE},
+           created_at ${MailMessageTypeCol.CREATED_AT},
+           updated_at ${MailMessageTypeCol.UPDATED_AT},
+           content_type ${MailMessageTypeCol.CONTENT_TYPE},
+           template_engine ${MailMessageTypeCol.TEMPLATE_ENGINE},
+           template ${MailMessageTypeCol.TEMPLATE}
       FROM mail_message_type
      WHERE name = ?
        AND state = 'ENABLED'"""
 
 private const val FIND_ALL_SLICED_SQL = """
-    SELECT mail_message_type_id mt_mail_message_type_id,
-           name mt_name,
-           description mt_description,
-           max_retries_count mt_max_retries_count,
-           state mt_state,
-           created_at mt_created_at,
-           updated_at mt_updated_at,
-           content_type mt_content_type,
-           template_engine mt_template_engine,
-           template mt_template
+    SELECT mail_message_type_id ${MailMessageTypeCol.ID},
+           name ${MailMessageTypeCol.NAME},
+           description ${MailMessageTypeCol.DESCRIPTION},
+           max_retries_count ${MailMessageTypeCol.MAX_RETRIES_COUNT},
+           state ${MailMessageTypeCol.STATE},
+           created_at ${MailMessageTypeCol.CREATED_AT},
+           updated_at ${MailMessageTypeCol.UPDATED_AT},
+           content_type ${MailMessageTypeCol.CONTENT_TYPE},
+           template_engine ${MailMessageTypeCol.TEMPLATE_ENGINE},
+           template ${MailMessageTypeCol.TEMPLATE}
       FROM mail_message_type
      WHERE state = 'ENABLED'
      ORDER BY mt_mail_message_type_id DESC
@@ -99,15 +98,15 @@ class H2MailMessageTypeRepository(
     private val queryRunner: QueryRunner,
 ) : MailMessageTypeRepository {
 
-    private val singleItemMapper = SingleMailMessageTypeResultSetMapper()
-    private val multipleItemsMapper = MultipleMailMessageTypesResultSetMapper()
+    private val singleMapper = SingleResultSetMapper { it.getMailMessageTypeFromRow() }
+    private val multipleMapper = MultipleResultSetMapper { it.getMailMessageTypeFromRow() }
 
     override suspend fun findById(id: Long): MailMessageType? =
         dataSource.connection.use {
             queryRunner.query(
                 it,
                 FIND_BY_ID_SQL,
-                singleItemMapper,
+                singleMapper,
                 id,
             )
         }
@@ -117,7 +116,7 @@ class H2MailMessageTypeRepository(
             queryRunner.query(
                 it,
                 FIND_BY_NAME_SQL,
-                singleItemMapper,
+                singleMapper,
                 name,
             )
         }
@@ -129,7 +128,7 @@ class H2MailMessageTypeRepository(
             queryRunner.query(
                 it,
                 FIND_ALL_SLICED_SQL,
-                multipleItemsMapper,
+                multipleMapper,
                 size + 1,
                 offset,
             )
@@ -206,39 +205,7 @@ class H2MailMessageTypeRepository(
         }
 }
 
-/**
- * Used to extract single mail type. Thread safe
- */
-private class SingleMailMessageTypeResultSetMapper : ResultSetHandler<MailMessageType?> {
-
-    override fun handle(rs: ResultSet?): MailMessageType? =
-        if (rs?.next() == true) {
-            rs.getMailMessageTypeFromRow()
-        } else {
-            null
-        }
-}
-
-/**
- * Used to extract list of mail type. Thread safe
- */
-private class MultipleMailMessageTypesResultSetMapper : ResultSetHandler<List<MailMessageType>> {
-
-    override fun handle(rs: ResultSet?): List<MailMessageType> {
-        if (rs == null) {
-            return ArrayList()
-        }
-
-        val mailTypes = ArrayList<MailMessageType>()
-        while (rs.next()) {
-            mailTypes.add(rs.getMailMessageTypeFromRow())
-        }
-        return mailTypes
-    }
-}
-
 internal enum class MailMessageContent {
-
     PLAIN_TEXT,
     HTML,
 }

@@ -6,24 +6,23 @@ import io.mailit.core.model.application.ApplicationState
 import io.mailit.core.spi.DuplicateUniqueKeyException
 import io.mailit.core.spi.application.ApplicationRepository
 import io.mailit.persistence.common.createSlice
-import java.sql.ResultSet
+import io.mailit.persistence.h2.Columns.Application as ApplicationCol
 import java.sql.SQLException
 import javax.sql.DataSource
 import org.apache.commons.dbutils.QueryRunner
-import org.apache.commons.dbutils.ResultSetHandler
 import org.h2.api.ErrorCode
 
 private const val FIND_BY_ID_SQL = """
-    SELECT application_id app_application_id,
-           name app_name,
-           state app_state
+    SELECT application_id ${ApplicationCol.ID},
+           name ${ApplicationCol.NAME},
+           state ${ApplicationCol.STATE}
       FROM application
      WHERE application_id = ?"""
 
 private const val FIND_ALL_SLICED_SQL = """
-    SELECT application_id app_application_id,
-           name app_name,
-           state app_state
+    SELECT application_id ${ApplicationCol.ID},
+           name ${ApplicationCol.NAME},
+           state ${ApplicationCol.STATE}
       FROM application
      ORDER BY application_id DESC
      LIMIT ? OFFSET ?"""
@@ -44,12 +43,15 @@ class H2ApplicationRepository(
     private val queryRunner: QueryRunner,
 ) : ApplicationRepository {
 
+    private val singleMapper = SingleResultSetMapper { it.getApplicationFromRow() }
+    private val multipleMapper = MultipleResultSetMapper { it.getApplicationFromRow() }
+
     override suspend fun findById(id: Long) =
         dataSource.connection.use {
             queryRunner.query(
                 it,
                 FIND_BY_ID_SQL,
-                SingleApplicationResultSetMapper,
+                singleMapper,
                 id,
             )
         }
@@ -61,7 +63,7 @@ class H2ApplicationRepository(
             queryRunner.query(
                 it,
                 FIND_ALL_SLICED_SQL,
-                MultipleApplicationsResultSetMapper,
+                multipleMapper,
                 size + 1,
                 offset,
             )
@@ -100,36 +102,5 @@ class H2ApplicationRepository(
                 id,
             )
         }
-    }
-}
-
-/**
- * Used to extract single [Application]. Thread safe
- */
-private object SingleApplicationResultSetMapper : ResultSetHandler<Application?> {
-
-    override fun handle(rs: ResultSet?) =
-        if (rs?.next() == true) {
-            rs.getApplicationFromRow()
-        } else {
-            null
-        }
-}
-
-/**
- * Used to extract list of [Application]s. Thread safe
- */
-private object MultipleApplicationsResultSetMapper : ResultSetHandler<List<Application>> {
-
-    override fun handle(rs: ResultSet?): List<Application> {
-        if (rs == null) {
-            return emptyList()
-        }
-
-        val applications = mutableListOf<Application>()
-        while (rs.next()) {
-            applications += rs.getApplicationFromRow()
-        }
-        return applications
     }
 }
