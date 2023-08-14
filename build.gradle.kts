@@ -31,7 +31,7 @@ subprojects {
     group = "io.mailit"
     version = "0.2.0"
 
-    val dbUtilsVersion = "1.7" // https://mvnrepository.com/artifact/commons-dbutils/commons-dbutils
+    val dbUtilsVersion = "1.8.0" // https://mvnrepository.com/artifact/commons-dbutils/commons-dbutils
     val freemarkerVersion = "2.3.32" // https://mvnrepository.com/artifact/org.freemarker/freemarker
     val jsoupVersion = "1.16.1" // https://mvnrepository.com/artifact/org.jsoup/jsoup
     val kotlinLoggingVersion = "3.0.5" // https://mvnrepository.com/artifact/io.github.microutils/kotlin-logging
