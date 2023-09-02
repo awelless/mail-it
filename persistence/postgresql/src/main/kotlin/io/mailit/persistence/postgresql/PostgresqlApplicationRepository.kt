@@ -7,6 +7,7 @@ import io.mailit.core.spi.DuplicateUniqueKeyException
 import io.mailit.core.spi.application.ApplicationRepository
 import io.mailit.persistence.common.createSlice
 import io.mailit.persistence.postgresql.Columns.Application as ApplicationCol
+import io.mailit.persistence.postgresql.Tables.APPLICATION
 import io.smallrye.mutiny.Multi
 import io.smallrye.mutiny.coroutines.awaitSuspending
 import io.vertx.mutiny.pgclient.PgPool
@@ -17,26 +18,26 @@ private const val FIND_BY_ID_SQL = """
     SELECT application_id ${ApplicationCol.ID},
            name ${ApplicationCol.NAME},
            state ${ApplicationCol.STATE}
-      FROM application
+      FROM $APPLICATION
      WHERE application_id = $1"""
 
 private const val FIND_ALL_SLICED_SQL = """
     SELECT application_id ${ApplicationCol.ID},
            name ${ApplicationCol.NAME},
            state ${ApplicationCol.STATE}
-      FROM application
+      FROM $APPLICATION
      ORDER BY application_id DESC
      LIMIT $1 OFFSET $2"""
 
 private const val INSERT_SQL = """
-    INSERT INTO application(
+    INSERT INTO $APPLICATION(
         application_id,
         name,
         state)
     VALUES($1, $2, $3)"""
 
 private const val UPDATE_STATE_SQL = """
-    UPDATE application SET state = $1
+    UPDATE $APPLICATION SET state = $1
     WHERE application_id = $2"""
 
 class PostgresqlApplicationRepository(

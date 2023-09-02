@@ -6,6 +6,7 @@ import io.mailit.core.admin.api.type.MailMessageContentType.PLAIN_TEXT
 import io.mailit.core.exception.ValidationException
 import io.mailit.core.model.HtmlMailMessageType
 import io.mailit.core.model.HtmlTemplateEngine.FREEMARKER
+import io.mailit.core.model.MailMessageTemplate
 import io.mailit.core.model.PlainTextMailMessageType
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Nested
@@ -34,7 +35,7 @@ class MailMessageTypeFactoryTest {
                 maxRetriesCount = 100,
                 contentType = PLAIN_TEXT,
                 templateEngine = FREEMARKER,
-                template = "<html></html>",
+                template = MailMessageTemplate("<html></html>"),
             )
 
             // when
@@ -60,7 +61,7 @@ class MailMessageTypeFactoryTest {
                 maxRetriesCount = 100,
                 contentType = HTML,
                 templateEngine = FREEMARKER,
-                template = "<html></html>",
+                template = MailMessageTemplate("<html></html>"),
             )
 
             // when
@@ -84,7 +85,7 @@ class MailMessageTypeFactoryTest {
                 maxRetriesCount = 100,
                 contentType = HTML,
                 templateEngine = null,
-                template = "<html></html>",
+                template = MailMessageTemplate("<html></html>"),
             )
 
             // when

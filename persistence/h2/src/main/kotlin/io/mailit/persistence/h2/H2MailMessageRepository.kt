@@ -8,6 +8,9 @@ import io.mailit.persistence.common.createSlice
 import io.mailit.persistence.common.serialization.MailMessageDataSerializer
 import io.mailit.persistence.h2.Columns.MailMessage as MailMessageCol
 import io.mailit.persistence.h2.Columns.MailMessageType as MailMessageTypeCol
+import io.mailit.persistence.h2.Tables.MAIL_MESSAGE
+import io.mailit.persistence.h2.Tables.MAIL_MESSAGE_TEMPLATE
+import io.mailit.persistence.h2.Tables.MAIL_MESSAGE_TYPE
 import java.time.Instant
 import javax.sql.DataSource
 import org.apache.commons.dbutils.QueryRunner
@@ -33,9 +36,10 @@ private const val FIND_WITH_TYPE_BY_ID_SQL = """
            mt.updated_at ${MailMessageTypeCol.UPDATED_AT},
            mt.content_type ${MailMessageTypeCol.CONTENT_TYPE},
            mt.template_engine ${MailMessageTypeCol.TEMPLATE_ENGINE},
-           mt.template ${MailMessageTypeCol.TEMPLATE}
-    FROM mail_message m
-    INNER JOIN mail_message_type mt ON m.mail_message_type_id = mt.mail_message_type_id
+           t.template ${MailMessageTypeCol.TEMPLATE}
+    FROM $MAIL_MESSAGE m
+    INNER JOIN $MAIL_MESSAGE_TYPE mt ON m.mail_message_type_id = mt.mail_message_type_id
+     LEFT JOIN $MAIL_MESSAGE_TEMPLATE t ON mt.mail_message_type_id = t.mail_message_type_id
     WHERE m.mail_message_id = ?"""
 
 private const val FIND_WITH_TYPE_BY_SENDING_STARTED_BEFORE_AND_STATUSES_SQL = """
@@ -59,16 +63,17 @@ private const val FIND_WITH_TYPE_BY_SENDING_STARTED_BEFORE_AND_STATUSES_SQL = ""
            mt.updated_at ${MailMessageTypeCol.UPDATED_AT},
            mt.content_type ${MailMessageTypeCol.CONTENT_TYPE},
            mt.template_engine ${MailMessageTypeCol.TEMPLATE_ENGINE},
-           mt.template ${MailMessageTypeCol.TEMPLATE}
-    FROM mail_message m
-    INNER JOIN mail_message_type mt ON m.mail_message_type_id = mt.mail_message_type_id
+           t.template ${MailMessageTypeCol.TEMPLATE}
+    FROM $MAIL_MESSAGE m
+    INNER JOIN $MAIL_MESSAGE_TYPE mt ON m.mail_message_type_id = mt.mail_message_type_id
+     LEFT JOIN $MAIL_MESSAGE_TEMPLATE t ON mt.mail_message_type_id = t.mail_message_type_id
     WHERE m.sending_started_at < ?
       AND m.status IN (SELECT * FROM TABLE(x VARCHAR = ?))
     LIMIT ?"""
 
 private const val FIND_IDS_BY_STATUSES_SQL = """
     SELECT mail_message_id 
-      FROM mail_message 
+      FROM $MAIL_MESSAGE 
      WHERE status IN (SELECT * FROM TABLE(x VARCHAR = ?)) 
      LIMIT ?"""
 
@@ -93,14 +98,15 @@ private const val FIND_ALL_SLICED_SQL = """
            mt.updated_at ${MailMessageTypeCol.UPDATED_AT},
            mt.content_type ${MailMessageTypeCol.CONTENT_TYPE},
            mt.template_engine ${MailMessageTypeCol.TEMPLATE_ENGINE},
-           mt.template ${MailMessageTypeCol.TEMPLATE}
-     FROM mail_message m
-    INNER JOIN mail_message_type mt ON m.mail_message_type_id = mt.mail_message_type_id
-    ORDER BY m_mail_message_id DESC
+           t.template ${MailMessageTypeCol.TEMPLATE}
+     FROM $MAIL_MESSAGE m
+    INNER JOIN $MAIL_MESSAGE_TYPE mt ON m.mail_message_type_id = mt.mail_message_type_id
+     LEFT JOIN $MAIL_MESSAGE_TEMPLATE t ON mt.mail_message_type_id = t.mail_message_type_id
+    ORDER BY m.mail_message_id DESC
     LIMIT ? OFFSET ?"""
 
 private const val INSERT_SQL = """
-   INSERT INTO mail_message(
+   INSERT INTO $MAIL_MESSAGE(
         mail_message_id,
         text,
         data,
@@ -115,19 +121,19 @@ private const val INSERT_SQL = """
         failed_count)
    VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"""
 
-private const val UPDATE_STATUS_SQL = "UPDATE mail_message SET status = ? WHERE mail_message_id = ?"
+private const val UPDATE_STATUS_SQL = "UPDATE $MAIL_MESSAGE SET status = ? WHERE mail_message_id = ?"
 
 private const val UPDATE_STATUS_AND_SENDING_START_SQL = """
-    UPDATE mail_message 
+    UPDATE $MAIL_MESSAGE 
        SET status = ?, 
            sending_started_at = ? 
      WHERE mail_message_id = ? 
        AND status IN (SELECT * FROM TABLE(x VARCHAR = ?))"""
 
-private const val UPDATE_STATUS_AND_SENT_AT_SQL = "UPDATE mail_message SET status = ?, sent_at = ? WHERE mail_message_id = ?"
+private const val UPDATE_STATUS_AND_SENT_AT_SQL = "UPDATE $MAIL_MESSAGE SET status = ?, sent_at = ? WHERE mail_message_id = ?"
 
 private const val UPDATE_STATUS_FAILED_COUNT_AND_SENDING_START_SQL = """
-    UPDATE mail_message SET 
+    UPDATE $MAIL_MESSAGE SET 
         status = ?, 
         failed_count = ?, 
         sending_started_at = ? 
@@ -165,7 +171,7 @@ class H2MailMessageRepository(
             queryRunner.query(
                 it,
                 FIND_WITH_TYPE_BY_SENDING_STARTED_BEFORE_AND_STATUSES_SQL,
-                this.multipleMapper,
+                multipleMapper,
                 sendingStartedBefore,
                 statusNames,
                 maxListSize,
@@ -182,7 +188,7 @@ class H2MailMessageRepository(
             queryRunner.query(
                 it,
                 FIND_IDS_BY_STATUSES_SQL,
-                MultipleIdsResultSetMapper,
+                MULTIPLE_IDS_RESULT_SET_MAPPER,
                 statusNames,
                 maxListSize,
             )
@@ -196,7 +202,7 @@ class H2MailMessageRepository(
             queryRunner.query(
                 it,
                 FIND_ALL_SLICED_SQL,
-                this.multipleMapper,
+                multipleMapper,
                 size + 1,
                 offset,
             )

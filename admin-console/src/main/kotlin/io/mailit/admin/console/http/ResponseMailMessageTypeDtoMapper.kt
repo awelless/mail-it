@@ -21,7 +21,7 @@ class ResponseMailMessageTypeDtoMapper {
             maxRetriesCount = mailType.maxRetriesCount,
             contentType = mailType.contentType,
             templateEngine = (mailType as? HtmlMailMessageType)?.templateEngine,
-            template = (mailType as? HtmlMailMessageType)?.template,
+            template = (mailType as? HtmlMailMessageType)?.template?.value,
         )
 
     fun toPagedDto(mailType: MailMessageType) =

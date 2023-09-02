@@ -12,6 +12,8 @@ import io.mailit.persistence.common.createSlice
 import io.mailit.persistence.h2.Columns.MailMessageType as MailMessageTypeCol
 import io.mailit.persistence.h2.MailMessageContent.HTML
 import io.mailit.persistence.h2.MailMessageContent.PLAIN_TEXT
+import io.mailit.persistence.h2.Tables.MAIL_MESSAGE_TEMPLATE
+import io.mailit.persistence.h2.Tables.MAIL_MESSAGE_TYPE
 import java.sql.SQLException
 import java.time.Instant
 import javax.sql.DataSource
@@ -19,53 +21,56 @@ import org.apache.commons.dbutils.QueryRunner
 import org.h2.api.ErrorCode
 
 private const val FIND_BY_ID_SQL = """
-    SELECT mail_message_type_id ${MailMessageTypeCol.ID},
-           name ${MailMessageTypeCol.NAME},
-           description ${MailMessageTypeCol.DESCRIPTION},
-           max_retries_count ${MailMessageTypeCol.MAX_RETRIES_COUNT},
-           state ${MailMessageTypeCol.STATE},
-           created_at ${MailMessageTypeCol.CREATED_AT},
-           updated_at ${MailMessageTypeCol.UPDATED_AT},
-           content_type ${MailMessageTypeCol.CONTENT_TYPE},
-           template_engine ${MailMessageTypeCol.TEMPLATE_ENGINE},
-           template ${MailMessageTypeCol.TEMPLATE}
-      FROM mail_message_type
-     WHERE mail_message_type_id = ?
-       AND state = 'ENABLED'"""
+    SELECT mt.mail_message_type_id ${MailMessageTypeCol.ID},
+           mt.name ${MailMessageTypeCol.NAME},
+           mt.description ${MailMessageTypeCol.DESCRIPTION},
+           mt.max_retries_count ${MailMessageTypeCol.MAX_RETRIES_COUNT},
+           mt.state ${MailMessageTypeCol.STATE},
+           mt.created_at ${MailMessageTypeCol.CREATED_AT},
+           mt.updated_at ${MailMessageTypeCol.UPDATED_AT},
+           mt.content_type ${MailMessageTypeCol.CONTENT_TYPE},
+           mt.template_engine ${MailMessageTypeCol.TEMPLATE_ENGINE},
+           t.template ${MailMessageTypeCol.TEMPLATE}
+      FROM $MAIL_MESSAGE_TYPE mt
+      LEFT JOIN $MAIL_MESSAGE_TEMPLATE t ON mt.mail_message_type_id = t.mail_message_type_id
+     WHERE mt.mail_message_type_id = ?
+       AND mt.state = 'ENABLED'"""
 
 private const val FIND_BY_NAME_SQL = """
-    SELECT mail_message_type_id ${MailMessageTypeCol.ID},
-           name ${MailMessageTypeCol.NAME},
-           description ${MailMessageTypeCol.DESCRIPTION},
-           max_retries_count ${MailMessageTypeCol.MAX_RETRIES_COUNT},
-           state ${MailMessageTypeCol.STATE},
-           created_at ${MailMessageTypeCol.CREATED_AT},
-           updated_at ${MailMessageTypeCol.UPDATED_AT},
-           content_type ${MailMessageTypeCol.CONTENT_TYPE},
-           template_engine ${MailMessageTypeCol.TEMPLATE_ENGINE},
-           template ${MailMessageTypeCol.TEMPLATE}
-      FROM mail_message_type
-     WHERE name = ?
-       AND state = 'ENABLED'"""
+    SELECT mt.mail_message_type_id ${MailMessageTypeCol.ID},
+           mt.name ${MailMessageTypeCol.NAME},
+           mt.description ${MailMessageTypeCol.DESCRIPTION},
+           mt.max_retries_count ${MailMessageTypeCol.MAX_RETRIES_COUNT},
+           mt.state ${MailMessageTypeCol.STATE},
+           mt.created_at ${MailMessageTypeCol.CREATED_AT},
+           mt.updated_at ${MailMessageTypeCol.UPDATED_AT},
+           mt.content_type ${MailMessageTypeCol.CONTENT_TYPE},
+           mt.template_engine ${MailMessageTypeCol.TEMPLATE_ENGINE},
+           t.template ${MailMessageTypeCol.TEMPLATE}
+      FROM $MAIL_MESSAGE_TYPE mt
+      LEFT JOIN $MAIL_MESSAGE_TEMPLATE t ON mt.mail_message_type_id = t.mail_message_type_id
+     WHERE mt.name = ?
+       AND mt.state = 'ENABLED'"""
 
 private const val FIND_ALL_SLICED_SQL = """
-    SELECT mail_message_type_id ${MailMessageTypeCol.ID},
-           name ${MailMessageTypeCol.NAME},
-           description ${MailMessageTypeCol.DESCRIPTION},
-           max_retries_count ${MailMessageTypeCol.MAX_RETRIES_COUNT},
-           state ${MailMessageTypeCol.STATE},
-           created_at ${MailMessageTypeCol.CREATED_AT},
-           updated_at ${MailMessageTypeCol.UPDATED_AT},
-           content_type ${MailMessageTypeCol.CONTENT_TYPE},
-           template_engine ${MailMessageTypeCol.TEMPLATE_ENGINE},
-           template ${MailMessageTypeCol.TEMPLATE}
-      FROM mail_message_type
-     WHERE state = 'ENABLED'
-     ORDER BY mt_mail_message_type_id DESC
+    SELECT mt.mail_message_type_id ${MailMessageTypeCol.ID},
+           mt.name ${MailMessageTypeCol.NAME},
+           mt.description ${MailMessageTypeCol.DESCRIPTION},
+           mt.max_retries_count ${MailMessageTypeCol.MAX_RETRIES_COUNT},
+           mt.state ${MailMessageTypeCol.STATE},
+           mt.created_at ${MailMessageTypeCol.CREATED_AT},
+           mt.updated_at ${MailMessageTypeCol.UPDATED_AT},
+           mt.content_type ${MailMessageTypeCol.CONTENT_TYPE},
+           mt.template_engine ${MailMessageTypeCol.TEMPLATE_ENGINE},
+           t.template ${MailMessageTypeCol.TEMPLATE}
+      FROM $MAIL_MESSAGE_TYPE mt
+      LEFT JOIN $MAIL_MESSAGE_TEMPLATE t ON mt.mail_message_type_id = t.mail_message_type_id
+     WHERE mt.state = 'ENABLED'
+     ORDER BY mt.mail_message_type_id DESC
      LIMIT ? OFFSET ?"""
 
-private const val INSERT_SQL = """
-    INSERT INTO mail_message_type(
+private const val INSERT_MAIL_TYPE_SQL = """
+    INSERT INTO $MAIL_MESSAGE_TYPE(
         mail_message_type_id,
         name,
         description,
@@ -74,21 +79,30 @@ private const val INSERT_SQL = """
         created_at,
         updated_at,
         content_type,
-        template_engine,
-        template)
-    VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"""
+        template_engine)
+    VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)"""
 
-private const val UPDATE_SQL = """
-    UPDATE mail_message_type SET
+private const val INSERT_MAIL_TEMPLATE_SQL = """
+    INSERT INTO $MAIL_MESSAGE_TEMPLATE(mail_message_type_id, template)
+    VALUES(?, ?)
+"""
+
+private const val UPDATE_MAIL_TYPE_SQL = """
+    UPDATE $MAIL_MESSAGE_TYPE SET
         description = ?,
         max_retries_count = ?,
         updated_at = ?,
-        template_engine = ?,
-        template = ?
+        template_engine = ?
     WHERE mail_message_type_id = ?"""
 
+private const val UPDATE_TEMPLATE_SQL = """
+    UPDATE $MAIL_MESSAGE_TEMPLATE SET
+        template = ?
+    WHERE mail_message_type_id = ?
+"""
+
 private const val UPDATE_STATE_SQL = """
-    UPDATE mail_message_type SET
+    UPDATE $MAIL_MESSAGE_TYPE SET
         state = ?,
         updated_at = ?
     WHERE mail_message_type_id = ?"""
@@ -140,19 +154,24 @@ class H2MailMessageTypeRepository(
     override suspend fun create(mailMessageType: MailMessageType): MailMessageType {
         try {
             dataSource.connection.use {
-                queryRunner.update(
-                    it, INSERT_SQL,
-                    mailMessageType.id,
-                    mailMessageType.name,
-                    mailMessageType.description,
-                    mailMessageType.maxRetriesCount,
-                    mailMessageType.state.name,
-                    mailMessageType.createdAt,
-                    mailMessageType.updatedAt,
-                    mailMessageType.contentType,
-                    (mailMessageType as? HtmlMailMessageType)?.templateEngine?.name,
-                    (mailMessageType as? HtmlMailMessageType)?.template,
-                )
+                it.withTransaction {
+                    queryRunner.update(
+                        it, INSERT_MAIL_TYPE_SQL,
+                        mailMessageType.id,
+                        mailMessageType.name,
+                        mailMessageType.description,
+                        mailMessageType.maxRetriesCount,
+                        mailMessageType.state.name,
+                        mailMessageType.createdAt,
+                        mailMessageType.updatedAt,
+                        mailMessageType.contentType,
+                        (mailMessageType as? HtmlMailMessageType)?.templateEngine?.name,
+                    )
+
+                    if (mailMessageType is HtmlMailMessageType) {
+                        queryRunner.update(it, INSERT_MAIL_TEMPLATE_SQL, mailMessageType.id, mailMessageType.template.compressedValue)
+                    }
+                }
             }
         } catch (e: SQLException) {
             // replace with custom exception handler?
@@ -168,16 +187,24 @@ class H2MailMessageTypeRepository(
 
     override suspend fun update(mailMessageType: MailMessageType): MailMessageType {
         val updatedRowsCount = dataSource.connection.use {
-            queryRunner.update(
-                it,
-                UPDATE_SQL,
-                mailMessageType.description,
-                mailMessageType.maxRetriesCount,
-                mailMessageType.updatedAt,
-                (mailMessageType as? HtmlMailMessageType)?.templateEngine?.name,
-                (mailMessageType as? HtmlMailMessageType)?.template,
-                mailMessageType.id,
-            )
+            it.withTransaction {
+                queryRunner.update(
+                    it,
+                    UPDATE_TEMPLATE_SQL,
+                    (mailMessageType as? HtmlMailMessageType)?.template?.compressedValue,
+                    mailMessageType.id,
+                )
+
+                queryRunner.update(
+                    it,
+                    UPDATE_MAIL_TYPE_SQL,
+                    mailMessageType.description,
+                    mailMessageType.maxRetriesCount,
+                    mailMessageType.updatedAt,
+                    (mailMessageType as? HtmlMailMessageType)?.templateEngine?.name,
+                    mailMessageType.id,
+                )
+            }
         }
 
         if (updatedRowsCount == 0) {

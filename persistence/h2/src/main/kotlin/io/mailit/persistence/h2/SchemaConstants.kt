@@ -1,4 +1,12 @@
-package io.mailit.persistence.postgresql
+package io.mailit.persistence.h2
+
+internal object Tables {
+    const val API_KEY = "api_key"
+    const val APPLICATION = "application"
+    const val MAIL_MESSAGE = "mail_message"
+    const val MAIL_MESSAGE_TEMPLATE = "mail_message_template"
+    const val MAIL_MESSAGE_TYPE = "mail_message_type"
+}
 
 internal object Columns {
 

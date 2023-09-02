@@ -1,6 +1,7 @@
 package io.mailit.core.admin.api.type
 
 import io.mailit.core.model.HtmlTemplateEngine
+import io.mailit.core.model.MailMessageTemplate
 import io.mailit.core.model.MailMessageType
 import io.mailit.core.model.Slice
 
@@ -23,7 +24,7 @@ data class CreateMailMessageTypeCommand(
     val maxRetriesCount: Int? = null,
     val contentType: MailMessageContentType,
     val templateEngine: HtmlTemplateEngine? = null,
-    val template: String? = null,
+    val template: MailMessageTemplate? = null,
 )
 
 data class UpdateMailMessageTypeCommand(
@@ -31,7 +32,7 @@ data class UpdateMailMessageTypeCommand(
     val description: String?,
     val maxRetriesCount: Int?,
     val templateEngine: HtmlTemplateEngine? = null,
-    val template: String? = null,
+    val template: MailMessageTemplate? = null,
 )
 
 enum class MailMessageContentType {

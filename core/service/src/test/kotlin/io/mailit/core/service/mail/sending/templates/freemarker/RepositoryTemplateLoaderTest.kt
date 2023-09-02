@@ -46,7 +46,7 @@ class RepositoryTemplateLoaderTest {
 
         // then
         assertEquals(mailMessageType.updatedAt.toEpochMilli(), lastModified)
-        assertEquals(mailMessageType.template, template)
+        assertEquals(mailMessageType.template.value, template)
     }
 
     @Test

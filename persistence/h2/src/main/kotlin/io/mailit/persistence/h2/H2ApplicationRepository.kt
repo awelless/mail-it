@@ -7,6 +7,7 @@ import io.mailit.core.spi.DuplicateUniqueKeyException
 import io.mailit.core.spi.application.ApplicationRepository
 import io.mailit.persistence.common.createSlice
 import io.mailit.persistence.h2.Columns.Application as ApplicationCol
+import io.mailit.persistence.h2.Tables.APPLICATION
 import java.sql.SQLException
 import javax.sql.DataSource
 import org.apache.commons.dbutils.QueryRunner
@@ -16,26 +17,26 @@ private const val FIND_BY_ID_SQL = """
     SELECT application_id ${ApplicationCol.ID},
            name ${ApplicationCol.NAME},
            state ${ApplicationCol.STATE}
-      FROM application
+      FROM $APPLICATION
      WHERE application_id = ?"""
 
 private const val FIND_ALL_SLICED_SQL = """
     SELECT application_id ${ApplicationCol.ID},
            name ${ApplicationCol.NAME},
            state ${ApplicationCol.STATE}
-      FROM application
+      FROM $APPLICATION
      ORDER BY application_id DESC
      LIMIT ? OFFSET ?"""
 
 private const val INSERT_SQL = """
-    INSERT INTO application(
+    INSERT INTO $APPLICATION(
         application_id,
         name,
         state)
     VALUES(?, ?, ?)"""
 
 private const val UPDATE_STATE_SQL = """
-    UPDATE application SET state = ?
+    UPDATE $APPLICATION SET state = ?
     WHERE application_id = ?"""
 
 class H2ApplicationRepository(

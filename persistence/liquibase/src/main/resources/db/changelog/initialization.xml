@@ -29,7 +29,7 @@
                 <constraints nullable="false"/>
             </column>
             <column name="template_engine" type="varchar(64)"/>
-            <column name="template" type="text"/>
+            <column name="template" type="${blob_type}"/>
         </createTable>
         <rollback>
             DROP TABLE IF EXISTS mail_message_type;

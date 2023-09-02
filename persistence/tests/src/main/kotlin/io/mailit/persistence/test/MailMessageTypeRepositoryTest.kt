@@ -81,7 +81,21 @@ abstract class MailMessageTypeRepositoryTest {
     }
 
     @Test
-    fun create() = runTest {
+    fun `create plain text type`() = runTest {
+        // given
+        val newMailMessageType = createPlainMailMessageType()
+
+        // when
+        mailMessageTypeRepository.create(newMailMessageType)
+
+        val actual = mailMessageTypeRepository.findById(newMailMessageType.id)
+
+        // then
+        assertEquals(newMailMessageType, actual)
+    }
+
+    @Test
+    fun `create html type`() = runTest {
         // given
         val newMailMessageType = createHtmlMailMessageType()
 

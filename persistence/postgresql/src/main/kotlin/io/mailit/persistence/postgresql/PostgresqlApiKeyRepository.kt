@@ -5,6 +5,8 @@ import io.mailit.core.spi.application.ApiKeyRepository
 import io.mailit.persistence.common.toLocalDateTime
 import io.mailit.persistence.postgresql.Columns.ApiKey as ApiKeyCol
 import io.mailit.persistence.postgresql.Columns.Application as ApplicationCol
+import io.mailit.persistence.postgresql.Tables.API_KEY
+import io.mailit.persistence.postgresql.Tables.APPLICATION
 import io.smallrye.mutiny.Multi
 import io.smallrye.mutiny.coroutines.awaitSuspending
 import io.vertx.mutiny.pgclient.PgPool
@@ -19,8 +21,8 @@ private const val FIND_BY_ID_SQL = """
            app.application_id ${ApplicationCol.ID},
            app.name ${ApplicationCol.NAME},
            app.state ${ApplicationCol.STATE}
-      FROM api_key api
-     INNER JOIN application app ON app.application_id = api.application_id
+      FROM $API_KEY api
+     INNER JOIN $APPLICATION app ON app.application_id = api.application_id
      WHERE api.api_key_id = $1"""
 
 private const val FIND_ALL_BY_APPLICATION_ID_SQL = """
@@ -32,13 +34,13 @@ private const val FIND_ALL_BY_APPLICATION_ID_SQL = """
            app.application_id ${ApplicationCol.ID},
            app.name ${ApplicationCol.NAME},
            app.state ${ApplicationCol.STATE}
-      FROM api_key api
-     INNER JOIN application app ON app.application_id = api.application_id
+      FROM $API_KEY api
+     INNER JOIN $APPLICATION app ON app.application_id = api.application_id
      WHERE app.application_id = $1
      ORDER BY api.created_at DESC"""
 
 private const val INSERT_SQL = """
-    INSERT INTO api_key(
+    INSERT INTO $API_KEY(
         api_key_id,
         name,
         secret,
@@ -47,7 +49,7 @@ private const val INSERT_SQL = """
         expires_at)
     VALUES($1, $2, $3, $4, $5, $6)"""
 
-private const val DELETE_SQL = "DELETE FROM api_key WHERE api_key_id = $1 AND application_id = $2"
+private const val DELETE_SQL = "DELETE FROM $API_KEY WHERE api_key_id = $1 AND application_id = $2"
 
 class PostgresqlApiKeyRepository(
     private val client: PgPool,

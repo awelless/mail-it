@@ -5,6 +5,7 @@ import io.mailit.core.exception.ValidationException
 import io.mailit.core.model.HtmlMailMessageType
 import io.mailit.core.model.HtmlTemplateEngine.FREEMARKER
 import io.mailit.core.model.HtmlTemplateEngine.NONE
+import io.mailit.core.model.MailMessageTemplate
 import io.mailit.core.model.PlainTextMailMessageType
 import io.mailit.test.createHtmlMailMessageType
 import io.mailit.test.createPlainMailMessageType
@@ -70,7 +71,7 @@ class MailMessageTypeStateUpdateTest {
                 description = "some description",
                 maxRetriesCount = 100,
                 templateEngine = FREEMARKER,
-                template = "<html></html>",
+                template = MailMessageTemplate("<html></html>"),
             )
 
             // when
@@ -91,7 +92,7 @@ class MailMessageTypeStateUpdateTest {
                 description = "some description",
                 maxRetriesCount = 100,
                 templateEngine = null,
-                template = "<html></html>",
+                template = MailMessageTemplate("<html></html>"),
             )
 
             // when

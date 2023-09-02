@@ -8,6 +8,7 @@ import io.mailit.admin.console.security.Roles.ADMIN
 import io.mailit.core.admin.api.type.CreateMailMessageTypeCommand
 import io.mailit.core.admin.api.type.MailMessageTypeService
 import io.mailit.core.admin.api.type.UpdateMailMessageTypeCommand
+import io.mailit.core.model.MailMessageTemplate
 import io.mailit.core.model.Slice
 import jakarta.annotation.security.RolesAllowed
 import jakarta.ws.rs.DELETE
@@ -53,7 +54,7 @@ class MailMessageTypeResource(
             maxRetriesCount = createDto.maxRetriesCount,
             contentType = createDto.contentType,
             templateEngine = createDto.templateEngine,
-            template = createDto.template,
+            template = createDto.template?.let { MailMessageTemplate(it) },
         )
 
         val mailType = mailMessageTypeService.createNewMailType(command)
@@ -69,7 +70,7 @@ class MailMessageTypeResource(
             description = updateDto.description,
             maxRetriesCount = updateDto.maxRetriesCount,
             templateEngine = updateDto.templateEngine,
-            template = updateDto.template,
+            template = updateDto.template?.let { MailMessageTemplate(it) },
         )
 
         val mailType = mailMessageTypeService.updateMailType(command)

@@ -2,6 +2,7 @@ package io.mailit.persistence.postgresql
 
 import io.mailit.core.spi.id.InstanceIdLocks
 import io.mailit.persistence.common.toLocalDateTime
+import io.mailit.persistence.postgresql.Tables.INSTANCE_ID_LOCKS
 import io.smallrye.mutiny.Uni
 import io.smallrye.mutiny.coroutines.awaitSuspending
 import io.vertx.mutiny.pgclient.PgPool
@@ -14,10 +15,8 @@ import mu.KLogging
 
 private const val SET_SERIALIZABLE_LEVEL = "SET TRANSACTION ISOLATION LEVEL SERIALIZABLE"
 
-private const val TABLE_NAME = "instance_id_locks"
-
 private const val ACQUIRE_LOCK = """
-    INSERT INTO $TABLE_NAME(
+    INSERT INTO $INSTANCE_ID_LOCKS(
         instance_id,
         acquired_until,
         identity_key
@@ -25,20 +24,20 @@ private const val ACQUIRE_LOCK = """
 """
 
 private const val CLEANUP_EXPIRED_LOCK = """
-    DELETE FROM $TABLE_NAME
+    DELETE FROM $INSTANCE_ID_LOCKS
      WHERE instance_id = $1
        AND acquired_until < $2
 """
 
 private const val PROLONG_LOCK = """
-    UPDATE $TABLE_NAME
+    UPDATE $INSTANCE_ID_LOCKS
        SET acquired_until = $1
      WHERE instance_id = $2
        AND identity_key = $3
 """
 
 private const val RELEASE_LOCK = """
-    DELETE FROM $TABLE_NAME 
+    DELETE FROM $INSTANCE_ID_LOCKS 
      WHERE instance_id = $1 
        AND identity_key = $2
 """

@@ -71,7 +71,7 @@ data class HtmlMailMessageType(
     /**
      * Template that will be used by [templateEngine]
      */
-    var template: String,
+    var template: MailMessageTemplate,
 
 ) : MailMessageType(id, name, description, maxRetriesCount, state, createdAt, updatedAt)
 

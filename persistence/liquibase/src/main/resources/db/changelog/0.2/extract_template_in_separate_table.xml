@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+            http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="1" author="Aliaksei Shcharbaty">
+        <comment>Create mail_message_template table</comment>
+        <createTable tableName="mail_message_template">
+            <column name="mail_message_type_id" type="bigint">
+                <constraints primaryKey="true" foreignKeyName="fk_mailmessagetemplate_mailmessagetype" references="mail_message_type(mail_message_type_id)"/>
+            </column>
+            <column name="template" type="${blob_type}">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <rollback>
+            DROP TABLE IF EXISTS mail_message_template;
+        </rollback>
+    </changeSet>
+
+    <changeSet id="2" author="Aliaksei Shcharbaty">
+        <comment>Move templates into mail_message_template</comment>
+        <sql>
+            INSERT INTO mail_message_template(mail_message_type_id, template)
+            SELECT mail_message_type_id, template FROM mail_message_type;
+        </sql>
+        <rollback>
+            DELETE FROM mail_message_template WHERE 1=1;
+        </rollback>
+    </changeSet>
+
+    <changeSet id="3" author="Aliaksei Shcharbaty">
+        <comment>Delete template column from mail_message_type table</comment>
+        <dropColumn tableName="mail_message_type" columnName="template"/>
+        <rollback>
+            DROP TABLE IF EXISTS mail_message_template;
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

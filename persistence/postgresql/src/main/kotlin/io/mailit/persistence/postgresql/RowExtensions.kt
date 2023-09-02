@@ -4,6 +4,7 @@ import io.mailit.core.model.HtmlMailMessageType
 import io.mailit.core.model.HtmlTemplateEngine
 import io.mailit.core.model.MailMessage
 import io.mailit.core.model.MailMessageStatus
+import io.mailit.core.model.MailMessageTemplate
 import io.mailit.core.model.MailMessageType
 import io.mailit.core.model.MailMessageTypeState
 import io.mailit.core.model.PlainTextMailMessageType
@@ -52,7 +53,7 @@ internal fun Row.getMailMessageTypeFromRow(): MailMessageType {
 
     val templateEngine = getString(MailMessageTypeCol.TEMPLATE_ENGINE)?.let { HtmlTemplateEngine.valueOf(it) }
 
-    val template = getString(MailMessageTypeCol.TEMPLATE)
+    val template = getBuffer(MailMessageTypeCol.TEMPLATE)?.bytes
 
     return when (contentType) {
         MailMessageContent.PLAIN_TEXT -> PlainTextMailMessageType(
@@ -73,7 +74,7 @@ internal fun Row.getMailMessageTypeFromRow(): MailMessageType {
             createdAt = createdAt,
             updatedAt = updatedAt,
             templateEngine = templateEngine!!,
-            template = template!!,
+            template = MailMessageTemplate.fromCompressedValue(template!!),
         )
     }
 }

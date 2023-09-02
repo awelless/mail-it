@@ -4,6 +4,7 @@ import freemarker.cache.TemplateLoader
 import io.mailit.core.exception.NotFoundException
 import io.mailit.core.model.HtmlMailMessageType
 import io.mailit.core.model.HtmlTemplateEngine.FREEMARKER
+import io.mailit.core.model.MailMessageTemplate
 import io.mailit.core.service.mail.sending.templates.InvalidTemplateEngineException
 import io.mailit.core.spi.MailMessageTypeRepository
 import java.io.StringReader
@@ -33,7 +34,9 @@ class RepositoryTemplateLoader(
 
     override fun getLastModified(templateSource: Any) = (templateSource as RepositoryTemplateSource).updatedAt
 
-    override fun getReader(templateSource: Any, encoding: String?) = StringReader((templateSource as RepositoryTemplateSource).template)
+    override fun getReader(templateSource: Any, encoding: String?) =
+        (templateSource as? RepositoryTemplateSource)?.template?.value?.let { StringReader(it) }
+            ?: throw IllegalArgumentException("templateSource of type ${templateSource::class.qualifiedName} is not supported")
 
     override fun closeTemplateSource(templateSource: Any?) {
         // no need to close RepositoryTemplateSource
@@ -46,6 +49,6 @@ class RepositoryTemplateLoader(
 
 private data class RepositoryTemplateSource(
     val name: String,
-    val template: String,
+    val template: MailMessageTemplate,
     val updatedAt: Long,
 )

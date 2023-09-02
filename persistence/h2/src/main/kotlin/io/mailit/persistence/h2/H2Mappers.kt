@@ -1,6 +1,5 @@
 package io.mailit.persistence.h2
 
-import io.mailit.core.model.application.ApiKey
 import java.sql.ResultSet
 import org.apache.commons.dbutils.ResultSetHandler
 
@@ -12,7 +11,7 @@ internal class SingleResultSetMapper<T>(private val mapper: (ResultSet) -> T) : 
 }
 
 /**
- * Used to extract list of [ApiKey]s. Thread safe
+ * Used to extract list of objects. Thread safe
  */
 internal class MultipleResultSetMapper<T>(private val mapper: (ResultSet) -> T) : ResultSetHandler<List<T>> {
 
@@ -32,19 +31,4 @@ internal class MultipleResultSetMapper<T>(private val mapper: (ResultSet) -> T) 
 /**
  * Used to extract list of ids. Thread safe
  */
-internal object MultipleIdsResultSetMapper : ResultSetHandler<List<Long>> {
-
-    override fun handle(rs: ResultSet?): List<Long> {
-        if (rs == null) {
-            return emptyList()
-        }
-
-        val ids = mutableListOf<Long>()
-        while (rs.next()) {
-            ids.add(rs.mapRowToLong())
-        }
-        return ids
-    }
-
-    private fun ResultSet.mapRowToLong(): Long = getLong(1)
-}
+internal val MULTIPLE_IDS_RESULT_SET_MAPPER = MultipleResultSetMapper { it.getLong(1) }
