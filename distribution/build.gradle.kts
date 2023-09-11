@@ -42,7 +42,7 @@ tasks.getByName("quarkusDependenciesBuild") {
  */
 fun DependencyHandler.databaseProviderImplementation(): Dependency? {
     // database provider names should be the same as modules in :persistence
-    val supportedDatabaseProviders = setOf("h2", "postgresql")
+    val supportedDatabaseProviders = setOf("h2", "mysql", "postgresql")
     val databaseProviderProperty = "databaseProvider"
 
     val databaseProvider = project.properties[databaseProviderProperty] as? String ?: "h2" // h2 is a default value

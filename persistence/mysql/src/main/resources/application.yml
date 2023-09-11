@@ -1,0 +1,26 @@
+quarkus:
+  datasource:
+    db-kind: mysql
+
+"%test":
+  quarkus:
+    datasource:
+      devservices:
+        username: root
+        properties:
+          logger: com.mysql.cj.log.StandardLogger
+          profileSQL: true
+    log:
+      category:
+        "io.mailit.persistence.mysql":
+          level: DEBUG
+
+"%prod":
+  quarkus:
+    datasource:
+      username: ${DATABASE_USERNAME:admin}
+      password: ${DATABASE_PASSWORD:admin}
+      jdbc:
+        url: jdbc:${DATABASE_URL:mysql://localhost:3306/mail_it}
+      reactive:
+        url: ${DATABASE_URL:mysql://localhost:3306/mail_it}

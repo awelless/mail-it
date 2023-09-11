@@ -26,11 +26,11 @@ To build the artifact run the following command:
 
 To skip tests replace `distribution:build` with `distribution:assemble`
 
-| Variable name     | Description                                                                                                |
-|-------------------|------------------------------------------------------------------------------------------------------------|
-| PACKAGE_TYPE      | Type of result artifact. Possible values are `uber-jar` or `native` (graalvm is required)                  | 
-| DATABASE_PROVIDER | Database that will be used by this application. Possible values are `h2` (set by default) and `postgresql` |
-| CONNECTORS        | List of connectors for this application. Only `http` is supported (set by default)                         |
+| Variable name     | Description                                                                                                         |
+|-------------------|---------------------------------------------------------------------------------------------------------------------|
+| PACKAGE_TYPE      | Type of result artifact. Possible values are `uber-jar` or `native` (graalvm is required)                           | 
+| DATABASE_PROVIDER | Database that will be used by this application. Possible values are `h2` (set by default), `mysql` and `postgresql` |
+| CONNECTORS        | List of connectors for this application. Only `http` is supported (set by default)                                  |
 
 Please, note that `h2` database runs in embedded mode only, thus all data is lost on every application restart, so this mode is appropriate only for dev
 purposes. Also, `native` packaging doesn't support `h2` database
@@ -72,6 +72,13 @@ Nothing to configure
 
 #### H2
 Nothing to configure
+
+#### Mysql
+| Variable name     | Default value                  | Description       |
+|-------------------|--------------------------------|-------------------|
+| DATABASE_URL      | mysql://localhost:3306/mail_it | Database url      |
+| DATABASE_USERNAME | admin                          | Database username |
+| DATABASE_PASSWORD | admin                          | Database password |
 
 #### Postgresql
 | Variable name     | Default value                       | Description       |

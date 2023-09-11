@@ -17,24 +17,26 @@ fun DataSource.useConnectionWithSchema(schemaName: String, executable: (Connecti
 fun DataSource.createSchema(schemaName: String) {
     connection.use { connection ->
         connection.createStatement().use { statement ->
-            statement.executeUpdate("CREATE SCHEMA $schemaName")
+            statement.execute("CREATE SCHEMA $schemaName")
         }
     }
 }
 
 fun DataSource.initializeSchema(schemaName: String, sqlScript: String) = useConnectionWithSchema(schemaName) { connection ->
     val initializationStatements = sqlScript.split(';')
+        .filter { it.isNotBlank() }
 
-    connection.createStatement().use { statement ->
-        initializationStatements.forEach { statement.addBatch(it) }
-        statement.executeBatch()
+    initializationStatements.forEach { sql ->
+        connection.createStatement().use { statement ->
+            statement.execute(sql)
+        }
     }
 }
 
-fun DataSource.dropSchema(schemaName: String) {
+fun DataSource.dropSchema(schemaName: String, cascade: Boolean = true) {
     connection.use { connection ->
         connection.createStatement().use { statement ->
-            statement.executeUpdate("DROP SCHEMA $schemaName CASCADE")
+            statement.execute("DROP SCHEMA $schemaName ${if (cascade) "CASCADE" else ""}")
         }
     }
 }

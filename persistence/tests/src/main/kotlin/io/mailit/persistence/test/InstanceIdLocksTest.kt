@@ -2,6 +2,7 @@ package io.mailit.persistence.test
 
 import io.mailit.core.spi.id.InstanceIdLocks
 import jakarta.inject.Inject
+import kotlin.time.Duration.Companion.ZERO
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
@@ -47,17 +48,16 @@ abstract class InstanceIdLocksTest {
     @Test
     fun acquireLock_expired_acquires() = runBlocking {
         // given
-        val initialLockDuration = 200.milliseconds
         val initialIdentityKey = "initial"
 
         instanceIdLocks.acquireLock(
             instanceId = instanceId,
-            duration = initialLockDuration,
+            duration = ZERO,
             identityKey = initialIdentityKey,
         )
 
         // when
-        delay(initialLockDuration * 2) // wait for lock to expire
+        delay(1.seconds) // Wait for the lock to expire.
 
         val acquired = instanceIdLocks.acquireLock(
             instanceId = instanceId,

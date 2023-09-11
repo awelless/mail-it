@@ -1,6 +1,7 @@
 package io.mailit.persistence.test
 
 import io.mailit.core.model.MailMessage
+import io.mailit.core.model.MailMessageStatus.CANCELED
 import io.mailit.core.model.MailMessageStatus.PENDING
 import io.mailit.core.model.MailMessageStatus.SENDING
 import io.mailit.core.model.MailMessageType
@@ -213,7 +214,7 @@ abstract class MailMessageRepositoryTest {
         // when
         mailMessageRepository.updateMessageStatusAndSendingStartedTimeByIdAndStatusIn(
             id = mailMessage.id,
-            statuses = emptyList(),
+            statuses = listOf(CANCELED),
             status = status,
             sendingStartedAt = startTime,
         )

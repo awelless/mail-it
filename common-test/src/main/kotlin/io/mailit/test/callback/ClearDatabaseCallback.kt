@@ -8,7 +8,8 @@ import javax.sql.DataSource
 
 class ClearDatabaseCallback : QuarkusTestAfterEachCallback {
 
-    private val truncateAllScript: String = "/db/clear_all_tables.sql".readResource()
+    private val clearTableStatements = "/db/clear_all_tables.sql".readResource().lines()
+        .filter { it.isNotBlank() }
 
     override fun afterEach(context: QuarkusTestMethodContext) {
         val datasource = Arc.container()
@@ -19,9 +20,10 @@ class ClearDatabaseCallback : QuarkusTestAfterEachCallback {
     }
 
     private fun DataSource.clear() {
-        connection.use { conn ->
-            conn.createStatement().use { statement ->
-                statement.execute(truncateAllScript)
+        connection.use { connection ->
+            connection.createStatement().use { statement ->
+                clearTableStatements.forEach { statement.addBatch(it) }
+                statement.executeBatch()
             }
         }
     }

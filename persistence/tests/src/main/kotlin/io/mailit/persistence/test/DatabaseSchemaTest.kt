@@ -1,10 +1,5 @@
 package io.mailit.persistence.test
 
-import io.mailit.persistence.common.createSchema
-import io.mailit.persistence.common.dropSchema
-import io.mailit.persistence.common.initializeSchema
-import io.mailit.persistence.common.useConnectionWithSchema
-import io.mailit.test.readResource
 import jakarta.inject.Inject
 import java.sql.Connection
 import javax.sql.DataSource
@@ -18,29 +13,27 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
-abstract class DatabaseSchemaTest(
-    private val referenceSchemaName: String,
-    private val referenceSchemaScriptLocation: String,
-) {
+abstract class DatabaseSchemaTest {
 
     @Inject
     lateinit var dataSource: DataSource
 
     @BeforeEach
-    fun setUp() {
-        dataSource.createSchema(referenceSchemaName)
-        dataSource.initializeSchema(referenceSchemaName, referenceSchemaScriptLocation.readResource())
-    }
+    fun setUp() = initialize()
 
     @AfterEach
-    fun tearDown() {
-        dataSource.dropSchema(referenceSchemaName)
-    }
+    fun tearDown() = cleanUp()
+
+    abstract fun initialize()
+
+    abstract fun cleanUp()
+
+    abstract fun useConnection(executable: (Connection) -> Unit)
 
     @Test
     fun `compare schemas`() {
         dataSource.connection.use { connection ->
-            dataSource.useConnectionWithSchema(referenceSchemaName) { referenceConnection ->
+            useConnection { referenceConnection ->
                 val database = connection.toDatabase()
                 val referenceDatabase = referenceConnection.toDatabase()
 
