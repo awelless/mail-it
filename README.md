@@ -64,7 +64,7 @@ The service is configured via environment variables. List of all possible variab
 ### Connectors
 
 #### Http
-todo openapi
+[OpenApi](connector/http/openapi.yaml)
 
 Nothing to configure
 
