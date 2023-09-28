@@ -29,7 +29,6 @@
 <script setup lang="ts">
 import { defineProps, ref } from 'vue'
 import apiKeyClient from 'src/client/apiKeyClient'
-import { name } from 'axios'
 
 const props = defineProps<{
   applicationId: string,

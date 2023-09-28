@@ -7,7 +7,7 @@ async function login(username: string, password: string): Promise<LoginResponse>
     password,
   }
 
-  const { data, status } = await api.post('/login', credentials, {
+  const { status } = await api.post('/login', credentials, {
     headers: {
       'Content-Type': 'multipart/form-data',
     },
