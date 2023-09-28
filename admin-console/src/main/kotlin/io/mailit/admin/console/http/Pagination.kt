@@ -1,8 +1,5 @@
 package io.mailit.admin.console.http
 
-import kotlin.math.max
-import kotlin.math.min
-
 const val PAGE_PARAM = "page"
 const val SIZE_PARAM = "size"
 
@@ -14,7 +11,16 @@ private const val DEFAULT_SIZE = 10
 private const val MIN_SIZE = 1
 private const val MAX_SIZE = 1_000
 
-fun normalizePage(page: Int?) = page?.let { putInRange(it, MIN_PAGE, MAX_PAGE) } ?: DEFAULT_PAGE
-fun normalizeSize(size: Int?) = size?.let { putInRange(it, MIN_SIZE, MAX_SIZE) } ?: DEFAULT_SIZE
+fun normalizePage(page: Int?) = when {
+    page == null -> DEFAULT_PAGE
+    page < MIN_PAGE -> MIN_PAGE
+    page > MAX_PAGE -> MAX_PAGE
+    else -> page
+}
 
-private fun putInRange(number: Int, minBorder: Int, maxBorder: Int) = max(min(number, maxBorder), minBorder)
+fun normalizeSize(size: Int?) = when {
+    size == null -> DEFAULT_SIZE
+    size < MIN_SIZE -> MIN_SIZE
+    size > MAX_SIZE -> MAX_SIZE
+    else -> size
+}
