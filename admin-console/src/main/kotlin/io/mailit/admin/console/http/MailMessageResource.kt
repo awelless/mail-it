@@ -22,7 +22,7 @@ class MailMessageResource(
         @QueryParam(PAGE_PARAM) page: Int?,
         @QueryParam(SIZE_PARAM) size: Int?,
     ): Slice<AdminSlicedMailDto> {
-        val slice = mailMessageService.getAllSliced(page ?: DEFAULT_PAGE, size ?: DEFAULT_SIZE)
+        val slice = mailMessageService.getAllSliced(normalizePage(page), normalizeSize(size))
         return slice.map { it.toDto() }
     }
 

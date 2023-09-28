@@ -1,7 +1,5 @@
 package io.mailit.distribution.admin.client
 
-import io.mailit.admin.console.http.DEFAULT_PAGE
-import io.mailit.admin.console.http.DEFAULT_SIZE
 import io.mailit.admin.console.http.PAGE_PARAM
 import io.mailit.admin.console.http.SIZE_PARAM
 import io.mailit.core.admin.api.application.CreateApplicationCommand
@@ -151,5 +149,8 @@ class ApplicationResourceTest {
         private const val ID = "id"
         private const val NAME = "name"
         private const val STATE = "state"
+
+        private const val DEFAULT_PAGE = 0
+        private const val DEFAULT_SIZE = 10
     }
 }

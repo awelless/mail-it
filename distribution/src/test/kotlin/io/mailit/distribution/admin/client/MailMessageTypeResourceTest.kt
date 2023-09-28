@@ -1,7 +1,5 @@
 package io.mailit.distribution.admin.client
 
-import io.mailit.admin.console.http.DEFAULT_PAGE
-import io.mailit.admin.console.http.DEFAULT_SIZE
 import io.mailit.admin.console.http.PAGE_PARAM
 import io.mailit.admin.console.http.SIZE_PARAM
 import io.mailit.admin.console.http.dto.MailMessageTypeCreateDto
@@ -196,5 +194,8 @@ class MailMessageTypeResourceTest {
         private const val NAME = "name"
         private const val DESCRIPTION = "description"
         private const val MAX_RETRIES_COUNT = "maxRetriesCount"
+
+        private const val DEFAULT_PAGE = 0
+        private const val DEFAULT_SIZE = 10
     }
 }

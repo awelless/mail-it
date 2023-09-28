@@ -41,7 +41,7 @@ class MailMessageTypeResource(
         @QueryParam(PAGE_PARAM) page: Int?,
         @QueryParam(SIZE_PARAM) size: Int?,
     ): Slice<PagedMailMessageTypeResponseDto> {
-        val slice = mailMessageTypeService.getAllSliced(page ?: DEFAULT_PAGE, size ?: DEFAULT_SIZE)
+        val slice = mailMessageTypeService.getAllSliced(normalizePage(page), normalizeSize(size))
         return slice.map { mailMessageTypeDtoMapper.toPagedDto(it) }
     }
 

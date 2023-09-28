@@ -29,7 +29,7 @@ class ApplicationResource(
 
     @GET
     suspend fun getAllSliced(@QueryParam(PAGE_PARAM) page: Int?, @QueryParam(SIZE_PARAM) size: Int?) =
-        applicationService.getAllSliced(page ?: DEFAULT_PAGE, size ?: DEFAULT_SIZE).map { it.toDto() }
+        applicationService.getAllSliced(normalizePage(page), normalizeSize(size)).map { it.toDto() }
 
     @ResponseStatus(CREATED)
     @POST
