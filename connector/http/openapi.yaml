@@ -6,7 +6,7 @@ info:
   license:
     name: MIT
     url: https://opensource.org/license/mit/
-  version: 0.1.0
+  version: 0.2.0
 paths:
   /api/connector/mail:
     post:
@@ -41,6 +41,10 @@ components:
         - emailTo
         - mailType
       properties:
+        deduplicationId:
+          type: string
+          description: String that's used for mails deduplication. Messages with the same `deduplicationId` are considered as duplicates
+          example: 123-456-789-deduplicate
         text:
           type: string
           description: Mail text. Used only for PlainTextMailMessageType

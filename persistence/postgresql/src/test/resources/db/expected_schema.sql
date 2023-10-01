@@ -59,7 +59,9 @@ CREATE TABLE mail_message
     sent_at              TIMESTAMP,
     status               VARCHAR(32)  NOT NULL,
     failed_count         INT          NOT NULL,
-    CONSTRAINT fk_mailmessage_mailmessagetype FOREIGN KEY (mail_message_type_id) REFERENCES mail_message_type (mail_message_type_id)
+    deduplication_id     VARCHAR(128) NOT NULL,
+    CONSTRAINT fk_mailmessage_mailmessagetype FOREIGN KEY (mail_message_type_id) REFERENCES mail_message_type (mail_message_type_id),
+    CONSTRAINT uk_mailmessage_deduplicationid UNIQUE (deduplication_id)
 );
 
 CREATE TABLE instance_id_locks

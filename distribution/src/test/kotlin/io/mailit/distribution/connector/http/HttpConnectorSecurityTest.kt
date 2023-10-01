@@ -132,6 +132,7 @@ class HttpConnectorSecurityTest {
         emailFrom = "yoshito@gmail.com",
         emailTo = "makise@gmail.com",
         mailType = mailType.name,
+        deduplicationId = "dedup",
     )
 
     companion object {

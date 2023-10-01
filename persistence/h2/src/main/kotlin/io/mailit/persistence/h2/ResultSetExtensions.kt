@@ -101,6 +101,8 @@ internal fun ResultSet.getMailMessageWithTypeFromRow(dataSerializer: MailMessage
     val status = MailMessageStatus.valueOf(getString(MailMessageCol.STATUS))
     val failedCount = getInt(MailMessageCol.FAILED_COUNT)
 
+    val deduplicationId = getString(MailMessageCol.DEDUPLICATION_ID)
+
     return MailMessage(
         id = id,
         text = text,
@@ -114,6 +116,7 @@ internal fun ResultSet.getMailMessageWithTypeFromRow(dataSerializer: MailMessage
         sentAt = sentAt,
         status = status,
         failedCount = failedCount,
+        deduplicationId = deduplicationId,
     )
 }
 

@@ -36,6 +36,7 @@ internal object Columns {
         const val SENT_AT = "m_sent_at"
         const val STATUS = "m_status"
         const val FAILED_COUNT = "m_failed_count"
+        const val DEDUPLICATION_ID = "m_deduplication_id"
     }
 
     object MailMessageType {

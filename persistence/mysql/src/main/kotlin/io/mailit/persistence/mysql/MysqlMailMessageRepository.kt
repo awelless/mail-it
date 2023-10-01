@@ -3,6 +3,7 @@ package io.mailit.persistence.mysql
 import io.mailit.core.model.MailMessage
 import io.mailit.core.model.MailMessageStatus
 import io.mailit.core.model.Slice
+import io.mailit.core.spi.DuplicateUniqueKeyException
 import io.mailit.core.spi.MailMessageRepository
 import io.mailit.persistence.common.createSlice
 import io.mailit.persistence.common.serialization.MailMessageDataSerializer
@@ -16,6 +17,7 @@ import io.smallrye.mutiny.Multi
 import io.smallrye.mutiny.coroutines.awaitSuspending
 import io.vertx.mutiny.mysqlclient.MySQLPool
 import io.vertx.mutiny.sqlclient.Tuple
+import io.vertx.mysqlclient.MySQLException
 import java.time.Instant
 
 private const val FIND_WITH_TYPE_BY_ID_SQL = """
@@ -30,6 +32,7 @@ private const val FIND_WITH_TYPE_BY_ID_SQL = """
            m.sent_at ${MailMessageCol.SENT_AT},
            m.status ${MailMessageCol.STATUS},
            m.failed_count ${MailMessageCol.FAILED_COUNT},
+           m.deduplication_id ${MailMessageCol.DEDUPLICATION_ID},
            mt.mail_message_type_id ${MailMessageTypeCol.ID},
            mt.name ${MailMessageTypeCol.NAME},
            mt.description ${MailMessageTypeCol.DESCRIPTION},
@@ -57,6 +60,7 @@ private fun FIND_WITH_TYPE_BY_SENDING_STARTED_BEFORE_AND_STATUSES_SQL(statusesNu
            m.sent_at ${MailMessageCol.SENT_AT},
            m.status ${MailMessageCol.STATUS},
            m.failed_count ${MailMessageCol.FAILED_COUNT},
+           m.deduplication_id ${MailMessageCol.DEDUPLICATION_ID},
            mt.mail_message_type_id ${MailMessageTypeCol.ID},
            mt.name ${MailMessageTypeCol.NAME},
            mt.description ${MailMessageTypeCol.DESCRIPTION},
@@ -93,6 +97,7 @@ private const val FIND_ALL_SLICED_SQL = """
            m.sent_at ${MailMessageCol.SENT_AT},
            m.status ${MailMessageCol.STATUS},
            m.failed_count ${MailMessageCol.FAILED_COUNT},
+           m.deduplication_id ${MailMessageCol.DEDUPLICATION_ID},
            mt.mail_message_type_id ${MailMessageTypeCol.ID},
            mt.name ${MailMessageTypeCol.NAME},
            mt.description ${MailMessageTypeCol.DESCRIPTION},
@@ -122,8 +127,9 @@ private const val INSERT_SQL = """
         sending_started_at,
         sent_at,
         status,
-        failed_count)
-   VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"""
+        failed_count,
+        deduplication_id)
+   VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"""
 
 private const val UPDATE_STATUS_SQL = "UPDATE $MAIL_MESSAGE SET status = ? WHERE mail_message_id = ?"
 
@@ -225,10 +231,14 @@ class MysqlMailMessageRepository(
             mailMessage.sentAt?.toLocalDateTime(),
             mailMessage.status.name,
             mailMessage.failedCount,
+            mailMessage.deduplicationId,
         )
 
         client.preparedQuery(INSERT_SQL)
             .execute(Tuple.from(arguments))
+            .onFailure(MySQLException::class.java).transform {
+                if ((it as? MySQLException)?.errorCode == 1062) DuplicateUniqueKeyException(it.message, it) else it
+            }
             .awaitSuspending()
 
         return mailMessage

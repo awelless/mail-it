@@ -6,6 +6,7 @@ import io.mailit.core.model.MailMessage
 import io.mailit.core.model.MailMessageStatus.PENDING
 import io.mailit.core.model.MailMessageType
 import io.mailit.core.service.id.IdGenerator
+import io.mailit.core.spi.DuplicateUniqueKeyException
 import io.mailit.core.spi.MailMessageRepository
 import io.mailit.core.spi.MailMessageTypeRepository
 import io.mailit.test.createMailMessage
@@ -21,6 +22,7 @@ import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.params.ParameterizedTest
@@ -66,6 +68,7 @@ class MailMessageServiceImplTest {
             emailFrom = "from@gmail.com",
             emailTo = "to@mail.com",
             mailType = mailType.name,
+            deduplicationId = "deduplication",
         )
 
         coEvery { mailMessageTypeRepository.findByName(mailType.name) } returns mailType
@@ -85,6 +88,30 @@ class MailMessageServiceImplTest {
         assertEquals(command.emailTo, savedMailMessage.emailTo)
         assertEquals(mailType, savedMailMessage.type)
         assertEquals(PENDING, savedMailMessage.status)
+        assertEquals(command.deduplicationId, savedMailMessage.deduplicationId)
+    }
+
+    @Test
+    fun `createNewMail - when mail is duplicate - does nothing`() = runTest {
+        // given
+        val command = CreateMailCommand(
+            text = "Some message",
+            data = mapOf("name" to "john"),
+            subject = "subject",
+            emailFrom = "from@gmail.com",
+            emailTo = "to@mail.com",
+            mailType = mailType.name,
+            deduplicationId = "deduplication",
+        )
+
+        coEvery { mailMessageTypeRepository.findByName(mailType.name) } returns mailType
+        coEvery { mailMessageRepository.create(any()) } throws DuplicateUniqueKeyException(null, null)
+
+        // when
+        assertDoesNotThrow { mailMessageService.createNewMail(command) }
+
+        // then
+        coVerify(exactly = 1) { mailMessageRepository.create(any()) }
     }
 
     @Test
@@ -96,6 +123,7 @@ class MailMessageServiceImplTest {
             emailFrom = "from@gmail.com",
             emailTo = "to@mail.com",
             mailType = "invalid",
+            deduplicationId = "deduplication",
         )
 
         coEvery { mailMessageTypeRepository.findByName(command.mailType) } returns null
@@ -120,6 +148,7 @@ class MailMessageServiceImplTest {
             emailFrom = emailFrom,
             emailTo = emailTo,
             mailType = "123",
+            deduplicationId = "deduplication",
         )
 
         val exception = assertThrows<ValidationException> {

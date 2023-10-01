@@ -53,6 +53,7 @@ class HttpConnectorTest {
             emailFrom = "yoshito@gmail.com",
             emailTo = "makise@gmail.com",
             mailType = mailType.name,
+            deduplicationId = "dedup",
         )
 
         val messageId: String = Given {
@@ -84,6 +85,7 @@ class HttpConnectorTest {
             emailFrom = "yoshito@gmail.com",
             emailTo = "makise@gmail.com",
             mailType = mailType.name,
+            deduplicationId = "dedup",
         )
 
         val messageId: String = Given {
@@ -133,6 +135,7 @@ class HttpConnectorTest {
             emailFrom = "yoshito@gmail.com",
             emailTo = "makise@gmail.com",
             mailType = "invalid",
+            deduplicationId = "dedup",
         )
 
         Given {

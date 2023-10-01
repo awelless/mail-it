@@ -5,6 +5,7 @@ import io.mailit.core.model.MailMessageStatus.CANCELED
 import io.mailit.core.model.MailMessageStatus.PENDING
 import io.mailit.core.model.MailMessageStatus.SENDING
 import io.mailit.core.model.MailMessageType
+import io.mailit.core.spi.DuplicateUniqueKeyException
 import io.mailit.core.spi.MailMessageRepository
 import io.mailit.core.spi.MailMessageTypeRepository
 import io.mailit.test.createPlainMailMessageType
@@ -18,6 +19,7 @@ import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 
 abstract class MailMessageRepositoryTest {
 
@@ -46,6 +48,7 @@ abstract class MailMessageRepositoryTest {
                 type = mailMessageType,
                 createdAt = nowWithoutNanos(),
                 status = PENDING,
+                deduplicationId = "deduplication1",
             )
             mailMessageRepository.create(mailMessage)
         }
@@ -61,6 +64,7 @@ abstract class MailMessageRepositoryTest {
         assertEquals(mailMessage.emailTo, actual.emailTo)
         assertEquals(mailMessage.createdAt, actual.createdAt)
         assertEquals(mailMessage.status, actual.status)
+        assertEquals(mailMessage.deduplicationId, actual.deduplicationId)
 
         // mailMessageType is fetched too
         assertEquals(mailMessageType.id, actual.type.id)
@@ -87,6 +91,7 @@ abstract class MailMessageRepositoryTest {
             createdAt = Instant.now().minusSeconds(100),
             sendingStartedAt = messageSendingStartedAt,
             status = SENDING,
+            deduplicationId = "deduplication2",
         )
         mailMessageRepository.create(sendingMessage)
 
@@ -111,6 +116,7 @@ abstract class MailMessageRepositoryTest {
             type = mailMessageType,
             createdAt = Instant.now(),
             status = PENDING,
+            deduplicationId = "deduplication2",
         )
         mailMessageRepository.create(message2)
 
@@ -135,6 +141,7 @@ abstract class MailMessageRepositoryTest {
             type = mailMessageType,
             createdAt = Instant.now(),
             status = PENDING,
+            deduplicationId = "deduplication2",
         )
         mailMessageRepository.create(message2)
 
@@ -159,6 +166,7 @@ abstract class MailMessageRepositoryTest {
             type = mailMessageType,
             createdAt = nowWithoutNanos(),
             status = PENDING,
+            deduplicationId = "deduplication555",
         )
 
         // when
@@ -168,6 +176,26 @@ abstract class MailMessageRepositoryTest {
 
         // then
         assertEquals(message, actual)
+    }
+
+    @Test
+    fun `create with the same deduplication id`() = runTest {
+        // given
+        val message = MailMessage(
+            id = 123,
+            text = null,
+            data = mapOf("name" to "Name", "age" to 20),
+            subject = null,
+            emailFrom = "email@from.com",
+            emailTo = "email@to.com",
+            type = mailMessageType,
+            createdAt = nowWithoutNanos(),
+            status = PENDING,
+            deduplicationId = mailMessage.deduplicationId,
+        )
+
+        // when + then
+        assertThrows<DuplicateUniqueKeyException> { mailMessageRepository.create(message) }
     }
 
     @Test

@@ -9,6 +9,7 @@ import io.mailit.core.model.MailMessageStatus
 import io.mailit.core.model.Slice
 import io.mailit.core.service.id.IdGenerator
 import io.mailit.core.service.isEmail
+import io.mailit.core.spi.DuplicateUniqueKeyException
 import io.mailit.core.spi.MailMessageRepository
 import io.mailit.core.spi.MailMessageTypeRepository
 import java.time.Instant
@@ -39,9 +40,14 @@ class MailMessageServiceImpl(
             type = messageType,
             createdAt = Instant.now(),
             status = MailMessageStatus.PENDING,
+            deduplicationId = command.deduplicationId,
         )
 
-        mailMessageRepository.create(message)
+        try {
+            mailMessageRepository.create(message)
+        } catch (_: DuplicateUniqueKeyException) {
+            logger.debug { "Mail with deduplication id: ${command.deduplicationId} has already been created" }
+        }
 
         logger.debug { "Persisted message with id: ${message.id}" }
 

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+            http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="1" author="Aliaksei Shcharbaty">
+        <comment>Add deduplication id for mail messages</comment>
+        <addColumn tableName="mail_message">
+            <column name="deduplication_id" type="varchar(128)">
+                <constraints nullable="false" unique="true" uniqueConstraintName="uk_mailmessage_deduplicationid"/>
+            </column>
+        </addColumn>
+        <rollback>
+            ALTER TABLE mail_message DROP CONSTRAINT uk_mailmessage_deduplicationid;
+            ALTER TABLE mail_message DROP COLUMN deduplication_id;
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

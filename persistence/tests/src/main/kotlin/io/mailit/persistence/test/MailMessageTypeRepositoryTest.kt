@@ -2,6 +2,7 @@ package io.mailit.persistence.test
 
 import io.mailit.core.model.MailMessageTypeState.DELETED
 import io.mailit.core.model.PlainTextMailMessageType
+import io.mailit.core.spi.DuplicateUniqueKeyException
 import io.mailit.core.spi.MailMessageTypeRepository
 import io.mailit.test.createHtmlMailMessageType
 import io.mailit.test.createPlainMailMessageType
@@ -14,6 +15,7 @@ import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 
 abstract class MailMessageTypeRepositoryTest {
 
@@ -106,6 +108,15 @@ abstract class MailMessageTypeRepositoryTest {
 
         // then
         assertEquals(newMailMessageType, actual)
+    }
+
+    @Test
+    fun `create with the same name`() = runTest {
+        // given
+        val newMailMessageType = createPlainMailMessageType().copy(name = mailMessageType.name)
+
+        // when + then
+        assertThrows<DuplicateUniqueKeyException> { mailMessageTypeRepository.create(newMailMessageType) }
     }
 
     @Test

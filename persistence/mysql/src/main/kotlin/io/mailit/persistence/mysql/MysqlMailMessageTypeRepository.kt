@@ -155,7 +155,7 @@ class MysqlMailMessageTypeRepository(
             val query = connection.preparedQuery(INSERT_MAIL_TYPE_SQL)
                 .execute(Tuple.from(arguments))
                 .onFailure(MySQLException::class.java).transform {
-                    if ((it as? MySQLException)?.errorCode == 23505) DuplicateUniqueKeyException(it.message, it) else it
+                    if ((it as? MySQLException)?.errorCode == 1062) DuplicateUniqueKeyException(it.message, it) else it
                 }
 
             if (mailMessageType is HtmlMailMessageType) {

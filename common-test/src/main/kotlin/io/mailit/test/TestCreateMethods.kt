@@ -39,9 +39,11 @@ fun createHtmlMailMessageType(): HtmlMailMessageType {
     )
 }
 
-fun createMailMessage(messageType: MailMessageType): MailMessage =
-    MailMessage(
-        id = counter.incrementAndGet(),
+fun createMailMessage(messageType: MailMessageType): MailMessage {
+    val id = counter.incrementAndGet()
+
+    return MailMessage(
+        id = id,
         text = "text",
         data = emptyMap(),
         subject = null,
@@ -50,4 +52,6 @@ fun createMailMessage(messageType: MailMessageType): MailMessage =
         type = messageType,
         createdAt = nowWithoutNanos(),
         status = MailMessageStatus.PENDING,
+        deduplicationId = id.toString(),
     )
+}

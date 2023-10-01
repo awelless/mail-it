@@ -9,5 +9,6 @@
     <include file="application.xml" relativeToChangelogFile="true"/>
     <include file="api_key.xml" relativeToChangelogFile="true"/>
     <include file="extract_template_in_separate_table.xml" relativeToChangelogFile="true"/>
+    <include file="deduplication_id.xml" relativeToChangelogFile="true"/>
 
 </databaseChangeLog>

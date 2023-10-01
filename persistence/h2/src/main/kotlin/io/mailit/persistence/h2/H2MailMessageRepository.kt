@@ -3,6 +3,7 @@ package io.mailit.persistence.h2
 import io.mailit.core.model.MailMessage
 import io.mailit.core.model.MailMessageStatus
 import io.mailit.core.model.Slice
+import io.mailit.core.spi.DuplicateUniqueKeyException
 import io.mailit.core.spi.MailMessageRepository
 import io.mailit.persistence.common.createSlice
 import io.mailit.persistence.common.serialization.MailMessageDataSerializer
@@ -11,9 +12,11 @@ import io.mailit.persistence.h2.Columns.MailMessageType as MailMessageTypeCol
 import io.mailit.persistence.h2.Tables.MAIL_MESSAGE
 import io.mailit.persistence.h2.Tables.MAIL_MESSAGE_TEMPLATE
 import io.mailit.persistence.h2.Tables.MAIL_MESSAGE_TYPE
+import java.sql.SQLException
 import java.time.Instant
 import javax.sql.DataSource
 import org.apache.commons.dbutils.QueryRunner
+import org.h2.api.ErrorCode
 
 private const val FIND_WITH_TYPE_BY_ID_SQL = """
     SELECT m.mail_message_id ${MailMessageCol.ID},
@@ -27,6 +30,7 @@ private const val FIND_WITH_TYPE_BY_ID_SQL = """
            m.sent_at ${MailMessageCol.SENT_AT},
            m.status ${MailMessageCol.STATUS},
            m.failed_count ${MailMessageCol.FAILED_COUNT},
+           m.deduplication_id ${MailMessageCol.DEDUPLICATION_ID},
            mt.mail_message_type_id ${MailMessageTypeCol.ID},
            mt.name ${MailMessageTypeCol.NAME},
            mt.description ${MailMessageTypeCol.DESCRIPTION},
@@ -54,6 +58,7 @@ private const val FIND_WITH_TYPE_BY_SENDING_STARTED_BEFORE_AND_STATUSES_SQL = ""
            m.sent_at ${MailMessageCol.SENT_AT},
            m.status ${MailMessageCol.STATUS},
            m.failed_count ${MailMessageCol.FAILED_COUNT},
+           m.deduplication_id ${MailMessageCol.DEDUPLICATION_ID},
            mt.mail_message_type_id ${MailMessageTypeCol.ID},
            mt.name ${MailMessageTypeCol.NAME},
            mt.description ${MailMessageTypeCol.DESCRIPTION},
@@ -89,6 +94,7 @@ private const val FIND_ALL_SLICED_SQL = """
            m.sent_at ${MailMessageCol.SENT_AT},
            m.status ${MailMessageCol.STATUS},
            m.failed_count ${MailMessageCol.FAILED_COUNT},
+           m.deduplication_id ${MailMessageCol.DEDUPLICATION_ID},
            mt.mail_message_type_id ${MailMessageTypeCol.ID},
            mt.name ${MailMessageTypeCol.NAME},
            mt.description ${MailMessageTypeCol.DESCRIPTION},
@@ -118,8 +124,9 @@ private const val INSERT_SQL = """
         sending_started_at,
         sent_at,
         status,
-        failed_count)
-   VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"""
+        failed_count,
+        deduplication_id)
+   VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"""
 
 private const val UPDATE_STATUS_SQL = "UPDATE $MAIL_MESSAGE SET status = ? WHERE mail_message_id = ?"
 
@@ -214,15 +221,36 @@ class H2MailMessageRepository(
     override suspend fun create(mailMessage: MailMessage): MailMessage {
         val data = dataSerializer.write(mailMessage.data)
 
-        dataSource.connection.use {
-            val dataBlob = it.createBlob()
-            dataBlob.setBytes(1, data)
+        try {
+            dataSource.connection.use {
+                val dataBlob = it.createBlob()
+                dataBlob.setBytes(1, data)
 
-            queryRunner.update(
-                it, INSERT_SQL,
-                mailMessage.id, mailMessage.text, dataBlob, mailMessage.subject, mailMessage.emailFrom, mailMessage.emailTo, mailMessage.type.id,
-                mailMessage.createdAt, mailMessage.sendingStartedAt, mailMessage.sentAt, mailMessage.status.name, mailMessage.failedCount,
-            )
+                val params = arrayOf(
+                    mailMessage.id,
+                    mailMessage.text,
+                    dataBlob,
+                    mailMessage.subject,
+                    mailMessage.emailFrom,
+                    mailMessage.emailTo,
+                    mailMessage.type.id,
+                    mailMessage.createdAt,
+                    mailMessage.sendingStartedAt,
+                    mailMessage.sentAt,
+                    mailMessage.status.name,
+                    mailMessage.failedCount,
+                    mailMessage.deduplicationId,
+                )
+
+                queryRunner.update(it, INSERT_SQL, *params)
+            }
+        } catch (e: SQLException) {
+            // todo replace with custom exception handler?
+            throw if (e.errorCode == ErrorCode.DUPLICATE_KEY_1) {
+                DuplicateUniqueKeyException(e.message, e)
+            } else {
+                e
+            }
         }
 
         return mailMessage
