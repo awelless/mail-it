@@ -14,7 +14,7 @@ data class MailMessage(
     /**
      * Data that is substituted in the template in [HtmlMailMessageType]
      */
-    val data: Map<String, Any?>?,
+    val data: Map<String, Any>?,
 
     val subject: String?,
 

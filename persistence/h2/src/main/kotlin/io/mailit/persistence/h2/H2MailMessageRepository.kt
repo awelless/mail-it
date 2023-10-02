@@ -223,8 +223,7 @@ class H2MailMessageRepository(
 
         try {
             dataSource.connection.use {
-                val dataBlob = it.createBlob()
-                dataBlob.setBytes(1, data)
+                val dataBlob = data?.let { bytes -> it.createBlob().apply { setBytes(1, bytes) } }
 
                 val params = arrayOf(
                     mailMessage.id,

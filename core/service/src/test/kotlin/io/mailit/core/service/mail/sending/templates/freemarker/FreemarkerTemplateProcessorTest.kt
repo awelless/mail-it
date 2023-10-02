@@ -9,6 +9,7 @@ import io.mailit.core.model.HtmlTemplateEngine.FREEMARKER
 import io.mailit.test.assertHtmlEquals
 import io.mailit.test.createHtmlMailMessageType
 import io.mailit.test.readResource
+import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -32,7 +33,7 @@ open class FreemarkerTemplateProcessorTest {
     }
 
     @Test
-    fun `process valid template - creates html`() {
+    fun `process valid template - creates html`() = runTest {
         // given
         templateLoader.putTemplate(mailMessageType.name, FREEMARKER_TEST_TEMPLATE_PATH.readResource())
 
@@ -71,7 +72,7 @@ open class FreemarkerTemplateProcessorTest {
     }
 
     @Test
-    fun `process valid template with excess data - creates html`() {
+    fun `process valid template with excess data - creates html`() = runTest {
         // given
         templateLoader.putTemplate(mailMessageType.name, FREEMARKER_TEST_TEMPLATE_PATH.readResource())
 
@@ -112,7 +113,7 @@ open class FreemarkerTemplateProcessorTest {
     }
 
     @Test
-    fun `process valid template when some data is not present - throws exception`() {
+    fun `process valid template when some data is not present - throws exception`() = runTest {
         // given
         templateLoader.putTemplate(mailMessageType.name, FREEMARKER_TEST_TEMPLATE_PATH.readResource())
 
@@ -125,12 +126,12 @@ open class FreemarkerTemplateProcessorTest {
     }
 
     @Test
-    fun `template doesn't exist - throws exception`() {
+    fun `template doesn't exist - throws exception`() = runTest {
         assertThrows<TemplateNotFoundException> { templateProcessor.process(mailMessageType, emptyMap()) }
     }
 
     @Test
-    fun `template is invalid - throws exception`() {
+    fun `template is invalid - throws exception`() = runTest {
         // given
         templateLoader.putTemplate(mailMessageType.name, FREEMARKER_INVALID_TEMPLATE_PATH.readResource())
 

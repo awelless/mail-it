@@ -9,7 +9,7 @@ interface MailMessageService {
 
 data class CreateMailCommand(
     val text: String?,
-    val data: Map<String, Any?>?,
+    val data: Map<String, Any>?,
     val subject: String?,
     val emailFrom: String?,
     val emailTo: String,

@@ -13,7 +13,7 @@ class MailFactory(
         private const val MESSAGE_ID_HEADER = "Message-ID"
     }
 
-    fun create(mailMessage: MailMessage): Mail {
+    suspend fun create(mailMessage: MailMessage): Mail {
         val mail = when (val type = mailMessage.type) {
             is PlainTextMailMessageType -> plainTextMessage(mailMessage)
             is HtmlMailMessageType -> htmlMessage(mailMessage, type)
@@ -32,7 +32,7 @@ class MailFactory(
     private fun plainTextMessage(mailMessage: MailMessage) =
         Mail.withText(mailMessage.emailTo, mailMessage.subject, mailMessage.text)
 
-    private fun htmlMessage(mailMessage: MailMessage, mailMessageType: HtmlMailMessageType): Mail {
+    private suspend fun htmlMessage(mailMessage: MailMessage, mailMessageType: HtmlMailMessageType): Mail {
         val htmlMessage = templateProcessor.process(
             mailMessageType = mailMessageType,
             data = mailMessage.data.orEmpty(),

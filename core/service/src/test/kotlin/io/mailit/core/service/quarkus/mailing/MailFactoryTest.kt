@@ -4,10 +4,11 @@ import io.mailit.core.service.mail.sending.templates.TemplateProcessor
 import io.mailit.test.createHtmlMailMessageType
 import io.mailit.test.createMailMessage
 import io.mailit.test.createPlainMailMessageType
-import io.mockk.every
+import io.mockk.coEvery
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
+import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -26,7 +27,7 @@ class MailFactoryTest {
     lateinit var mailFactory: MailFactory
 
     @Test
-    fun create_plainTextMessage() {
+    fun create_plainTextMessage() = runTest {
         // given
         val plainMessageType = createPlainMailMessageType()
         val message = createMailMessage(plainMessageType)
@@ -43,14 +44,14 @@ class MailFactoryTest {
     }
 
     @Test
-    fun create_htmlMessage() {
+    fun create_htmlMessage() = runTest {
         // given
         val htmlMessageType = createHtmlMailMessageType()
         val message = createMailMessage(htmlMessageType)
 
         val messageHtml = "<html><body> message </body></html>"
 
-        every { templateProcessor.process(htmlMessageType, message.data.orEmpty()) } returns messageHtml
+        coEvery { templateProcessor.process(htmlMessageType, message.data.orEmpty()) } returns messageHtml
 
         // when
         val actual = mailFactory.create(message)

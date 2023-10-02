@@ -7,6 +7,9 @@ info:
     name: MIT
     url: https://opensource.org/license/mit/
   version: 0.2.0
+servers:
+  - url: http://localhost:8080
+    description: Dev server
 paths:
   /api/connector/mail:
     post:

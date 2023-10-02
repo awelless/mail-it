@@ -9,5 +9,5 @@ import io.mailit.core.service.mail.sending.templates.TemplateProcessor
  */
 class NoneTemplateProcessor : TemplateProcessor {
 
-    override fun process(mailMessageType: HtmlMailMessageType, data: Map<String, Any?>): String = mailMessageType.template.value
+    override suspend fun process(mailMessageType: HtmlMailMessageType, data: Map<String, Any?>): String = mailMessageType.template.value
 }

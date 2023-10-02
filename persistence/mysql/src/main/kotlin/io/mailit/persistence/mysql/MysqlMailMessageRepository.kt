@@ -221,7 +221,7 @@ class MysqlMailMessageRepository(
         val arguments = arrayOf(
             mailMessage.id,
             mailMessage.text,
-            data.toBuffer(),
+            data?.toBuffer(),
             mailMessage.subject,
             mailMessage.emailFrom,
             mailMessage.emailTo,

@@ -11,7 +11,7 @@ interface TemplateProcessor {
     /**
      * Merges [HtmlMailMessageType.template] and [data]. Returns html message
      */
-    fun process(mailMessageType: HtmlMailMessageType, data: Map<String, Any?>): String
+    suspend fun process(mailMessageType: HtmlMailMessageType, data: Map<String, Any?>): String
 }
 
 class TemplateProcessorManager(
@@ -19,7 +19,7 @@ class TemplateProcessorManager(
     private val freemarkerTemplateProcessor: FreemarkerTemplateProcessor,
 ) : TemplateProcessor {
 
-    override fun process(mailMessageType: HtmlMailMessageType, data: Map<String, Any?>): String =
+    override suspend fun process(mailMessageType: HtmlMailMessageType, data: Map<String, Any?>): String =
         when (mailMessageType.templateEngine) {
             NONE -> noneTemplateProcessor.process(mailMessageType, data)
             FREEMARKER -> freemarkerTemplateProcessor.process(mailMessageType, data)

@@ -15,8 +15,8 @@ import io.restassured.module.kotlin.extensions.Given
 import io.restassured.module.kotlin.extensions.Then
 import io.restassured.module.kotlin.extensions.When
 import jakarta.inject.Inject
-import kotlin.time.Duration
 import kotlin.time.Duration.Companion.days
+import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import org.jboss.resteasy.reactive.RestResponse.StatusCode.ACCEPTED
@@ -75,7 +75,11 @@ class HttpConnectorSecurityTest {
 
     @Test
     fun `sendMail with expired api key`() = runTest {
-        val expiredToken = apiKeyService.generate(CreateApiKeyCommand(name = "expired-api-key", expiration = Duration.ZERO))
+        val command = CreateApiKeyCommand(
+            name = "expired-api-key",
+            expiration = (-10).seconds, // Negative duration, so the expiration will be in the past.
+        )
+        val expiredToken = apiKeyService.generate(command)
 
         Given {
             contentType(JSON)

@@ -4,7 +4,7 @@ import com.esotericsoftware.kryo.serializers.CollectionSerializer
 import com.esotericsoftware.kryo.serializers.DefaultArraySerializers
 import com.esotericsoftware.kryo.serializers.DefaultSerializers
 import com.esotericsoftware.kryo.serializers.MapSerializer
-import io.mailit.persistence.common.serialization.KryoMailMessageDataSerializer
+import io.mailit.persistence.common.serialization.kryo.KryoMailMessageDataSerializer
 import io.quarkus.runtime.annotations.RegisterForReflection
 import jakarta.inject.Singleton
 
@@ -52,7 +52,7 @@ import jakarta.inject.Singleton
         DefaultSerializers.KryoSerializableSerializer::class,
     ],
 )
-class SerializationConfiguration {
+internal class SerializationConfiguration {
 
     @Singleton
     fun kryoMailMessageDataSerializer() = KryoMailMessageDataSerializer()
