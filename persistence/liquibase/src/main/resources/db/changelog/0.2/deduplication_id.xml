@@ -9,7 +9,7 @@
         <comment>Add deduplication id for mail messages</comment>
         <addColumn tableName="mail_message">
             <column name="deduplication_id" type="varchar(128)">
-                <constraints nullable="false" unique="true" uniqueConstraintName="uk_mailmessage_deduplicationid"/>
+                <constraints unique="true" uniqueConstraintName="uk_mailmessage_deduplicationid"/>
             </column>
         </addColumn>
         <rollback>

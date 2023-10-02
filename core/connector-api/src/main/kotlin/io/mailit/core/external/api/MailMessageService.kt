@@ -14,5 +14,5 @@ data class CreateMailCommand(
     val emailFrom: String?,
     val emailTo: String,
     val mailType: String,
-    val deduplicationId: String,
+    val deduplicationId: String?,
 )

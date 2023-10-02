@@ -15,6 +15,7 @@ import java.time.Instant
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
@@ -196,6 +197,33 @@ abstract class MailMessageRepositoryTest {
 
         // when + then
         assertThrows<DuplicateUniqueKeyException> { mailMessageRepository.create(message) }
+    }
+
+    @Test
+    fun `create without deduplication ids`() = runTest {
+        // given
+        val message = MailMessage(
+            id = 123,
+            text = null,
+            data = mapOf("name" to "Name", "age" to 20),
+            subject = null,
+            emailFrom = "email@from.com",
+            emailTo = "email@to.com",
+            type = mailMessageType,
+            createdAt = nowWithoutNanos(),
+            status = PENDING,
+            deduplicationId = null,
+        )
+
+        val message2 = message.copy(id = 124)
+
+        // when
+        mailMessageRepository.create(message)
+        mailMessageRepository.create(message2)
+
+        // then
+        assertNotNull(mailMessageRepository.findOneWithTypeById(message.id))
+        assertNotNull(mailMessageRepository.findOneWithTypeById(message2.id))
     }
 
     @Test

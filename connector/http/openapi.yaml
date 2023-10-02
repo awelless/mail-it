@@ -43,7 +43,7 @@ components:
       properties:
         deduplicationId:
           type: string
-          description: String that's used for mails deduplication. Messages with the same `deduplicationId` are considered as duplicates
+          description: String that's used for mails deduplication. Messages with the same `deduplicationId` are considered as duplicates. If not provided, mail is considered as unique
           example: 123-456-789-deduplicate
         text:
           type: string

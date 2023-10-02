@@ -38,9 +38,10 @@ data class MailMessage(
     var failedCount: Int = 0,
 
     /**
-     * String that's used for mails deduplication. Messages with the same [deduplicationId] are considered as duplicates
+     * String that's used for mails deduplication. Messages with the same [deduplicationId] are considered as duplicates.
+     * Messages with `null` [deduplicationId] are considered as different.
      */
-    val deduplicationId: String,
+    val deduplicationId: String?,
 )
 
 enum class MailMessageStatus {
