@@ -12,13 +12,10 @@
                 <constraints primaryKey="true"/>
             </column>
             <column name="name" type="varchar(128)">
-                <constraints nullable="false"/>
+                <constraints nullable="false" unique="true" uniqueConstraintName="uk_apikey_name"/>
             </column>
             <column name="secret" type="varchar(64)">
                 <constraints nullable="false"/>
-            </column>
-            <column name="application_id" type="bigint">
-                <constraints nullable="false" foreignKeyName="fk_apikey_application" references="application(application_id)"/>
             </column>
             <column name="created_at" type="timestamp">
                 <constraints nullable="false"/>

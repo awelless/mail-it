@@ -31,7 +31,6 @@ import { defineProps, ref } from 'vue'
 import apiKeyClient from 'src/client/apiKeyClient'
 
 const props = defineProps<{
-  applicationId: string,
   onCreate: () => void,
 }>()
 
@@ -50,7 +49,7 @@ async function create() {
     return
   }
 
-  token.value = await apiKeyClient.create(props.applicationId, keyName, expirationDays.value)
+  token.value = await apiKeyClient.create(keyName, expirationDays.value)
 
   props.onCreate()
 }

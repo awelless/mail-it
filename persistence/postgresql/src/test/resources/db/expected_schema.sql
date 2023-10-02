@@ -71,21 +71,12 @@ CREATE TABLE instance_id_locks
     identity_key   VARCHAR(36) NOT NULL
 );
 
-CREATE TABLE application
-(
-    application_id BIGINT PRIMARY KEY,
-    name           VARCHAR(128) NOT NULL,
-    state          VARCHAR(32)  NOT NULL,
-    CONSTRAINT uk_application_name UNIQUE (name)
-);
-
 CREATE TABLE api_key
 (
     api_key_id     VARCHAR(32) PRIMARY KEY,
     name           VARCHAR(128) NOT NULL,
     secret         VARCHAR(64)  NOT NULL,
-    application_id BIGINT       NOT NULL,
     created_at     TIMESTAMP    NOT NULL,
     expires_at     TIMESTAMP    NOT NULL,
-    CONSTRAINT fk_apikey_application FOREIGN KEY (application_id) REFERENCES application (application_id)
+    CONSTRAINT uk_apikey_name UNIQUE (name)
 );

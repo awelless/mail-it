@@ -1,4 +1,4 @@
-package io.mailit.core.model.application
+package io.mailit.core.model
 
 import java.time.Instant
 
@@ -9,7 +9,6 @@ data class ApiKey(
      * Encrypted secret
      */
     val secret: String,
-    val application: Application,
     val createdAt: Instant,
     val expiresAt: Instant,
 ) {

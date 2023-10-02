@@ -1,6 +1,5 @@
 package io.mailit.connector.http.security
 
-import io.mailit.core.model.application.Application
 import io.quarkus.security.credential.Credential
 import io.quarkus.security.identity.SecurityIdentity
 import io.smallrye.mutiny.Uni
@@ -8,10 +7,10 @@ import java.security.Permission
 import java.security.Principal
 
 internal class AuthenticatedApplication(
-    private val application: Application,
+    private val apiKeyName: String,
 ) : SecurityIdentity {
 
-    override fun getPrincipal() = Principal { application.id.toString() }
+    override fun getPrincipal() = Principal { "API KEY $apiKeyName" }
 
     override fun isAnonymous() = false
 

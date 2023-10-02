@@ -37,18 +37,14 @@
     </q-card>
   </q-dialog>
 
-  <CreateApiKey v-model="showCreate" :application-id="applicationId" :on-create="load"/>
+  <CreateApiKey v-model="showCreate" :on-create="load"/>
 </template>
 
 <script setup lang="ts">
-import { defineProps, ref } from 'vue'
+import { ref } from 'vue'
 import { ApiKey } from 'src/models/ApiKey'
 import apiKeyClient from 'src/client/apiKeyClient'
-import CreateApiKey from 'components/application/CreateApiKey.vue'
-
-const props = defineProps<{
-  applicationId: string,
-}>()
+import CreateApiKey from 'components/CreateApiKey.vue'
 
 const columns = [
   { name: 'name', label: 'Name', field: 'name' },
@@ -66,7 +62,7 @@ const deletedApiKey = ref<ApiKey | null>(null)
 load()
 
 async function load() {
-  apiKeys.value = await apiKeyClient.getAll(props.applicationId)
+  apiKeys.value = await apiKeyClient.getAll()
 }
 
 function initiateDeletion(apiKey: ApiKey) {
@@ -81,7 +77,7 @@ async function deleteKey() {
     return
   }
 
-  await apiKeyClient.deleteApiKey(props.applicationId, apiKey.id)
+  await apiKeyClient.deleteApiKey(apiKey.id)
   await load()
 
   showDelete.value = false

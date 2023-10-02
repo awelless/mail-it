@@ -1,17 +1,16 @@
 package io.mailit.core.external.api
 
-import io.mailit.core.model.application.ApiKey
-import io.mailit.core.model.application.ApiKeyToken
-import io.mailit.core.model.application.Application
+import io.mailit.core.model.ApiKey
+import io.mailit.core.model.ApiKeyToken
 
 interface ApiKeyService {
 
     /**
-     * Validates passed [token] and extracts [Application] from a dedicated [ApiKey].
+     * Validates passed [token] and extracts [ApiKey.name] from a dedicated [ApiKey].
      *
      * If passed token is invalid, [InvalidApiKeyException] is thrown
      */
-    suspend fun validate(token: ApiKeyToken): Application
+    suspend fun validate(token: ApiKeyToken): String
 }
 
 class InvalidApiKeyException : Exception("API Key is invalid")

@@ -1,6 +1,6 @@
 package io.mailit.admin.console.http.dto
 
-import io.mailit.core.model.application.ApiKey
+import io.mailit.core.model.ApiKey
 import java.time.Instant
 
 data class ApiKeyDto(

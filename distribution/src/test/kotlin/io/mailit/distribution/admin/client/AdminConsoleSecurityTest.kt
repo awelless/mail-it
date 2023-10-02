@@ -1,11 +1,8 @@
 package io.mailit.distribution.admin.client
 
 import io.mailit.admin.console.security.UserCredentials
-import io.mailit.core.admin.api.application.ApiKeyService
-import io.mailit.core.admin.api.application.CreateApiKeyCommand
-import io.mailit.core.model.application.Application
-import io.mailit.core.model.application.ApplicationState.ENABLED
-import io.mailit.core.spi.application.ApplicationRepository
+import io.mailit.core.admin.api.ApiKeyService
+import io.mailit.core.admin.api.CreateApiKeyCommand
 import io.quarkus.test.junit.QuarkusTest
 import io.restassured.authentication.FormAuthConfig
 import io.restassured.module.kotlin.extensions.Given
@@ -20,9 +17,6 @@ import org.junit.jupiter.api.Test
 
 @QuarkusTest
 class AdminConsoleSecurityTest {
-
-    @Inject
-    lateinit var applicationRepository: ApplicationRepository
 
     @Inject
     lateinit var apiKeyService: ApiKeyService
@@ -56,8 +50,7 @@ class AdminConsoleSecurityTest {
 
     @Test
     fun `get mail types with api key`() = runTest {
-        val application = Application(id = 1, name = "test", state = ENABLED).also { applicationRepository.create(it) }
-        val apiKeyToken = apiKeyService.generate(CreateApiKeyCommand(application.id, name = "valid-api-key", expiration = 30.days))
+        val apiKeyToken = apiKeyService.generate(CreateApiKeyCommand(name = "valid-api-key", expiration = 30.days))
 
         Given {
             header(API_KEY_HEADER, apiKeyToken.value)

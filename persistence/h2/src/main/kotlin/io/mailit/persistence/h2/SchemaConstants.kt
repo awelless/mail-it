@@ -2,7 +2,6 @@ package io.mailit.persistence.h2
 
 internal object Tables {
     const val API_KEY = "api_key"
-    const val APPLICATION = "application"
     const val MAIL_MESSAGE = "mail_message"
     const val MAIL_MESSAGE_TEMPLATE = "mail_message_template"
     const val MAIL_MESSAGE_TYPE = "mail_message_type"
@@ -16,12 +15,6 @@ internal object Columns {
         const val SECRET = "api_secret"
         const val CREATED_AT = "api_created_at"
         const val EXPIRES_AT = "api_expires_at"
-    }
-
-    object Application {
-        const val ID = "app_application_id"
-        const val NAME = "app_name"
-        const val STATE = "app_state"
     }
 
     object MailMessage {

@@ -1,6 +1,6 @@
 package io.mailit.connector.http.security
 
-import io.mailit.core.model.application.ApiKeyToken
+import io.mailit.core.model.ApiKeyToken
 import io.netty.handler.codec.http.HttpResponseStatus
 import io.quarkus.security.identity.IdentityProviderManager
 import io.quarkus.security.identity.SecurityIdentity

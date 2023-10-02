@@ -1,11 +1,8 @@
 package io.mailit.distribution.admin.client
 
 import io.mailit.admin.console.http.dto.CreateApiKeyDto
-import io.mailit.core.model.application.ApiKey
-import io.mailit.core.model.application.Application
-import io.mailit.core.model.application.ApplicationState
-import io.mailit.core.spi.application.ApiKeyRepository
-import io.mailit.core.spi.application.ApplicationRepository
+import io.mailit.core.model.ApiKey
+import io.mailit.core.spi.ApiKeyRepository
 import io.mailit.test.minus
 import io.mailit.test.nowWithoutNanos
 import io.mailit.test.plus
@@ -44,29 +41,18 @@ class ApiKeyResourceTest {
     @Inject
     lateinit var apiKeyRepository: ApiKeyRepository
 
-    @Inject
-    lateinit var applicationRepository: ApplicationRepository
-
-    lateinit var application: Application
     lateinit var apiKey1: ApiKey
     lateinit var apiKey2: ApiKey
 
     @BeforeEach
     fun setUp() {
         runBlocking {
-            application = Application(
-                id = 1,
-                name = "Application",
-                state = ApplicationState.ENABLED,
-            ).also { applicationRepository.create(it) }
-
             val now = nowWithoutNanos()
 
             apiKey1 = ApiKey(
                 id = "111",
                 name = "test api key",
                 secret = "s3cr3t",
-                application = application,
                 createdAt = now - 1.days,
                 expiresAt = nowWithoutNanos() + 30.days,
             ).also { apiKeyRepository.create(it) }
@@ -75,7 +61,6 @@ class ApiKeyResourceTest {
                 id = "112",
                 name = "test api key 2",
                 secret = "s3cr3t33",
-                application = application,
                 createdAt = now,
                 expiresAt = nowWithoutNanos() + 30.days,
             ).also { apiKeyRepository.create(it) }
@@ -85,7 +70,7 @@ class ApiKeyResourceTest {
     @Test
     fun getAll() {
         When {
-            get(API_KEYS_URL, application.id)
+            get(API_KEYS_URL)
         } Then {
             statusCode(OK)
 
@@ -116,7 +101,7 @@ class ApiKeyResourceTest {
             contentType(JSON)
             body(dto)
         } When {
-            post(API_KEYS_URL, application.id)
+            post(API_KEYS_URL)
         } Then {
             statusCode(CREATED)
 
@@ -132,13 +117,12 @@ class ApiKeyResourceTest {
 
         assertTrue(expectedExpiresAt.within(1.seconds, of = apiKey!!.expiresAt))
         assertEquals(dto.name, apiKey.name)
-        assertEquals(application, apiKey.application)
     }
 
     @Test
     fun delete() = runTest {
         When {
-            delete(API_KEY_URL, application.id, apiKey1.id)
+            delete(API_KEY_URL, apiKey1.id)
         } Then {
             statusCode(NO_CONTENT)
         }
@@ -149,7 +133,7 @@ class ApiKeyResourceTest {
     }
 
     companion object {
-        private const val API_KEYS_URL = "/api/admin/applications/{applicationId}/api-keys"
+        private const val API_KEYS_URL = "/api/admin/api-keys"
         private const val API_KEY_URL = "$API_KEYS_URL/{id}"
 
         private const val ID = "id"

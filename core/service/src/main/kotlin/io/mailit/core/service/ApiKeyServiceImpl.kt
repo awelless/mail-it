@@ -1,16 +1,15 @@
-package io.mailit.core.service.application
+package io.mailit.core.service
 
-import io.mailit.core.admin.api.application.ApiKeyService
-import io.mailit.core.admin.api.application.CreateApiKeyCommand
+import io.mailit.core.admin.api.ApiKeyService
+import io.mailit.core.admin.api.CreateApiKeyCommand
 import io.mailit.core.exception.NotFoundException
+import io.mailit.core.exception.ValidationException
 import io.mailit.core.external.api.ApiKeyService as ConnectorApiKeyService
 import io.mailit.core.external.api.InvalidApiKeyException
-import io.mailit.core.model.application.ApiKey
-import io.mailit.core.model.application.ApiKeyToken
-import io.mailit.core.model.application.Application
-import io.mailit.core.model.application.ApplicationState
-import io.mailit.core.spi.application.ApiKeyRepository
-import io.mailit.core.spi.application.ApplicationRepository
+import io.mailit.core.model.ApiKey
+import io.mailit.core.model.ApiKeyToken
+import io.mailit.core.spi.ApiKeyRepository
+import io.mailit.core.spi.DuplicateUniqueKeyException
 import java.security.SecureRandom
 import java.time.Instant
 import java.util.UUID
@@ -20,13 +19,10 @@ import mu.KLogging
 internal class ApiKeyServiceImpl(
     private val apiKeyGenerator: ApiKeyGenerator,
     private val apiKeyRepository: ApiKeyRepository,
-    private val applicationRepository: ApplicationRepository,
     private val secretHasher: SecretHasher,
 ) : ApiKeyService, ConnectorApiKeyService {
 
     override suspend fun generate(command: CreateApiKeyCommand): ApiKeyToken {
-        val application = applicationRepository.findByIdOrThrow(command.applicationId)
-
         val id = apiKeyGenerator.generateId()
         val secret = apiKeyGenerator.generateSecret()
 
@@ -36,31 +32,34 @@ internal class ApiKeyServiceImpl(
             id = id,
             name = command.name,
             secret = secretHasher.hash(secret),
-            application = application,
             createdAt = now,
             expiresAt = now.plus(command.expiration.toJavaDuration()),
         )
 
-        apiKeyRepository.create(apiKey)
+        try {
+            apiKeyRepository.create(apiKey)
+        } catch (e: DuplicateUniqueKeyException) {
+            throw ValidationException("ApiKey name: ${command.name} is not unique", e)
+        }
 
-        logger.info { "ApiKey: $id, ${apiKey.name} for application: ${application.id} has been created" }
+        logger.info { "ApiKey: $id, ${apiKey.name} has been created" }
 
         return ApiKeyTokenCodec.encode(id, secret)
     }
 
-    override suspend fun getAll(applicationId: Long) = apiKeyRepository.findAllByApplicationId(applicationId)
+    override suspend fun getAll() = apiKeyRepository.findAll()
 
-    override suspend fun delete(applicationId: Long, id: String) {
-        val deleted = apiKeyRepository.delete(applicationId, id)
+    override suspend fun delete(id: String) {
+        val deleted = apiKeyRepository.delete(id)
 
         if (!deleted) {
             throw NotFoundException("Api key with id: $id is not found")
         }
 
-        logger.info { "ApiKey: $id fro application: $applicationId has been deleted" }
+        logger.info { "ApiKey: $id has been deleted" }
     }
 
-    override suspend fun validate(token: ApiKeyToken): Application {
+    override suspend fun validate(token: ApiKeyToken): String {
         val (id, secret) = ApiKeyTokenCodec.decode(token)
 
         val apiKey = apiKeyRepository.findById(id) ?: throw InvalidApiKeyException()
@@ -74,11 +73,7 @@ internal class ApiKeyServiceImpl(
             throw InvalidApiKeyException()
         }
 
-        if (apiKey.application.state == ApplicationState.DELETED) {
-            throw InvalidApiKeyException()
-        }
-
-        return apiKey.application
+        return apiKey.name
     }
 
     companion object : KLogging()

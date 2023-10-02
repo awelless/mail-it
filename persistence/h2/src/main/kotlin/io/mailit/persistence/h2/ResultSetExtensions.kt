@@ -1,5 +1,6 @@
 package io.mailit.persistence.h2
 
+import io.mailit.core.model.ApiKey
 import io.mailit.core.model.HtmlMailMessageType
 import io.mailit.core.model.HtmlTemplateEngine
 import io.mailit.core.model.MailMessage
@@ -8,29 +9,18 @@ import io.mailit.core.model.MailMessageTemplate
 import io.mailit.core.model.MailMessageType
 import io.mailit.core.model.MailMessageTypeState
 import io.mailit.core.model.PlainTextMailMessageType
-import io.mailit.core.model.application.ApiKey
-import io.mailit.core.model.application.Application
-import io.mailit.core.model.application.ApplicationState
 import io.mailit.persistence.common.serialization.MailMessageDataSerializer
 import io.mailit.persistence.h2.Columns.ApiKey as ApiKeyCol
-import io.mailit.persistence.h2.Columns.Application as ApplicationCol
 import io.mailit.persistence.h2.Columns.MailMessage as MailMessageCol
 import io.mailit.persistence.h2.Columns.MailMessageType as MailMessageTypeCol
 import io.mailit.persistence.h2.MailMessageContent.HTML
 import java.sql.ResultSet
 import java.time.Instant
 
-internal fun ResultSet.getApplicationFromRow() = Application(
-    id = getLong(ApplicationCol.ID),
-    name = getString(ApplicationCol.NAME),
-    state = ApplicationState.valueOf(getString(ApplicationCol.STATE)),
-)
-
 internal fun ResultSet.getApiKeyFromRow() = ApiKey(
     id = getString(ApiKeyCol.ID),
     name = getString(ApiKeyCol.NAME),
     secret = getString(ApiKeyCol.SECRET),
-    application = getApplicationFromRow(),
     createdAt = getInstant(ApiKeyCol.CREATED_AT),
     expiresAt = getInstant(ApiKeyCol.EXPIRES_AT),
 )

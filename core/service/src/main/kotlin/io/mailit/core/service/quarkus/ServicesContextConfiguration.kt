@@ -1,9 +1,8 @@
 package io.mailit.core.service.quarkus
 
 import io.mailit.core.model.MailMessageType
-import io.mailit.core.service.application.ApiKeyGenerator
-import io.mailit.core.service.application.ApiKeyServiceImpl
-import io.mailit.core.service.application.ApplicationServiceImpl
+import io.mailit.core.service.ApiKeyGenerator
+import io.mailit.core.service.ApiKeyServiceImpl
 import io.mailit.core.service.id.DistributedIdGenerator
 import io.mailit.core.service.id.IdGenerator
 import io.mailit.core.service.id.InstanceIdProvider
@@ -34,10 +33,9 @@ import io.mailit.core.service.quarkus.id.LeaseLockingInstanceIdProviderLifecycle
 import io.mailit.core.service.quarkus.mailing.MailFactory
 import io.mailit.core.service.quarkus.mailing.MailSenderImpl
 import io.mailit.core.service.quarkus.mailing.QuarkusMailSender
+import io.mailit.core.spi.ApiKeyRepository
 import io.mailit.core.spi.MailMessageRepository
 import io.mailit.core.spi.MailMessageTypeRepository
-import io.mailit.core.spi.application.ApiKeyRepository
-import io.mailit.core.spi.application.ApplicationRepository
 import io.mailit.core.spi.id.InstanceIdLocks
 import io.quarkus.mailer.reactive.ReactiveMailer
 import jakarta.enterprise.inject.Instance
@@ -69,12 +67,6 @@ class ServicesContextConfiguration {
     ) = MailMessageTypeServiceImpl(mailMessageTypeRepository, mailMessageTypeFactory, mailMessageTypeStateUpdated)
 
     @Singleton
-    fun applicationService(
-        applicationRepository: ApplicationRepository,
-        idGenerator: IdGenerator,
-    ) = ApplicationServiceImpl(applicationRepository, idGenerator)
-
-    @Singleton
     fun mailMessageService(
         idGenerator: IdGenerator,
         mailMessageRepository: MailMessageRepository,
@@ -82,10 +74,9 @@ class ServicesContextConfiguration {
     ) = MailMessageServiceImpl(idGenerator, mailMessageRepository, mailMessageTypeRepository)
 
     @Singleton
-    internal fun apiKeyService(apiKeyRepository: ApiKeyRepository, applicationRepository: ApplicationRepository) = ApiKeyServiceImpl(
+    internal fun apiKeyService(apiKeyRepository: ApiKeyRepository) = ApiKeyServiceImpl(
         apiKeyGenerator = ApiKeyGenerator(SecureRandom.getInstance("SHA1PRNG")),
         apiKeyRepository = apiKeyRepository,
-        applicationRepository = applicationRepository,
         secretHasher = BCryptSecretHasher,
     )
 }

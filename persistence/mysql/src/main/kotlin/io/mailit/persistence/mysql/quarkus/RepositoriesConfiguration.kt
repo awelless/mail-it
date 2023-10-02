@@ -2,7 +2,6 @@ package io.mailit.persistence.mysql.quarkus
 
 import io.mailit.persistence.common.serialization.MailMessageDataSerializer
 import io.mailit.persistence.mysql.MysqlApiKeyRepository
-import io.mailit.persistence.mysql.MysqlApplicationRepository
 import io.mailit.persistence.mysql.MysqlInstanceIdLocks
 import io.mailit.persistence.mysql.MysqlMailMessageRepository
 import io.mailit.persistence.mysql.MysqlMailMessageTypeRepository
@@ -15,9 +14,6 @@ class RepositoriesConfiguration(
 
     @Singleton
     fun apiKeyRepository() = MysqlApiKeyRepository(mysqlPool)
-
-    @Singleton
-    fun applicationRepository() = MysqlApplicationRepository(mysqlPool)
 
     @Singleton
     fun mailMessageTypeRepository() = MysqlMailMessageTypeRepository(mysqlPool)

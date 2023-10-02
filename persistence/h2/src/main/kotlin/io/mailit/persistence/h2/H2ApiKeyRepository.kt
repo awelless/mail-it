@@ -1,25 +1,22 @@
 package io.mailit.persistence.h2
 
-import io.mailit.core.model.application.ApiKey
-import io.mailit.core.spi.application.ApiKeyRepository
+import io.mailit.core.model.ApiKey
+import io.mailit.core.spi.ApiKeyRepository
+import io.mailit.core.spi.DuplicateUniqueKeyException
 import io.mailit.persistence.h2.Columns.ApiKey as ApiKeyCol
-import io.mailit.persistence.h2.Columns.Application as ApplicationCol
 import io.mailit.persistence.h2.Tables.API_KEY
-import io.mailit.persistence.h2.Tables.APPLICATION
+import java.sql.SQLException
 import javax.sql.DataSource
 import org.apache.commons.dbutils.QueryRunner
+import org.h2.api.ErrorCode
 
 private const val FIND_BY_ID_SQL = """
     SELECT api.api_key_id ${ApiKeyCol.ID},
            api.name ${ApiKeyCol.NAME},
            api.secret ${ApiKeyCol.SECRET},
            api.created_at ${ApiKeyCol.CREATED_AT},
-           api.expires_at ${ApiKeyCol.EXPIRES_AT},
-           app.application_id ${ApplicationCol.ID},
-           app.name ${ApplicationCol.NAME},
-           app.state ${ApplicationCol.STATE}
+           api.expires_at ${ApiKeyCol.EXPIRES_AT}
       FROM $API_KEY api
-     INNER JOIN $APPLICATION app ON app.application_id = api.application_id
      WHERE api.api_key_id = ?"""
 
 private const val FIND_ALL_BY_APPLICATION_ID_SQL = """
@@ -27,13 +24,8 @@ private const val FIND_ALL_BY_APPLICATION_ID_SQL = """
            api.name ${ApiKeyCol.NAME},
            api.secret ${ApiKeyCol.SECRET},
            api.created_at ${ApiKeyCol.CREATED_AT},
-           api.expires_at ${ApiKeyCol.EXPIRES_AT},
-           app.application_id ${ApplicationCol.ID},
-           app.name ${ApplicationCol.NAME},
-           app.state ${ApplicationCol.STATE}
+           api.expires_at ${ApiKeyCol.EXPIRES_AT}
       FROM $API_KEY api
-     INNER JOIN $APPLICATION app ON app.application_id = api.application_id
-     WHERE app.application_id = ?
      ORDER BY api.created_at DESC"""
 
 private const val INSERT_SQL = """
@@ -41,12 +33,11 @@ private const val INSERT_SQL = """
         api_key_id,
         name,
         secret,
-        application_id,
         created_at,
         expires_at)
-    VALUES(?, ?, ?, ?, ?, ?)"""
+    VALUES(?, ?, ?, ?, ?)"""
 
-private const val DELETE_SQL = "DELETE FROM $API_KEY WHERE api_key_id = ? AND application_id = ?"
+private const val DELETE_SQL = "DELETE FROM $API_KEY WHERE api_key_id = ?"
 
 class H2ApiKeyRepository(
     private val dataSource: DataSource,
@@ -65,38 +56,35 @@ class H2ApiKeyRepository(
         )
     }
 
-    override suspend fun findAllByApplicationId(applicationId: Long): List<ApiKey> = dataSource.connection.use {
-        queryRunner.query(
-            it,
-            FIND_ALL_BY_APPLICATION_ID_SQL,
-            multipleMapper,
-            applicationId,
-        )
+    override suspend fun findAll(): List<ApiKey> = dataSource.connection.use {
+        queryRunner.query(it, FIND_ALL_BY_APPLICATION_ID_SQL, multipleMapper)
     }
 
     override suspend fun create(apiKey: ApiKey) {
-        dataSource.connection.use {
-            queryRunner.update(
-                it,
-                INSERT_SQL,
-                apiKey.id,
-                apiKey.name,
-                apiKey.secret,
-                apiKey.application.id,
-                apiKey.createdAt,
-                apiKey.expiresAt,
-            )
+        try {
+            dataSource.connection.use {
+                queryRunner.update(
+                    it,
+                    INSERT_SQL,
+                    apiKey.id,
+                    apiKey.name,
+                    apiKey.secret,
+                    apiKey.createdAt,
+                    apiKey.expiresAt,
+                )
+            }
+        } catch (e: SQLException) {
+            // replace with custom exception handler?
+            throw if (e.errorCode == ErrorCode.DUPLICATE_KEY_1) {
+                DuplicateUniqueKeyException(e.message, e)
+            } else {
+                e
+            }
         }
     }
 
-    override suspend fun delete(applicationId: Long, id: String) = dataSource.connection.use {
-        val updatedRows = queryRunner.update(
-            it,
-            DELETE_SQL,
-            id,
-            applicationId,
-        )
-
+    override suspend fun delete(id: String) = dataSource.connection.use {
+        val updatedRows = queryRunner.update(it, DELETE_SQL, id)
         updatedRows > 0
     }
 }

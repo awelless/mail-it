@@ -17,12 +17,16 @@ quarkus:
           auth-mechanism: form
           paths: /api/admin/*
           policy: authenticated
-    cors:
-      ~: true # 'true' for development
-      origins: 'http://localhost:8080,http://localhost:9001'
-      access-control-allow-credentials: true
 
 admin:
   console:
     username: ${ADMIN_CLIENT_USERNAME:username}
     password: ${ADMIN_CLIENT_PASSWORD:password}
+
+"%dev":
+  quarkus:
+    http:
+      cors:
+        ~: true
+        origins: 'http://localhost:8080,http://localhost:9001'
+        access-control-allow-credentials: true

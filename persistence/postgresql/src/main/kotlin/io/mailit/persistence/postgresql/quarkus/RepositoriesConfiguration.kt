@@ -2,7 +2,6 @@ package io.mailit.persistence.postgresql.quarkus
 
 import io.mailit.persistence.common.serialization.MailMessageDataSerializer
 import io.mailit.persistence.postgresql.PostgresqlApiKeyRepository
-import io.mailit.persistence.postgresql.PostgresqlApplicationRepository
 import io.mailit.persistence.postgresql.PostgresqlInstanceIdLocks
 import io.mailit.persistence.postgresql.PostgresqlMailMessageRepository
 import io.mailit.persistence.postgresql.PostgresqlMailMessageTypeRepository
@@ -15,9 +14,6 @@ class RepositoriesConfiguration(
 
     @Singleton
     fun apiKeyRepository() = PostgresqlApiKeyRepository(pgPool)
-
-    @Singleton
-    fun applicationRepository() = PostgresqlApplicationRepository(pgPool)
 
     @Singleton
     fun mailMessageTypeRepository() = PostgresqlMailMessageTypeRepository(pgPool)

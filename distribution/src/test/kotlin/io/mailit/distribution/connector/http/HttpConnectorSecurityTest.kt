@@ -1,16 +1,12 @@
 package io.mailit.distribution.connector.http
 
 import io.mailit.admin.console.security.UserCredentials
-import io.mailit.core.admin.api.application.ApiKeyService
-import io.mailit.core.admin.api.application.CreateApiKeyCommand
+import io.mailit.core.admin.api.ApiKeyService
+import io.mailit.core.admin.api.CreateApiKeyCommand
 import io.mailit.core.external.api.CreateMailCommand
+import io.mailit.core.model.ApiKeyToken
 import io.mailit.core.model.MailMessageType
-import io.mailit.core.model.application.ApiKeyToken
-import io.mailit.core.model.application.Application
-import io.mailit.core.model.application.ApplicationState.DELETED
-import io.mailit.core.model.application.ApplicationState.ENABLED
 import io.mailit.core.spi.MailMessageTypeRepository
-import io.mailit.core.spi.application.ApplicationRepository
 import io.mailit.test.createPlainMailMessageType
 import io.quarkus.test.junit.QuarkusTest
 import io.restassured.authentication.FormAuthConfig
@@ -35,24 +31,19 @@ class HttpConnectorSecurityTest {
     lateinit var mailMessageTypeRepository: MailMessageTypeRepository
 
     @Inject
-    lateinit var applicationRepository: ApplicationRepository
-
-    @Inject
     lateinit var apiKeyService: ApiKeyService
 
     @Inject
     lateinit var userCredentials: UserCredentials
 
     lateinit var mailType: MailMessageType
-    lateinit var application: Application
     var apiKeyToken: ApiKeyToken = ApiKeyToken("")
 
     @BeforeEach
     fun setUp() {
         runBlocking {
             mailType = createPlainMailMessageType().also { mailMessageTypeRepository.create(it) }
-            application = Application(id = 1, name = "test", state = ENABLED).also { applicationRepository.create(it) }
-            apiKeyToken = apiKeyService.generate(CreateApiKeyCommand(application.id, name = "valid-api-key", expiration = 30.days))
+            apiKeyToken = apiKeyService.generate(CreateApiKeyCommand(name = "valid-api-key", expiration = 30.days))
         }
     }
 
@@ -84,27 +75,12 @@ class HttpConnectorSecurityTest {
 
     @Test
     fun `sendMail with expired api key`() = runTest {
-        val expiredToken = apiKeyService.generate(CreateApiKeyCommand(application.id, name = "valid-api-key", expiration = Duration.ZERO))
+        val expiredToken = apiKeyService.generate(CreateApiKeyCommand(name = "expired-api-key", expiration = Duration.ZERO))
 
         Given {
             contentType(JSON)
             body(createCommand())
             header(API_KEY_HEADER, expiredToken.value)
-        } When {
-            post(SEND_URL)
-        } Then {
-            statusCode(UNAUTHORIZED)
-        }
-    }
-
-    @Test
-    fun `sendMail for deleted application`() = runTest {
-        applicationRepository.updateState(application.id, DELETED)
-
-        Given {
-            contentType(JSON)
-            body(createCommand())
-            header(API_KEY_HEADER, apiKeyToken.value)
         } When {
             post(SEND_URL)
         } Then {

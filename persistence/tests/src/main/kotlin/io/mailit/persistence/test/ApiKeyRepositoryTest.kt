@@ -1,10 +1,8 @@
 package io.mailit.persistence.test
 
-import io.mailit.core.model.application.ApiKey
-import io.mailit.core.model.application.Application
-import io.mailit.core.model.application.ApplicationState.ENABLED
-import io.mailit.core.spi.application.ApiKeyRepository
-import io.mailit.core.spi.application.ApplicationRepository
+import io.mailit.core.model.ApiKey
+import io.mailit.core.spi.ApiKeyRepository
+import io.mailit.core.spi.DuplicateUniqueKeyException
 import io.mailit.test.minus
 import io.mailit.test.nowWithoutNanos
 import io.mailit.test.plus
@@ -13,32 +11,21 @@ import kotlin.time.Duration.Companion.days
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertFalse
-import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 
 abstract class ApiKeyRepositoryTest {
 
     @Inject
     lateinit var apiKeyRepository: ApiKeyRepository
 
-    @Inject
-    lateinit var applicationRepository: ApplicationRepository
-
-    private val application = Application(
-        id = 1,
-        name = "Test Application",
-        state = ENABLED,
-    )
-
     private val apiKey = ApiKey(
         id = "id",
         name = "api key",
         secret = "s3cr3t",
-        application = application,
         createdAt = nowWithoutNanos() - 1.days,
         expiresAt = nowWithoutNanos() + 30.days,
     )
@@ -46,7 +33,6 @@ abstract class ApiKeyRepositoryTest {
     @BeforeEach
     fun setUp() {
         runBlocking {
-            applicationRepository.create(application)
             apiKeyRepository.create(apiKey)
         }
     }
@@ -70,34 +56,18 @@ abstract class ApiKeyRepositoryTest {
     }
 
     @Test
-    fun findAllByApplicationId() = runTest {
+    fun findAll() = runTest {
         // given
         val apiKey2 = ApiKey(
             id = "a",
             name = "Another Api Key",
             secret = "s3cr3t",
-            application = application,
-            createdAt = nowWithoutNanos(),
-            expiresAt = nowWithoutNanos() + 30.days,
-        ).also { apiKeyRepository.create(it) }
-
-        val anotherApplication = Application(
-            id = 2,
-            name = "another",
-            state = ENABLED,
-        ).also { applicationRepository.create(it) }
-
-        ApiKey(
-            id = "another app id",
-            name = "Another Api Key2222",
-            secret = "s3cr3t",
-            application = anotherApplication,
             createdAt = nowWithoutNanos(),
             expiresAt = nowWithoutNanos() + 30.days,
         ).also { apiKeyRepository.create(it) }
 
         // when
-        val actual = apiKeyRepository.findAllByApplicationId(application.id)
+        val actual = apiKeyRepository.findAll()
 
         // then
         assertEquals(listOf(apiKey2, apiKey), actual)
@@ -110,7 +80,6 @@ abstract class ApiKeyRepositoryTest {
             id = "another",
             name = "Another Api Key",
             secret = "s3cr3t",
-            application = application,
             createdAt = nowWithoutNanos(),
             expiresAt = nowWithoutNanos() + 30.days,
         )
@@ -125,29 +94,23 @@ abstract class ApiKeyRepositoryTest {
     }
 
     @Test
-    fun `delete when exists for application`() = runTest {
+    fun `create with the same name`() = runTest {
+        // given
+        val newApiKey = apiKey.copy(id = "333")
+
+        // when + then
+        assertThrows<DuplicateUniqueKeyException> { apiKeyRepository.create(newApiKey) }
+    }
+
+    @Test
+    fun `delete when exists`() = runTest {
         // when
-        val deleted = apiKeyRepository.delete(application.id, apiKey.id)
+        val deleted = apiKeyRepository.delete(apiKey.id)
 
         val actual = apiKeyRepository.findById(apiKey.id)
 
         // then
         assertTrue(deleted)
         assertNull(actual)
-    }
-
-    @Test
-    fun `delete when doesn't exist for application`() = runTest {
-        // when
-        val deleted = apiKeyRepository.delete(
-            applicationId = 9999,
-            id = apiKey.id,
-        )
-
-        val actual = apiKeyRepository.findById(apiKey.id)
-
-        // then
-        assertFalse(deleted)
-        assertNotNull(actual)
     }
 }

@@ -2,7 +2,6 @@ package io.mailit.persistence.postgresql
 
 internal object Tables {
     const val API_KEY = "api_key"
-    const val APPLICATION = "application"
     const val INSTANCE_ID_LOCKS = "instance_id_locks"
     const val MAIL_MESSAGE = "mail_message"
     const val MAIL_MESSAGE_TEMPLATE = "mail_message_template"
@@ -17,12 +16,6 @@ internal object Columns {
         const val SECRET = "api_secret"
         const val CREATED_AT = "api_created_at"
         const val EXPIRES_AT = "api_expires_at"
-    }
-
-    object Application {
-        const val ID = "app_application_id"
-        const val NAME = "app_name"
-        const val STATE = "app_state"
     }
 
     object MailMessage {

@@ -1,7 +1,7 @@
-package io.mailit.core.service.application
+package io.mailit.core.service
 
 import io.mailit.core.external.api.InvalidApiKeyException
-import io.mailit.core.model.application.ApiKeyToken
+import io.mailit.core.model.ApiKeyToken
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows

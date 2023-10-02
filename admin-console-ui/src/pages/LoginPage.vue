@@ -14,10 +14,8 @@
 import { ref } from 'vue'
 import authClient from 'src/client/authClient'
 import { userStore } from 'stores/userStore'
-import { useRouter } from 'vue-router'
 import { useQuasar } from 'quasar'
 
-const router = useRouter()
 const quasar = useQuasar()
 
 const user = userStore()
