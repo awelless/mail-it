@@ -3,7 +3,7 @@ pluginManagement {
     val kotlinVersion = "1.9.10" // https://mvnrepository.com/artifact/org.jetbrains.kotlin/kotlin-stdlib
     val ktlintVersion = "11.6.1" // https://mvnrepository.com/artifact/org.jlleitschuh.gradle/ktlint-gradle
     val springDependencyManagementVersion = "1.1.3" // // https://mvnrepository.com/artifact/io.spring.gradle/dependency-management-plugin
-    val quarkusVersion = "3.4.2" // https://mvnrepository.com/artifact/io.quarkus.platform/quarkus-bom
+    val quarkusVersion = "3.5.0" // https://mvnrepository.com/artifact/io.quarkus.platform/quarkus-bom
 
     repositories {
         mavenCentral()
