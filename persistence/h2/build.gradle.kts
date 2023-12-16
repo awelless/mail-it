@@ -4,6 +4,7 @@ apply {
 
 dependencies {
     implementation(project(":core:spi"))
+    implementation(project(":id-generator:id-generator-spi-locking"))
     implementation(project(":persistence:common"))
     implementation(project(":persistence:liquibase"))
 
@@ -16,5 +17,9 @@ dependencies {
 }
 
 tasks.getByName("quarkusGenerateCodeTests") {
+    dependsOn("jandex")
+}
+
+tasks.getByName("quarkusDependenciesBuild") {
     dependsOn("jandex")
 }

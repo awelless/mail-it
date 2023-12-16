@@ -2,10 +2,10 @@ package io.mailit.persistence.mysql
 
 internal object Tables {
     const val API_KEY = "api_key"
-    const val INSTANCE_ID_LOCKS = "instance_id_locks"
     const val MAIL_MESSAGE = "mail_message"
     const val MAIL_MESSAGE_TEMPLATE = "mail_message_template"
     const val MAIL_MESSAGE_TYPE = "mail_message_type"
+    const val SERVER_LEASE_LOCKS = "server_lease_locks"
 }
 
 internal object Columns {

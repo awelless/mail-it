@@ -5,10 +5,10 @@ import io.mailit.core.external.api.CreateMailCommand
 import io.mailit.core.model.MailMessage
 import io.mailit.core.model.MailMessageStatus.PENDING
 import io.mailit.core.model.MailMessageType
-import io.mailit.core.service.id.IdGenerator
 import io.mailit.core.spi.DuplicateUniqueKeyException
 import io.mailit.core.spi.MailMessageRepository
 import io.mailit.core.spi.MailMessageTypeRepository
+import io.mailit.idgenerator.test.ConstantIdGenerator
 import io.mailit.test.createMailMessage
 import io.mailit.test.createPlainMailMessageType
 import io.mockk.coEvery
@@ -36,9 +36,7 @@ class MailMessageServiceImplTest {
     private val mailId = 1L
 
     @SpyK
-    var idGenerator = object : IdGenerator { // spyk doesn't work well with lambdas
-        override fun generateId() = mailId
-    }
+    var idGenerator = ConstantIdGenerator(mailId)
 
     @RelaxedMockK
     lateinit var mailMessageRepository: MailMessageRepository

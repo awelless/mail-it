@@ -4,6 +4,7 @@ import io.mailit.persistence.common.serialization.MailMessageDataSerializer
 import io.mailit.persistence.h2.H2ApiKeyRepository
 import io.mailit.persistence.h2.H2MailMessageRepository
 import io.mailit.persistence.h2.H2MailMessageTypeRepository
+import io.mailit.persistence.h2.SingleServerLeaseLock
 import jakarta.inject.Singleton
 import javax.sql.DataSource
 import org.apache.commons.dbutils.QueryRunner
@@ -27,4 +28,7 @@ class RepositoriesConfiguration(
 
     @Singleton
     fun mailMessageRepository(dataSerializer: MailMessageDataSerializer) = H2MailMessageRepository(dataSource, queryRunner, dataSerializer)
+
+    @Singleton
+    fun serverIdLocks() = SingleServerLeaseLock()
 }

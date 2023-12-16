@@ -14,6 +14,7 @@ dependencies {
 
     implementation(project(":core:service")) // core implementation
     implementation(project(":admin-console")) // admin console implementation
+    implementation(project(":id-generator:id-generator-quarkus"))
     databaseProviderImplementation()
     connectorsImplementation()
 

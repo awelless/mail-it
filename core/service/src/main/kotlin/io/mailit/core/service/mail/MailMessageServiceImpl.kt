@@ -7,11 +7,11 @@ import io.mailit.core.external.api.MailMessageService as ConnectorMailMessageSer
 import io.mailit.core.model.MailMessage
 import io.mailit.core.model.MailMessageStatus
 import io.mailit.core.model.Slice
-import io.mailit.core.service.id.IdGenerator
 import io.mailit.core.service.isEmail
 import io.mailit.core.spi.DuplicateUniqueKeyException
 import io.mailit.core.spi.MailMessageRepository
 import io.mailit.core.spi.MailMessageTypeRepository
+import io.mailit.idgenerator.api.IdGenerator
 import java.time.Instant
 import mu.KLogging
 

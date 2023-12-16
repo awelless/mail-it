@@ -64,19 +64,19 @@ CREATE TABLE mail_message
     CONSTRAINT uk_mailmessage_deduplicationid UNIQUE (deduplication_id)
 );
 
-CREATE TABLE instance_id_locks
+CREATE TABLE server_lease_locks
 (
-    instance_id    INT PRIMARY KEY,
+    server_id      INT PRIMARY KEY,
     acquired_until TIMESTAMP   NOT NULL,
     identity_key   VARCHAR(36) NOT NULL
 );
 
 CREATE TABLE api_key
 (
-    api_key_id     VARCHAR(32) PRIMARY KEY,
-    name           VARCHAR(128) NOT NULL,
-    secret         VARCHAR(64)  NOT NULL,
-    created_at     TIMESTAMP    NOT NULL,
-    expires_at     TIMESTAMP    NOT NULL,
+    api_key_id VARCHAR(32) PRIMARY KEY,
+    name       VARCHAR(128) NOT NULL,
+    secret     VARCHAR(64)  NOT NULL,
+    created_at TIMESTAMP    NOT NULL,
+    expires_at TIMESTAMP    NOT NULL,
     CONSTRAINT uk_apikey_name UNIQUE (name)
 );

@@ -4,10 +4,9 @@ apply {
 
 dependencies {
     implementation(project(":core:spi"))
+    implementation(project(":id-generator:id-generator-spi-locking"))
     implementation(project(":persistence:common"))
     implementation(project(":persistence:liquibase"))
-
-    implementation("io.github.microutils:kotlin-logging-jvm")
 
     implementation("io.quarkus:quarkus-config-yaml")
     implementation("io.quarkus:quarkus-kotlin")
@@ -21,5 +20,9 @@ dependencies {
 }
 
 tasks.getByName("quarkusGenerateCodeTests") {
+    dependsOn("jandex")
+}
+
+tasks.getByName("quarkusDependenciesBuild") {
     dependsOn("jandex")
 }

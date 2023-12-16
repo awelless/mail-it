@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+            http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="1" author="Aliaksei Shcharbaty">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <dbms type="h2"/>
+            </not>
+        </preConditions>
+        <comment>Rename instance_id_locks table</comment>
+        <renameTable oldTableName="instance_id_locks" newTableName="server_lease_locks" />
+        <rollback>
+            ALTER TABLE server_lease_locks RENAME TO instance_id_locks;
+        </rollback>
+    </changeSet>
+
+    <changeSet id="2" author="Aliaksei Shcharbaty">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <dbms type="h2"/>
+            </not>
+        </preConditions>
+        <comment>Rename server_lease_locks.instance_id column</comment>
+        <renameColumn tableName="server_lease_locks" oldColumnName="instance_id" newColumnName="server_id" columnDataType="int" />
+        <rollback>
+            ALTER TABLE server_lease_locks RENAME COLUMN server_id TO instance_id;
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

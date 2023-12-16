@@ -4,8 +4,7 @@ dependencies {
     implementation(project(":core:exception"))
     implementation(project(":core:model"))
     implementation(project(":core:spi"))
-
-    implementation("io.github.microutils:kotlin-logging-jvm")
+    implementation(project(":id-generator:id-generator-api"))
 
     implementation("io.smallrye.reactive:mutiny-kotlin")
 
@@ -18,4 +17,5 @@ dependencies {
     implementation("org.freemarker:freemarker")
 
     testImplementation(project(":common-test"))
+    testImplementation(project(":id-generator:id-generator-test"))
 }

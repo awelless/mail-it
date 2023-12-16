@@ -68,6 +68,8 @@ subprojects {
         implementation(enforcedPlatform("io.quarkus.platform:quarkus-bom:$quarkusVersion"))
 
         implementation("org.jetbrains.kotlin:kotlin-stdlib")
+
+        implementation("io.github.microutils:kotlin-logging-jvm")
     }
 
     java {

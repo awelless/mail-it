@@ -1,7 +1,3 @@
-apply {
-    plugin("io.quarkus")
-}
-
 dependencies {
     api("commons-dbutils:commons-dbutils")
 
@@ -11,8 +7,4 @@ dependencies {
     implementation("io.quarkus:quarkus-kotlin")
 
     testImplementation(project(":common-test"))
-}
-
-tasks.getByName("quarkusGenerateCodeTests") {
-    dependsOn("jandex")
 }

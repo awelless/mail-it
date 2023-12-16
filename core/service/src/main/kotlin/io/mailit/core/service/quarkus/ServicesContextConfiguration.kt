@@ -3,10 +3,6 @@ package io.mailit.core.service.quarkus
 import io.mailit.core.model.MailMessageType
 import io.mailit.core.service.ApiKeyGenerator
 import io.mailit.core.service.ApiKeyServiceImpl
-import io.mailit.core.service.id.DistributedIdGenerator
-import io.mailit.core.service.id.IdGenerator
-import io.mailit.core.service.id.InstanceIdProvider
-import io.mailit.core.service.id.LeaseLockingInstanceIdProvider
 import io.mailit.core.service.mail.MailMessageServiceImpl
 import io.mailit.core.service.mail.sending.HungMailsResetManager
 import io.mailit.core.service.mail.sending.MailMessageService
@@ -29,21 +25,16 @@ import io.mailit.core.service.mail.type.MailMessageTypeStateUpdaterManager
 import io.mailit.core.service.mail.type.PlainTextMailMessageTypeFactory
 import io.mailit.core.service.mail.type.PlainTextMailMessageTypeStateUpdater
 import io.mailit.core.service.quarkus.application.BCryptSecretHasher
-import io.mailit.core.service.quarkus.id.LeaseLockingInstanceIdProviderLifecycleManager
 import io.mailit.core.service.quarkus.mailing.MailFactory
 import io.mailit.core.service.quarkus.mailing.MailSenderImpl
 import io.mailit.core.service.quarkus.mailing.QuarkusMailSender
 import io.mailit.core.spi.ApiKeyRepository
 import io.mailit.core.spi.MailMessageRepository
 import io.mailit.core.spi.MailMessageTypeRepository
-import io.mailit.core.spi.id.InstanceIdLocks
+import io.mailit.idgenerator.api.IdGenerator
 import io.quarkus.mailer.reactive.ReactiveMailer
-import jakarta.enterprise.inject.Instance
 import jakarta.inject.Singleton
 import java.security.SecureRandom
-import kotlin.time.Duration.Companion.minutes
-import kotlin.time.Duration.Companion.seconds
-import kotlinx.coroutines.Dispatchers
 
 class ServicesContextConfiguration {
 
@@ -125,25 +116,4 @@ class MailingContextConfiguration {
 
         return FreemarkerTemplateProcessor(configuration)
     }
-}
-
-class IdGeneratorConfiguration {
-
-    @Singleton
-    fun idGenerator(instanceIdProvider: InstanceIdProvider) = DistributedIdGenerator(instanceIdProvider)
-
-    @Singleton
-    fun instanceIdProvider(instanceIdLocks: Instance<InstanceIdLocks>) = if (instanceIdLocks.isUnsatisfied) {
-        InstanceIdProvider { 0 } // if h2 is the db, we have only one instance
-    } else {
-        LeaseLockingInstanceIdProvider(
-            instanceIdLocks = instanceIdLocks.get(),
-            lockProlongationCoroutineContext = Dispatchers.Default,
-            lockDuration = 15.minutes,
-            prolongationDelay = 30.seconds,
-        )
-    }
-
-    @Singleton
-    fun leaseLockingInstanceIdProviderInitializer(instanceIdProvider: InstanceIdProvider) = LeaseLockingInstanceIdProviderLifecycleManager(instanceIdProvider)
 }

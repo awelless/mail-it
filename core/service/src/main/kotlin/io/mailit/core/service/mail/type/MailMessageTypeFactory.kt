@@ -7,7 +7,7 @@ import io.mailit.core.exception.ValidationException
 import io.mailit.core.model.HtmlMailMessageType
 import io.mailit.core.model.MailMessageType
 import io.mailit.core.model.PlainTextMailMessageType
-import io.mailit.core.service.id.IdGenerator
+import io.mailit.idgenerator.api.IdGenerator
 import java.time.Instant
 
 interface MailMessageTypeFactory<T : MailMessageType> {
