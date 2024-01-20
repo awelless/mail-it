@@ -28,6 +28,12 @@ rootProject.name = "mail-it"
 
 include(
     "admin-console",
+    "api-key:api-key-api",
+    "api-key:api-key-core",
+    "api-key:api-key-quarkus",
+    "api-key:api-key-spi-persistence",
+    "api-key:api-key-spi-security",
+    "api-key:api-key-test",
     "common-test",
     "connector:http",
     "core:admin-api",
@@ -42,6 +48,7 @@ include(
     "id-generator:id-generator-quarkus",
     "id-generator:id-generator-spi-locking",
     "id-generator:id-generator-test",
+    "language-extensions",
     "persistence:common",
     "persistence:h2",
     "persistence:liquibase",

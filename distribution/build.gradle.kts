@@ -14,6 +14,7 @@ dependencies {
 
     implementation(project(":core:service")) // core implementation
     implementation(project(":admin-console")) // admin console implementation
+    implementation(project(":api-key:api-key-quarkus"))
     implementation(project(":id-generator:id-generator-quarkus"))
     databaseProviderImplementation()
     connectorsImplementation()
@@ -22,6 +23,8 @@ dependencies {
     implementation("io.quarkus:quarkus-kotlin")
     implementation("io.quarkus:quarkus-smallrye-health")
 
+    testImplementation(project(":api-key:api-key-api"))
+    testImplementation(project(":api-key:api-key-spi-persistence"))
     testImplementation(project(":common-test"))
     testImplementation(project(":core:admin-api"))
     testImplementation(project(":core:connector-api"))

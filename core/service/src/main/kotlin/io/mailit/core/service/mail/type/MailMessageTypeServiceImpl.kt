@@ -3,13 +3,13 @@ package io.mailit.core.service.mail.type
 import io.mailit.core.admin.api.type.CreateMailMessageTypeCommand
 import io.mailit.core.admin.api.type.MailMessageTypeService
 import io.mailit.core.admin.api.type.UpdateMailMessageTypeCommand
+import io.mailit.core.exception.DuplicateUniqueKeyException
 import io.mailit.core.exception.NotFoundException
 import io.mailit.core.exception.ValidationException
 import io.mailit.core.model.MailMessageType
 import io.mailit.core.model.MailMessageTypeState.DELETED
 import io.mailit.core.model.MailMessageTypeState.FORCE_DELETED
 import io.mailit.core.model.Slice
-import io.mailit.core.spi.DuplicateUniqueKeyException
 import io.mailit.core.spi.MailMessageTypeRepository
 import java.time.Instant
 import mu.KLogging

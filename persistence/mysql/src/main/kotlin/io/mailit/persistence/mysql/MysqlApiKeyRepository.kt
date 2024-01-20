@@ -1,12 +1,13 @@
 package io.mailit.persistence.mysql
 
-import io.mailit.core.model.ApiKey
-import io.mailit.core.spi.ApiKeyRepository
-import io.mailit.core.spi.DuplicateUniqueKeyException
+import io.mailit.apikey.spi.persistence.ApiKey
+import io.mailit.apikey.spi.persistence.ApiKeyRepository
+import io.mailit.core.exception.DuplicateUniqueKeyException
 import io.mailit.persistence.common.toLocalDateTime
 import io.mailit.persistence.mysql.Columns.ApiKey as ApiKeyCol
 import io.mailit.persistence.mysql.Tables.API_KEY
 import io.smallrye.mutiny.Multi
+import io.smallrye.mutiny.Uni
 import io.smallrye.mutiny.coroutines.awaitSuspending
 import io.vertx.mutiny.mysqlclient.MySQLPool
 import io.vertx.mutiny.sqlclient.Tuple
@@ -60,7 +61,7 @@ class MysqlApiKeyRepository(
             .collect().asList()
             .awaitSuspending()
 
-    override suspend fun create(apiKey: ApiKey) {
+    override suspend fun create(apiKey: ApiKey): Result<Unit> {
         val parameters = Tuple.of(
             apiKey.id,
             apiKey.name,
@@ -69,10 +70,15 @@ class MysqlApiKeyRepository(
             apiKey.expiresAt.toLocalDateTime(),
         )
 
-        client.preparedQuery(INSERT_SQL)
+        return client.preparedQuery(INSERT_SQL)
             .execute(parameters)
-            .onFailure(MySQLException::class.java).transform {
-                if ((it as? MySQLException)?.errorCode == 1062) DuplicateUniqueKeyException(it.message, it) else it
+            .onItem().transform { Result.success(Unit) }
+            .onFailure(MySQLException::class.java).recoverWithUni { err ->
+                if ((err as? MySQLException)?.errorCode == 1062) {
+                    Uni.createFrom().item(Result.failure<Unit>(DuplicateUniqueKeyException(err.message, err)))
+                } else {
+                    Uni.createFrom().failure(err)
+                }
             }
             .awaitSuspending()
     }

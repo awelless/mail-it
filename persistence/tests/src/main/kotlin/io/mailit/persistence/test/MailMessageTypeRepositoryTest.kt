@@ -1,8 +1,8 @@
 package io.mailit.persistence.test
 
+import io.mailit.core.exception.DuplicateUniqueKeyException
 import io.mailit.core.model.MailMessageTypeState.DELETED
 import io.mailit.core.model.PlainTextMailMessageType
-import io.mailit.core.spi.DuplicateUniqueKeyException
 import io.mailit.core.spi.MailMessageTypeRepository
 import io.mailit.test.createHtmlMailMessageType
 import io.mailit.test.createPlainMailMessageType

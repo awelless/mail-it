@@ -1,4 +1,5 @@
 dependencies {
+    api(project(":core:exception"))
     api("commons-dbutils:commons-dbutils")
 
     implementation(project(":core:model"))

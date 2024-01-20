@@ -1,6 +1,5 @@
 package io.mailit.connector.http.security
 
-import io.mailit.core.model.ApiKeyToken
 import io.netty.handler.codec.http.HttpResponseStatus
 import io.quarkus.security.identity.IdentityProviderManager
 import io.quarkus.security.identity.SecurityIdentity
@@ -22,7 +21,7 @@ internal class ApiKeyAuthenticationMechanism : HttpAuthenticationMechanism {
 
         logger.debug { "Found api key header: *****" + apiKeyHeader.takeLast(LOGGED_SYMBOLS_COUNT) }
 
-        val authenticationRequest = ApiKeyAuthenticationRequest(ApiKeyToken(apiKeyHeader))
+        val authenticationRequest = ApiKeyAuthenticationRequest(apiKeyHeader)
         HttpSecurityUtils.setRoutingContextAttribute(authenticationRequest, context)
         context.put(HttpAuthenticationMechanism::class.java.name, this)
 

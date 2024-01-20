@@ -1,11 +1,11 @@
 package io.mailit.persistence.test
 
+import io.mailit.core.exception.DuplicateUniqueKeyException
 import io.mailit.core.model.MailMessage
 import io.mailit.core.model.MailMessageStatus.CANCELED
 import io.mailit.core.model.MailMessageStatus.PENDING
 import io.mailit.core.model.MailMessageStatus.SENDING
 import io.mailit.core.model.MailMessageType
-import io.mailit.core.spi.DuplicateUniqueKeyException
 import io.mailit.core.spi.MailMessageRepository
 import io.mailit.core.spi.MailMessageTypeRepository
 import io.mailit.test.createPlainMailMessageType

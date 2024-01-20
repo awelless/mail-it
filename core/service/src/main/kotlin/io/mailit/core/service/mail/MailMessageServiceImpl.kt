@@ -1,6 +1,7 @@
 package io.mailit.core.service.mail
 
 import io.mailit.core.admin.api.mail.MailMessageService
+import io.mailit.core.exception.DuplicateUniqueKeyException
 import io.mailit.core.exception.ValidationException
 import io.mailit.core.external.api.CreateMailCommand
 import io.mailit.core.external.api.MailMessageService as ConnectorMailMessageService
@@ -8,7 +9,6 @@ import io.mailit.core.model.MailMessage
 import io.mailit.core.model.MailMessageStatus
 import io.mailit.core.model.Slice
 import io.mailit.core.service.isEmail
-import io.mailit.core.spi.DuplicateUniqueKeyException
 import io.mailit.core.spi.MailMessageRepository
 import io.mailit.core.spi.MailMessageTypeRepository
 import io.mailit.idgenerator.api.IdGenerator

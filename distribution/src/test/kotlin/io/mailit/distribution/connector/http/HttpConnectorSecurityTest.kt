@@ -1,10 +1,9 @@
 package io.mailit.distribution.connector.http
 
 import io.mailit.admin.console.security.UserCredentials
-import io.mailit.core.admin.api.ApiKeyService
-import io.mailit.core.admin.api.CreateApiKeyCommand
+import io.mailit.apikey.api.ApiKeyCrud
+import io.mailit.apikey.api.CreateApiKeyCommand
 import io.mailit.core.external.api.CreateMailCommand
-import io.mailit.core.model.ApiKeyToken
 import io.mailit.core.model.MailMessageType
 import io.mailit.core.spi.MailMessageTypeRepository
 import io.mailit.test.createPlainMailMessageType
@@ -31,19 +30,19 @@ class HttpConnectorSecurityTest {
     lateinit var mailMessageTypeRepository: MailMessageTypeRepository
 
     @Inject
-    lateinit var apiKeyService: ApiKeyService
+    lateinit var apiKeyCrud: ApiKeyCrud
 
     @Inject
     lateinit var userCredentials: UserCredentials
 
     lateinit var mailType: MailMessageType
-    var apiKeyToken: ApiKeyToken = ApiKeyToken("")
+    var apiKeyToken = ""
 
     @BeforeEach
     fun setUp() {
         runBlocking {
             mailType = createPlainMailMessageType().also { mailMessageTypeRepository.create(it) }
-            apiKeyToken = apiKeyService.generate(CreateApiKeyCommand(name = "valid-api-key", expiration = 30.days))
+            apiKeyToken = apiKeyCrud.generate(CreateApiKeyCommand(name = "valid-api-key", expiration = 30.days)).getOrThrow()
         }
     }
 
@@ -52,7 +51,7 @@ class HttpConnectorSecurityTest {
         Given {
             contentType(JSON)
             body(createCommand())
-            header(API_KEY_HEADER, apiKeyToken.value)
+            header(API_KEY_HEADER, apiKeyToken)
         } When {
             post(SEND_URL)
         } Then {
@@ -79,12 +78,12 @@ class HttpConnectorSecurityTest {
             name = "expired-api-key",
             expiration = (-10).seconds, // Negative duration, so the expiration will be in the past.
         )
-        val expiredToken = apiKeyService.generate(command)
+        val expiredToken = apiKeyCrud.generate(command)
 
         Given {
             contentType(JSON)
             body(createCommand())
-            header(API_KEY_HEADER, expiredToken.value)
+            header(API_KEY_HEADER, expiredToken)
         } When {
             post(SEND_URL)
         } Then {

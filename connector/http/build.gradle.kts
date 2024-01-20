@@ -3,6 +3,7 @@ plugins {
 }
 
 dependencies {
+    implementation(project(":api-key:api-key-api"))
     implementation(project(":core:connector-api"))
 
     implementation("io.github.microutils:kotlin-logging-jvm")

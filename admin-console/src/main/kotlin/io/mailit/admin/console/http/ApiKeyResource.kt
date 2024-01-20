@@ -1,11 +1,9 @@
 package io.mailit.admin.console.http
 
-import io.mailit.admin.console.http.dto.ApiKeyTokenDto
-import io.mailit.admin.console.http.dto.CreateApiKeyDto
-import io.mailit.admin.console.http.dto.toDto
 import io.mailit.admin.console.security.Roles.ADMIN
-import io.mailit.core.admin.api.ApiKeyService
-import io.mailit.core.admin.api.CreateApiKeyCommand
+import io.mailit.apikey.api.ApiKeyCrud
+import io.mailit.apikey.api.CreateApiKeyCommand
+import io.quarkus.runtime.annotations.RegisterForReflection
 import jakarta.annotation.security.RolesAllowed
 import jakarta.ws.rs.DELETE
 import jakarta.ws.rs.GET
@@ -20,12 +18,11 @@ import org.jboss.resteasy.reactive.RestResponse.StatusCode.NO_CONTENT
 @Path("/api/admin/api-keys")
 @RolesAllowed(ADMIN)
 class ApiKeyResource(
-    private val apiKeyService: ApiKeyService,
+    private val apiKeyCrud: ApiKeyCrud,
 ) {
 
     @GET
-    suspend fun getAll() =
-        apiKeyService.getAll().map { it.toDto() }
+    suspend fun getAll() = apiKeyCrud.getAll()
 
     @ResponseStatus(CREATED)
     @POST
@@ -35,14 +32,21 @@ class ApiKeyResource(
             expiration = createDto.expirationDays.days,
         )
 
-        val token = apiKeyService.generate(command)
+        val token = apiKeyCrud.generate(command).getOrThrow()
 
-        return ApiKeyTokenDto(token.value)
+        return ApiKeyTokenDto(token)
     }
 
     @ResponseStatus(NO_CONTENT)
     @DELETE
     @Path("/{id}")
-    suspend fun delete(@PathParam("id") id: String) =
-        apiKeyService.delete(id)
+    suspend fun delete(@PathParam("id") id: String) = apiKeyCrud.delete(id)
 }
+
+data class CreateApiKeyDto(
+    val name: String,
+    val expirationDays: Int,
+)
+
+@RegisterForReflection
+data class ApiKeyTokenDto(val token: String)

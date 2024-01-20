@@ -1,13 +1,13 @@
 package io.mailit.persistence.h2
 
+import io.mailit.core.exception.DuplicateUniqueKeyException
+import io.mailit.core.exception.PersistenceException
 import io.mailit.core.model.HtmlMailMessageType
 import io.mailit.core.model.MailMessageType
 import io.mailit.core.model.MailMessageTypeState
 import io.mailit.core.model.PlainTextMailMessageType
 import io.mailit.core.model.Slice
-import io.mailit.core.spi.DuplicateUniqueKeyException
 import io.mailit.core.spi.MailMessageTypeRepository
-import io.mailit.core.spi.PersistenceException
 import io.mailit.persistence.common.createSlice
 import io.mailit.persistence.h2.Columns.MailMessageType as MailMessageTypeCol
 import io.mailit.persistence.h2.MailMessageContent.HTML

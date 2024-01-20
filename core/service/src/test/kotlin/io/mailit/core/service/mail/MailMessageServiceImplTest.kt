@@ -1,11 +1,11 @@
 package io.mailit.core.service.mail
 
+import io.mailit.core.exception.DuplicateUniqueKeyException
 import io.mailit.core.exception.ValidationException
 import io.mailit.core.external.api.CreateMailCommand
 import io.mailit.core.model.MailMessage
 import io.mailit.core.model.MailMessageStatus.PENDING
 import io.mailit.core.model.MailMessageType
-import io.mailit.core.spi.DuplicateUniqueKeyException
 import io.mailit.core.spi.MailMessageRepository
 import io.mailit.core.spi.MailMessageTypeRepository
 import io.mailit.idgenerator.test.ConstantIdGenerator

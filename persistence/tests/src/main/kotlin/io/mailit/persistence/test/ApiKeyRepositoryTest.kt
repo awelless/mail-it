@@ -1,8 +1,8 @@
 package io.mailit.persistence.test
 
-import io.mailit.core.model.ApiKey
-import io.mailit.core.spi.ApiKeyRepository
-import io.mailit.core.spi.DuplicateUniqueKeyException
+import io.mailit.apikey.spi.persistence.ApiKey
+import io.mailit.apikey.spi.persistence.ApiKeyRepository
+import io.mailit.core.exception.DuplicateUniqueKeyException
 import io.mailit.test.minus
 import io.mailit.test.nowWithoutNanos
 import io.mailit.test.plus
@@ -15,7 +15,6 @@ import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 
 abstract class ApiKeyRepositoryTest {
 
@@ -85,11 +84,12 @@ abstract class ApiKeyRepositoryTest {
         )
 
         // when
-        apiKeyRepository.create(newApiKey)
+        val result = apiKeyRepository.create(newApiKey)
 
         val actual = apiKeyRepository.findById(newApiKey.id)
 
         // then
+        assertTrue(result.isSuccess)
         assertEquals(newApiKey, actual)
     }
 
@@ -98,8 +98,12 @@ abstract class ApiKeyRepositoryTest {
         // given
         val newApiKey = apiKey.copy(id = "333")
 
-        // when + then
-        assertThrows<DuplicateUniqueKeyException> { apiKeyRepository.create(newApiKey) }
+        // when
+        val result = apiKeyRepository.create(newApiKey)
+
+        // then
+        assertTrue(result.isFailure)
+        assertTrue(result.exceptionOrNull() is DuplicateUniqueKeyException)
     }
 
     @Test

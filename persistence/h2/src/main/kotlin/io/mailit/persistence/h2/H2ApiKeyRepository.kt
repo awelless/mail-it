@@ -1,8 +1,8 @@
 package io.mailit.persistence.h2
 
-import io.mailit.core.model.ApiKey
-import io.mailit.core.spi.ApiKeyRepository
-import io.mailit.core.spi.DuplicateUniqueKeyException
+import io.mailit.apikey.spi.persistence.ApiKey
+import io.mailit.apikey.spi.persistence.ApiKeyRepository
+import io.mailit.core.exception.DuplicateUniqueKeyException
 import io.mailit.persistence.h2.Columns.ApiKey as ApiKeyCol
 import io.mailit.persistence.h2.Tables.API_KEY
 import java.sql.SQLException
@@ -60,7 +60,7 @@ class H2ApiKeyRepository(
         queryRunner.query(it, FIND_ALL_BY_APPLICATION_ID_SQL, multipleMapper)
     }
 
-    override suspend fun create(apiKey: ApiKey) {
+    override suspend fun create(apiKey: ApiKey): Result<Unit> {
         try {
             dataSource.connection.use {
                 queryRunner.update(
@@ -75,12 +75,14 @@ class H2ApiKeyRepository(
             }
         } catch (e: SQLException) {
             // replace with custom exception handler?
-            throw if (e.errorCode == ErrorCode.DUPLICATE_KEY_1) {
-                DuplicateUniqueKeyException(e.message, e)
+            if (e.errorCode == ErrorCode.DUPLICATE_KEY_1) {
+                return Result.failure(DuplicateUniqueKeyException(e.message, e))
             } else {
-                e
+                throw e
             }
         }
+
+        return Result.success(Unit)
     }
 
     override suspend fun delete(id: String) = dataSource.connection.use {

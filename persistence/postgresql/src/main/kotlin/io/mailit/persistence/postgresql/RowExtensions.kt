@@ -1,6 +1,6 @@
 package io.mailit.persistence.postgresql
 
-import io.mailit.core.model.ApiKey
+import io.mailit.apikey.spi.persistence.ApiKey
 import io.mailit.core.model.HtmlMailMessageType
 import io.mailit.core.model.HtmlTemplateEngine
 import io.mailit.core.model.MailMessage

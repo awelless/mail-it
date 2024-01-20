@@ -1,8 +1,8 @@
 package io.mailit.distribution.admin.client
 
-import io.mailit.admin.console.http.dto.CreateApiKeyDto
-import io.mailit.core.model.ApiKey
-import io.mailit.core.spi.ApiKeyRepository
+import io.mailit.admin.console.http.CreateApiKeyDto
+import io.mailit.apikey.spi.persistence.ApiKey as PersistenceApiKey
+import io.mailit.apikey.spi.persistence.ApiKeyRepository
 import io.mailit.test.minus
 import io.mailit.test.nowWithoutNanos
 import io.mailit.test.plus
@@ -41,15 +41,15 @@ class ApiKeyResourceTest {
     @Inject
     lateinit var apiKeyRepository: ApiKeyRepository
 
-    lateinit var apiKey1: ApiKey
-    lateinit var apiKey2: ApiKey
+    lateinit var apiKey1: PersistenceApiKey
+    lateinit var apiKey2: PersistenceApiKey
 
     @BeforeEach
     fun setUp() {
         runBlocking {
             val now = nowWithoutNanos()
 
-            apiKey1 = ApiKey(
+            apiKey1 = PersistenceApiKey(
                 id = "111",
                 name = "test api key",
                 secret = "s3cr3t",
@@ -57,7 +57,7 @@ class ApiKeyResourceTest {
                 expiresAt = nowWithoutNanos() + 30.days,
             ).also { apiKeyRepository.create(it) }
 
-            apiKey2 = ApiKey(
+            apiKey2 = PersistenceApiKey(
                 id = "112",
                 name = "test api key 2",
                 secret = "s3cr3t33",
