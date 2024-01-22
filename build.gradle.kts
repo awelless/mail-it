@@ -38,7 +38,7 @@ subprojects {
     val kryoVersion = "5.6.0" // https://mvnrepository.com/artifact/com.esotericsoftware/kryo
     val quarkusVersion = "3.6.5" // https://mvnrepository.com/artifact/io.quarkus.platform/quarkus-bom
     val restAssuredKotlinExtensionsVersion = "5.4.0" // https://mvnrepository.com/artifact/io.rest-assured/kotlin-extensions
-    val svmVersion = "23.1.1" // https://mvnrepository.com/artifact/org.graalvm.nativeimage/svm
+    val svmVersion = "23.1.2" // https://mvnrepository.com/artifact/org.graalvm.nativeimage/svm
 
     val mockkVersion = "1.13.9" // https://mvnrepository.com/artifact/io.mockk/mockk
 
