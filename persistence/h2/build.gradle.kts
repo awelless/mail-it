@@ -8,7 +8,6 @@ dependencies {
     implementation(project(":id-generator:id-generator-spi-locking"))
     implementation(project(":persistence:common"))
     implementation(project(":persistence:liquibase"))
-    implementation(project(":template:template-api")) // Should be removed.
     implementation(project(":template:template-spi-persistence"))
 
     implementation("io.quarkus:quarkus-config-yaml")

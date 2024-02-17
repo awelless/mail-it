@@ -1,6 +1,7 @@
 package io.mailit.template.api
 
 import io.mailit.value.MailTypeId
+import io.mailit.value.TemplateEngine
 
 interface TemplateProcessor {
 

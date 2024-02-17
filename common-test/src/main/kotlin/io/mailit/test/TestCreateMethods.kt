@@ -6,10 +6,10 @@ import io.mailit.core.model.MailMessageStatus
 import io.mailit.core.model.MailMessageTemplate
 import io.mailit.core.model.MailMessageType
 import io.mailit.core.model.PlainTextMailMessageType
-import io.mailit.template.api.TemplateEngine
 import io.mailit.value.EmailAddress.Companion.toEmailAddress
 import io.mailit.value.MailId
 import io.mailit.value.MailTypeId
+import io.mailit.value.TemplateEngine
 import java.util.concurrent.atomic.AtomicLong
 
 private val counter = AtomicLong()

@@ -13,11 +13,11 @@ import io.mailit.persistence.mysql.Columns.ApiKey as ApiKeyCol
 import io.mailit.persistence.mysql.Columns.MailMessage as MailMessageCol
 import io.mailit.persistence.mysql.Columns.MailMessageType as MailMessageTypeCol
 import io.mailit.persistence.mysql.MailMessageContent.HTML
-import io.mailit.template.api.TemplateEngine
 import io.mailit.template.spi.persistence.PersistenceTemplate
 import io.mailit.value.EmailAddress.Companion.toEmailAddress
 import io.mailit.value.MailId
 import io.mailit.value.MailTypeId
+import io.mailit.value.TemplateEngine
 import io.vertx.mutiny.sqlclient.Row
 import java.time.Instant
 import java.time.ZoneOffset.UTC

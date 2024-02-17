@@ -5,10 +5,10 @@ import io.mailit.core.exception.ValidationException
 import io.mailit.core.model.HtmlMailMessageType
 import io.mailit.core.model.MailMessageTemplate
 import io.mailit.core.model.PlainTextMailMessageType
-import io.mailit.template.api.TemplateEngine.FREEMARKER
-import io.mailit.template.api.TemplateEngine.NONE
 import io.mailit.test.createHtmlMailMessageType
 import io.mailit.test.createPlainMailMessageType
+import io.mailit.value.TemplateEngine.FREEMARKER
+import io.mailit.value.TemplateEngine.NONE
 import io.mockk.junit5.MockKExtension
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach

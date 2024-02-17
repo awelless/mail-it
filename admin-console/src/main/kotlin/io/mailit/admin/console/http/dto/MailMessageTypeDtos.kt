@@ -1,7 +1,7 @@
 package io.mailit.admin.console.http.dto
 
 import io.mailit.core.admin.api.type.MailMessageContentType
-import io.mailit.template.api.TemplateEngine
+import io.mailit.value.TemplateEngine
 import io.quarkus.runtime.annotations.RegisterForReflection
 
 @RegisterForReflection

@@ -1,7 +1,7 @@
 package io.mailit.core.model
 
-import io.mailit.template.api.TemplateEngine
 import io.mailit.value.MailTypeId
+import io.mailit.value.TemplateEngine
 import java.time.Instant
 
 /**

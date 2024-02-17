@@ -1,12 +1,12 @@
 package io.mailit.template.core
 
-import io.mailit.template.api.TemplateEngine
-import io.mailit.template.api.TemplateEngine.FREEMARKER
-import io.mailit.template.api.TemplateEngine.NONE
 import io.mailit.template.api.TemplateProcessor
 import io.mailit.template.core.freemarker.FreemarkerTemplateProcessor
 import io.mailit.template.core.none.NoneTemplateProcessor
 import io.mailit.value.MailTypeId
+import io.mailit.value.TemplateEngine
+import io.mailit.value.TemplateEngine.FREEMARKER
+import io.mailit.value.TemplateEngine.NONE
 
 internal class MultiTemplateProcessor(
     private val noneTemplateProcessor: NoneTemplateProcessor,

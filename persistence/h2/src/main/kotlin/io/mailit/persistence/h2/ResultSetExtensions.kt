@@ -13,11 +13,11 @@ import io.mailit.persistence.h2.Columns.ApiKey as ApiKeyCol
 import io.mailit.persistence.h2.Columns.MailMessage as MailMessageCol
 import io.mailit.persistence.h2.Columns.MailMessageType as MailMessageTypeCol
 import io.mailit.persistence.h2.MailMessageContent.HTML
-import io.mailit.template.api.TemplateEngine
 import io.mailit.template.spi.persistence.PersistenceTemplate
 import io.mailit.value.EmailAddress.Companion.toEmailAddress
 import io.mailit.value.MailId
 import io.mailit.value.MailTypeId
+import io.mailit.value.TemplateEngine
 import java.sql.ResultSet
 import java.time.Instant
 

@@ -1,4 +1,7 @@
-package io.mailit.template.api
+package io.mailit.value
+
+@JvmInline
+value class MailTypeId(val value: Long)
 
 enum class TemplateEngine {
     /**
