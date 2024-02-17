@@ -17,3 +17,35 @@ value class EmailAddress private constructor(val email: String) {
             }
     }
 }
+
+enum class MailState {
+    /**
+     * Just created. Available for sending.
+     */
+    PENDING,
+
+    /**
+     * Sending failed one or several times, but can be retried. Available for sending.
+     */
+    RETRY,
+
+    /**
+     * Message is being sent right now.
+     */
+    SENDING,
+
+    /**
+     * Message has been sent successfully.
+     */
+    SENT,
+
+    /**
+     * Message sending failed and all available retries failed.
+     */
+    FAILED,
+
+    /**
+     * Message sending was canceled (e.g. MailType had been force deleted).
+     */
+    CANCELED,
+}

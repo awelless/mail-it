@@ -2,7 +2,6 @@ package io.mailit.persistence.mysql
 
 import io.mailit.core.exception.DuplicateUniqueKeyException
 import io.mailit.core.model.MailMessage
-import io.mailit.core.model.MailMessageStatus
 import io.mailit.core.model.Slice
 import io.mailit.core.spi.MailMessageRepository
 import io.mailit.persistence.common.createSlice
@@ -14,6 +13,7 @@ import io.mailit.persistence.mysql.Tables.MAIL_MESSAGE
 import io.mailit.persistence.mysql.Tables.MAIL_MESSAGE_TEMPLATE
 import io.mailit.persistence.mysql.Tables.MAIL_MESSAGE_TYPE
 import io.mailit.value.MailId
+import io.mailit.value.MailState
 import io.smallrye.mutiny.Multi
 import io.smallrye.mutiny.coroutines.awaitSuspending
 import io.vertx.mutiny.mysqlclient.MySQLPool
@@ -31,7 +31,7 @@ private const val FIND_WITH_TYPE_BY_ID_SQL = """
            m.created_at ${MailMessageCol.CREATED_AT},
            m.sending_started_at ${MailMessageCol.SENDING_STARTED_AT},
            m.sent_at ${MailMessageCol.SENT_AT},
-           m.status ${MailMessageCol.STATUS},
+           m.state ${MailMessageCol.STATE},
            m.failed_count ${MailMessageCol.FAILED_COUNT},
            m.deduplication_id ${MailMessageCol.DEDUPLICATION_ID},
            mt.mail_message_type_id ${MailMessageTypeCol.ID},
@@ -49,7 +49,7 @@ private const val FIND_WITH_TYPE_BY_ID_SQL = """
      LEFT JOIN $MAIL_MESSAGE_TEMPLATE t ON mt.mail_message_type_id = t.mail_message_type_id
     WHERE m.mail_message_id = ?"""
 
-private fun FIND_WITH_TYPE_BY_SENDING_STARTED_BEFORE_AND_STATUSES_SQL(statusesNumber: Int) = """
+private fun FIND_WITH_TYPE_BY_SENDING_STARTED_BEFORE_AND_STATEES_SQL(stateesNumber: Int) = """
     SELECT m.mail_message_id ${MailMessageCol.ID},
            m.text ${MailMessageCol.TEXT},
            m.data ${MailMessageCol.DATA},
@@ -59,7 +59,7 @@ private fun FIND_WITH_TYPE_BY_SENDING_STARTED_BEFORE_AND_STATUSES_SQL(statusesNu
            m.created_at ${MailMessageCol.CREATED_AT},
            m.sending_started_at ${MailMessageCol.SENDING_STARTED_AT},
            m.sent_at ${MailMessageCol.SENT_AT},
-           m.status ${MailMessageCol.STATUS},
+           m.state ${MailMessageCol.STATE},
            m.failed_count ${MailMessageCol.FAILED_COUNT},
            m.deduplication_id ${MailMessageCol.DEDUPLICATION_ID},
            mt.mail_message_type_id ${MailMessageTypeCol.ID},
@@ -76,14 +76,14 @@ private fun FIND_WITH_TYPE_BY_SENDING_STARTED_BEFORE_AND_STATUSES_SQL(statusesNu
     INNER JOIN $MAIL_MESSAGE_TYPE mt ON m.mail_message_type_id = mt.mail_message_type_id
      LEFT JOIN $MAIL_MESSAGE_TEMPLATE t ON mt.mail_message_type_id = t.mail_message_type_id
     WHERE m.sending_started_at < ?
-      AND m.status ${inClause(statusesNumber)}
+      AND m.state ${inClause(stateesNumber)}
     LIMIT ?
 """.trimIndent()
 
-private fun FIND_IDS_BY_STATUSES_SQL(statusesNumber: Int) = """
+private fun FIND_IDS_BY_STATEES_SQL(stateesNumber: Int) = """
     SELECT mail_message_id 
       FROM $MAIL_MESSAGE
-     WHERE status ${inClause(statusesNumber)}
+     WHERE state ${inClause(stateesNumber)}
      LIMIT ?"""
 
 private const val FIND_ALL_SLICED_SQL = """
@@ -96,7 +96,7 @@ private const val FIND_ALL_SLICED_SQL = """
            m.created_at ${MailMessageCol.CREATED_AT},
            m.sending_started_at ${MailMessageCol.SENDING_STARTED_AT},
            m.sent_at ${MailMessageCol.SENT_AT},
-           m.status ${MailMessageCol.STATUS},
+           m.state ${MailMessageCol.STATE},
            m.failed_count ${MailMessageCol.FAILED_COUNT},
            m.deduplication_id ${MailMessageCol.DEDUPLICATION_ID},
            mt.mail_message_type_id ${MailMessageTypeCol.ID},
@@ -127,26 +127,26 @@ private const val INSERT_SQL = """
         created_at,
         sending_started_at,
         sent_at,
-        status,
+        state,
         failed_count,
         deduplication_id)
    VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"""
 
-private const val UPDATE_STATUS_SQL = "UPDATE $MAIL_MESSAGE SET status = ? WHERE mail_message_id = ?"
+private const val UPDATE_STATE_SQL = "UPDATE $MAIL_MESSAGE SET state = ? WHERE mail_message_id = ?"
 
-private fun UPDATE_STATUS_AND_SENDING_START_SQL(statusesNumber: Int) = """
+private fun UPDATE_STATE_AND_SENDING_START_SQL(stateesNumber: Int) = """
     UPDATE $MAIL_MESSAGE SET 
-        status = ?, 
+        state = ?, 
         sending_started_at = ? 
     WHERE mail_message_id = ? 
-      AND status ${inClause(statusesNumber)}
+      AND state ${inClause(stateesNumber)}
 """
 
-private const val UPDATE_STATUS_AND_SENT_AT_SQL = "UPDATE $MAIL_MESSAGE SET status = ?, sent_at = ? WHERE mail_message_id = ?"
+private const val UPDATE_STATE_AND_SENT_AT_SQL = "UPDATE $MAIL_MESSAGE SET state = ?, sent_at = ? WHERE mail_message_id = ?"
 
-private const val UPDATE_STATUS_FAILED_COUNT_AND_SENDING_START_SQL = """
+private const val UPDATE_STATE_FAILED_COUNT_AND_SENDING_START_SQL = """
     UPDATE $MAIL_MESSAGE SET 
-        status = ?, 
+        state = ?, 
         failed_count = ?, 
         sending_started_at = ? 
     WHERE mail_message_id = ?"""
@@ -170,18 +170,18 @@ class MysqlMailMessageRepository(
             .onItem().transform { if (it.hasNext()) it.next().getMailMessageWithTypeFromRow(dataSerializer) else null }
             .awaitSuspending()
 
-    override suspend fun findAllWithTypeByStatusesAndSendingStartedBefore(
-        statuses: Collection<MailMessageStatus>,
+    override suspend fun findAllWithTypeByStatesAndSendingStartedBefore(
+        states: Collection<MailState>,
         sendingStartedBefore: Instant,
         maxListSize: Int,
     ): List<MailMessage> {
-        val statusNames = statuses
+        val stateNames = states
             .map { it.name }
             .toTypedArray()
 
-        val arguments = arrayOf(sendingStartedBefore.toLocalDateTime(), *statusNames, maxListSize)
+        val arguments = arrayOf(sendingStartedBefore.toLocalDateTime(), *stateNames, maxListSize)
 
-        return client.preparedQuery(FIND_WITH_TYPE_BY_SENDING_STARTED_BEFORE_AND_STATUSES_SQL(statusNames.size))
+        return client.preparedQuery(FIND_WITH_TYPE_BY_SENDING_STARTED_BEFORE_AND_STATEES_SQL(stateNames.size))
             .execute(Tuple.from(arguments))
             .onItem().transformToMulti { Multi.createFrom().iterable(it) }
             .onItem().transform { it.getMailMessageWithTypeFromRow(dataSerializer) }
@@ -189,14 +189,14 @@ class MysqlMailMessageRepository(
             .awaitSuspending()
     }
 
-    override suspend fun findAllIdsByStatusIn(statuses: Collection<MailMessageStatus>, maxListSize: Int): List<MailId> {
-        val statusNames = statuses
+    override suspend fun findAllIdsByStateIn(states: Collection<MailState>, maxListSize: Int): List<MailId> {
+        val stateNames = states
             .map { it.name }
             .toTypedArray()
 
-        val arguments = arrayOf(*statusNames, maxListSize)
+        val arguments = arrayOf(*stateNames, maxListSize)
 
-        return client.preparedQuery(FIND_IDS_BY_STATUSES_SQL(statusNames.size))
+        return client.preparedQuery(FIND_IDS_BY_STATEES_SQL(stateNames.size))
             .execute(Tuple.from(arguments))
             .onItem().transformToMulti { Multi.createFrom().iterable(it) }
             .onItem().transform { MailId(it.getLong("mail_message_id")) }
@@ -230,7 +230,7 @@ class MysqlMailMessageRepository(
             mailMessage.createdAt.toLocalDateTime(),
             mailMessage.sendingStartedAt?.toLocalDateTime(),
             mailMessage.sentAt?.toLocalDateTime(),
-            mailMessage.status.name,
+            mailMessage.state.name,
             mailMessage.failedCount,
             mailMessage.deduplicationId,
         )
@@ -245,44 +245,44 @@ class MysqlMailMessageRepository(
         return mailMessage
     }
 
-    override suspend fun updateMessageStatus(id: MailId, status: MailMessageStatus): Int =
-        client.preparedQuery(UPDATE_STATUS_SQL)
-            .execute(Tuple.of(status.name, id.value))
+    override suspend fun updateMessageState(id: MailId, state: MailState): Int =
+        client.preparedQuery(UPDATE_STATE_SQL)
+            .execute(Tuple.of(state.name, id.value))
             .onItem().transform { it.rowCount() }
             .awaitSuspending()
 
-    override suspend fun updateMessageStatusAndSendingStartedTimeByIdAndStatusIn(
+    override suspend fun updateMessageStateAndSendingStartedTimeByIdAndStateIn(
         id: MailId,
-        statuses: Collection<MailMessageStatus>,
-        status: MailMessageStatus,
+        states: Collection<MailState>,
+        state: MailState,
         sendingStartedAt: Instant,
     ): Int {
-        val statusNames = statuses
+        val stateNames = states
             .map { it.name }
             .toTypedArray()
 
-        val arguments = arrayOf(status.name, sendingStartedAt.toLocalDateTime(), id.value, *statusNames)
+        val arguments = arrayOf(state.name, sendingStartedAt.toLocalDateTime(), id.value, *stateNames)
 
-        return client.preparedQuery(UPDATE_STATUS_AND_SENDING_START_SQL(statusNames.size))
+        return client.preparedQuery(UPDATE_STATE_AND_SENDING_START_SQL(stateNames.size))
             .execute(Tuple.from(arguments))
             .onItem().transform { it.rowCount() }
             .awaitSuspending()
     }
 
-    override suspend fun updateMessageStatusAndSentTime(id: MailId, status: MailMessageStatus, sentAt: Instant): Int =
-        client.preparedQuery(UPDATE_STATUS_AND_SENT_AT_SQL)
-            .execute(Tuple.of(status.name, sentAt.toLocalDateTime(), id.value))
+    override suspend fun updateMessageStateAndSentTime(id: MailId, state: MailState, sentAt: Instant): Int =
+        client.preparedQuery(UPDATE_STATE_AND_SENT_AT_SQL)
+            .execute(Tuple.of(state.name, sentAt.toLocalDateTime(), id.value))
             .onItem().transform { it.rowCount() }
             .awaitSuspending()
 
-    override suspend fun updateMessageStatusFailedCountAndSendingStartedTime(
+    override suspend fun updateMessageStateFailedCountAndSendingStartedTime(
         id: MailId,
-        status: MailMessageStatus,
+        state: MailState,
         failedCount: Int,
         sendingStartedAt: Instant?,
     ): Int =
-        client.preparedQuery(UPDATE_STATUS_FAILED_COUNT_AND_SENDING_START_SQL)
-            .execute(Tuple.of(status.name, failedCount, sendingStartedAt?.toLocalDateTime(), id.value))
+        client.preparedQuery(UPDATE_STATE_FAILED_COUNT_AND_SENDING_START_SQL)
+            .execute(Tuple.of(state.name, failedCount, sendingStartedAt?.toLocalDateTime(), id.value))
             .onItem().transform { it.rowCount() }
             .awaitSuspending()
 }

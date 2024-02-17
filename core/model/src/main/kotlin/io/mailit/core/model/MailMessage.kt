@@ -2,6 +2,7 @@ package io.mailit.core.model
 
 import io.mailit.value.EmailAddress
 import io.mailit.value.MailId
+import io.mailit.value.MailState
 import java.time.Instant
 
 data class MailMessage(
@@ -35,7 +36,7 @@ data class MailMessage(
 
     var sentAt: Instant? = null,
 
-    var status: MailMessageStatus,
+    var state: MailState,
 
     var failedCount: Int = 0,
 
@@ -45,36 +46,3 @@ data class MailMessage(
      */
     val deduplicationId: String?,
 )
-
-enum class MailMessageStatus {
-
-    /**
-     * Just created. Available for sending.
-     */
-    PENDING,
-
-    /**
-     * Sending failed one or several times, but can be retried. Available for sending.
-     */
-    RETRY,
-
-    /**
-     * Message is being sent right now.
-     */
-    SENDING,
-
-    /**
-     * Message has been sent successfully.
-     */
-    SENT,
-
-    /**
-     * Message sending failed and all available retries failed.
-     */
-    FAILED,
-
-    /**
-     * Message sending was canceled (e.g. [MailMessageType] had been force deleted).
-     */
-    CANCELED,
-}

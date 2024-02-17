@@ -10,5 +10,6 @@
     <include file="extract_template_in_separate_table.xml" relativeToChangelogFile="true"/>
     <include file="deduplication_id.xml" relativeToChangelogFile="true"/>
     <include file="rename_instance_id_locks.xml" relativeToChangelogFile="true"/>
+    <include file="rename_mail_status.xml" relativeToChangelogFile="true"/>
 
 </databaseChangeLog>

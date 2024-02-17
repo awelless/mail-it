@@ -2,15 +2,15 @@ package io.mailit.core.service.mail.sending
 
 import io.mailit.core.exception.NotFoundException
 import io.mailit.core.model.MailMessage
-import io.mailit.core.model.MailMessageStatus.FAILED
-import io.mailit.core.model.MailMessageStatus.PENDING
-import io.mailit.core.model.MailMessageStatus.RETRY
-import io.mailit.core.model.MailMessageStatus.SENDING
-import io.mailit.core.model.MailMessageStatus.SENT
 import io.mailit.core.model.MailMessageType
 import io.mailit.core.spi.MailMessageRepository
 import io.mailit.test.createMailMessage
 import io.mailit.test.createPlainMailMessageType
+import io.mailit.value.MailState.FAILED
+import io.mailit.value.MailState.PENDING
+import io.mailit.value.MailState.RETRY
+import io.mailit.value.MailState.SENDING
+import io.mailit.value.MailState.SENT
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.impl.annotations.RelaxedMockK
@@ -51,10 +51,10 @@ class MailMessageServiceTest {
     @Test
     fun getMessageForSending_marksStatusSending() = runTest {
         coEvery {
-            mailMessageRepository.updateMessageStatusAndSendingStartedTimeByIdAndStatusIn(
+            mailMessageRepository.updateMessageStateAndSendingStartedTimeByIdAndStateIn(
                 id = mailMessage.id,
-                statuses = possibleToSendMessageStatuses,
-                status = SENDING,
+                states = possibleToSendMessageStatuses,
+                state = SENDING,
                 sendingStartedAt = frozenNow,
             )
         }.returns(1)
@@ -68,10 +68,10 @@ class MailMessageServiceTest {
     @Test
     fun getMessageForSending_notFoundForMarking_marksStatusSending() = runTest {
         coEvery {
-            mailMessageRepository.updateMessageStatusAndSendingStartedTimeByIdAndStatusIn(
+            mailMessageRepository.updateMessageStateAndSendingStartedTimeByIdAndStateIn(
                 id = mailMessage.id,
-                statuses = possibleToSendMessageStatuses,
-                status = SENDING,
+                states = possibleToSendMessageStatuses,
+                state = SENDING,
                 sendingStartedAt = frozenNow,
             )
         }.returns(0)
@@ -83,7 +83,7 @@ class MailMessageServiceTest {
     fun processSuccessfulDelivery_marksStatusSent() = runTest {
         mailMessageService.processSuccessfulDelivery(mailMessage)
 
-        coVerify { mailMessageRepository.updateMessageStatusAndSentTime(mailMessage.id, SENT, frozenNow) }
+        coVerify { mailMessageRepository.updateMessageStateAndSentTime(mailMessage.id, SENT, frozenNow) }
     }
 
     @Test
@@ -92,7 +92,7 @@ class MailMessageServiceTest {
 
         mailMessageService.processFailedDelivery(mailMessage)
 
-        coVerify { mailMessageRepository.updateMessageStatusFailedCountAndSendingStartedTime(mailMessage.id, RETRY, 1, null) }
+        coVerify { mailMessageRepository.updateMessageStateFailedCountAndSendingStartedTime(mailMessage.id, RETRY, 1, null) }
     }
 
     @Test
@@ -102,6 +102,6 @@ class MailMessageServiceTest {
 
         mailMessageService.processFailedDelivery(mailMessage)
 
-        coVerify { mailMessageRepository.updateMessageStatusFailedCountAndSendingStartedTime(mailMessage.id, FAILED, 10, null) }
+        coVerify { mailMessageRepository.updateMessageStateFailedCountAndSendingStartedTime(mailMessage.id, FAILED, 10, null) }
     }
 }

@@ -27,7 +27,7 @@ internal object Columns {
         const val CREATED_AT = "m_created_at"
         const val SENDING_STARTED_AT = "m_sending_started_at"
         const val SENT_AT = "m_sent_at"
-        const val STATUS = "m_status"
+        const val STATE = "m_state"
         const val FAILED_COUNT = "m_failed_count"
         const val DEDUPLICATION_ID = "m_deduplication_id"
     }

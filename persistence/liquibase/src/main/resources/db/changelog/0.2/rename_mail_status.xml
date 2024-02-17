@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+            http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="1" author="Aliaksei Shcharbaty">
+        <comment>Rename mail status column</comment>
+        <renameColumn tableName="mail_message" oldColumnName="status" newColumnName="state" columnDataType="varchar(32)" />
+        <rollback>
+            ALTER TABLE mail_message RENAME COLUMN state TO status;
+        </rollback>
+    </changeSet>
+
+    <changeSet id="2" author="Aliaksei Shcharbaty">
+        <preConditions onFail="MARK_RAN">
+            <dbms type="mysql"/>
+        </preConditions>
+        <comment>Make mail state non nullable</comment>
+        <addNotNullConstraint tableName="mail_message" columnName="state" columnDataType="varchar(32)" />
+        <rollback>
+            ALTER TABLE mail_message MODIFY state VARCHAR(32);
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

@@ -1,6 +1,6 @@
 package io.mailit.admin.console.http.dto
 
-import io.mailit.core.model.MailMessageStatus
+import io.mailit.value.MailState
 import io.quarkus.runtime.annotations.RegisterForReflection
 import java.time.Instant
 
@@ -13,6 +13,6 @@ data class AdminSlicedMailDto(
     val createdAt: Instant,
     val sendingStartedAt: Instant?,
     val sentAt: Instant?,
-    val status: MailMessageStatus,
+    val status: MailState, // todo: rename to "state"
     val failedCount: Int,
 )

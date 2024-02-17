@@ -1,22 +1,22 @@
 package io.mailit.core.spi
 
 import io.mailit.core.model.MailMessage
-import io.mailit.core.model.MailMessageStatus
 import io.mailit.core.model.Slice
 import io.mailit.value.MailId
+import io.mailit.value.MailState
 import java.time.Instant
 
 interface MailMessageRepository {
 
     suspend fun findOneWithTypeById(id: MailId): MailMessage?
 
-    suspend fun findAllWithTypeByStatusesAndSendingStartedBefore(
-        statuses: Collection<MailMessageStatus>,
+    suspend fun findAllWithTypeByStatesAndSendingStartedBefore(
+        states: Collection<MailState>,
         sendingStartedBefore: Instant,
         maxListSize: Int,
     ): List<MailMessage>
 
-    suspend fun findAllIdsByStatusIn(statuses: Collection<MailMessageStatus>, maxListSize: Int): List<MailId>
+    suspend fun findAllIdsByStateIn(states: Collection<MailState>, maxListSize: Int): List<MailId>
 
     /**
      * Returns a [Slice] of specified zero indexed [page] and [size]
@@ -25,16 +25,16 @@ interface MailMessageRepository {
 
     suspend fun create(mailMessage: MailMessage): MailMessage
 
-    suspend fun updateMessageStatus(id: MailId, status: MailMessageStatus): Int
+    suspend fun updateMessageState(id: MailId, state: MailState): Int
 
-    suspend fun updateMessageStatusAndSendingStartedTimeByIdAndStatusIn(
+    suspend fun updateMessageStateAndSendingStartedTimeByIdAndStateIn(
         id: MailId,
-        statuses: Collection<MailMessageStatus>,
-        status: MailMessageStatus,
+        states: Collection<MailState>,
+        state: MailState,
         sendingStartedAt: Instant,
     ): Int
 
-    suspend fun updateMessageStatusAndSentTime(id: MailId, status: MailMessageStatus, sentAt: Instant): Int
+    suspend fun updateMessageStateAndSentTime(id: MailId, state: MailState, sentAt: Instant): Int
 
-    suspend fun updateMessageStatusFailedCountAndSendingStartedTime(id: MailId, status: MailMessageStatus, failedCount: Int, sendingStartedAt: Instant?): Int
+    suspend fun updateMessageStateFailedCountAndSendingStartedTime(id: MailId, state: MailState, failedCount: Int, sendingStartedAt: Instant?): Int
 }

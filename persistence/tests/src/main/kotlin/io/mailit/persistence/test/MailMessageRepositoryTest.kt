@@ -2,9 +2,6 @@ package io.mailit.persistence.test
 
 import io.mailit.core.exception.DuplicateUniqueKeyException
 import io.mailit.core.model.MailMessage
-import io.mailit.core.model.MailMessageStatus.CANCELED
-import io.mailit.core.model.MailMessageStatus.PENDING
-import io.mailit.core.model.MailMessageStatus.SENDING
 import io.mailit.core.model.MailMessageType
 import io.mailit.core.spi.MailMessageRepository
 import io.mailit.core.spi.MailMessageTypeRepository
@@ -12,6 +9,9 @@ import io.mailit.test.createPlainMailMessageType
 import io.mailit.test.nowWithoutNanos
 import io.mailit.value.EmailAddress.Companion.toEmailAddress
 import io.mailit.value.MailId
+import io.mailit.value.MailState.CANCELED
+import io.mailit.value.MailState.PENDING
+import io.mailit.value.MailState.SENDING
 import jakarta.inject.Inject
 import java.time.Instant
 import kotlinx.coroutines.runBlocking
@@ -50,7 +50,7 @@ abstract class MailMessageRepositoryTest {
                 emailTo = "email@to.com".toEmailAddress(),
                 type = mailMessageType,
                 createdAt = nowWithoutNanos(),
-                status = PENDING,
+                state = PENDING,
                 deduplicationId = "deduplication1",
             )
             mailMessageRepository.create(mailMessage)
@@ -66,7 +66,7 @@ abstract class MailMessageRepositoryTest {
         assertEquals(mailMessage.emailFrom, actual.emailFrom)
         assertEquals(mailMessage.emailTo, actual.emailTo)
         assertEquals(mailMessage.createdAt, actual.createdAt)
-        assertEquals(mailMessage.status, actual.status)
+        assertEquals(mailMessage.state, actual.state)
         assertEquals(mailMessage.deduplicationId, actual.deduplicationId)
 
         // mailMessageType is fetched too
@@ -79,7 +79,7 @@ abstract class MailMessageRepositoryTest {
     }
 
     @Test
-    fun findAllWithTypeByStatusesAndSendingStartedBefore_returns() = runTest {
+    fun findAllWithTypeByStatesAndSendingStartedBefore_returns() = runTest {
         // given
         val messageSendingStartedAt = Instant.now().minusSeconds(10)
 
@@ -93,13 +93,13 @@ abstract class MailMessageRepositoryTest {
             type = mailMessageType,
             createdAt = Instant.now().minusSeconds(100),
             sendingStartedAt = messageSendingStartedAt,
-            status = SENDING,
+            state = SENDING,
             deduplicationId = "deduplication2",
         )
         mailMessageRepository.create(sendingMessage)
 
         // when
-        val actual = mailMessageRepository.findAllWithTypeByStatusesAndSendingStartedBefore(listOf(SENDING), Instant.now(), 1000)
+        val actual = mailMessageRepository.findAllWithTypeByStatesAndSendingStartedBefore(listOf(SENDING), Instant.now(), 1000)
 
         // then
         assertEquals(1, actual.size)
@@ -107,7 +107,7 @@ abstract class MailMessageRepositoryTest {
     }
 
     @Test
-    fun findAllIdsByStatusIn_returnsIdsOnly() = runTest {
+    fun findAllIdsByStateIn_returnsIdsOnly() = runTest {
         // given
         val message2 = MailMessage(
             id = MailId(2),
@@ -118,13 +118,13 @@ abstract class MailMessageRepositoryTest {
             emailTo = "email@to.com".toEmailAddress(),
             type = mailMessageType,
             createdAt = Instant.now(),
-            status = PENDING,
+            state = PENDING,
             deduplicationId = "deduplication2",
         )
         mailMessageRepository.create(message2)
 
         // when
-        val actual = mailMessageRepository.findAllIdsByStatusIn(listOf(PENDING), 1000)
+        val actual = mailMessageRepository.findAllIdsByStateIn(listOf(PENDING), 1000)
 
         // then
         assertEquals(2, actual.size)
@@ -143,7 +143,7 @@ abstract class MailMessageRepositoryTest {
             emailTo = "email@to.com".toEmailAddress(),
             type = mailMessageType,
             createdAt = Instant.now(),
-            status = PENDING,
+            state = PENDING,
             deduplicationId = "deduplication2",
         )
         mailMessageRepository.create(message2)
@@ -168,7 +168,7 @@ abstract class MailMessageRepositoryTest {
             emailTo = "email@to.com".toEmailAddress(),
             type = mailMessageType,
             createdAt = nowWithoutNanos(),
-            status = PENDING,
+            state = PENDING,
             deduplicationId = "deduplication555",
         )
 
@@ -193,7 +193,7 @@ abstract class MailMessageRepositoryTest {
             emailTo = "email@to.com".toEmailAddress(),
             type = mailMessageType,
             createdAt = nowWithoutNanos(),
-            status = PENDING,
+            state = PENDING,
             deduplicationId = mailMessage.deduplicationId,
         )
 
@@ -213,7 +213,7 @@ abstract class MailMessageRepositoryTest {
             emailTo = "email@to.com".toEmailAddress(),
             type = mailMessageType,
             createdAt = nowWithoutNanos(),
-            status = PENDING,
+            state = PENDING,
             deduplicationId = null,
         )
 
@@ -229,91 +229,91 @@ abstract class MailMessageRepositoryTest {
     }
 
     @Test
-    fun updateMessageStatus() = runTest {
+    fun updateMessageState() = runTest {
         // given
-        val status = SENDING
+        val state = SENDING
 
         // when
-        mailMessageRepository.updateMessageStatus(mailMessage.id, status)
+        mailMessageRepository.updateMessageState(mailMessage.id, state)
 
         val actual = mailMessageRepository.findOneWithTypeById(mailMessage.id)
 
         // then
-        assertEquals(status, actual?.status)
+        assertEquals(state, actual?.state)
     }
 
     @Test
-    fun updateMessageStatusAndSendingStartedTimeByIdAndStatusIn_whenStatusesMatch_updates() = runTest {
+    fun updateMessageStateAndSendingStartedTimeByIdAndStateIn_whenStatesMatch_updates() = runTest {
         // given
-        val status = SENDING
+        val state = SENDING
         val startTime = nowWithoutNanos()
 
         // when
-        mailMessageRepository.updateMessageStatusAndSendingStartedTimeByIdAndStatusIn(
+        mailMessageRepository.updateMessageStateAndSendingStartedTimeByIdAndStateIn(
             id = mailMessage.id,
-            statuses = listOf(mailMessage.status),
-            status = status,
+            states = listOf(mailMessage.state),
+            state = state,
             sendingStartedAt = startTime,
         )
 
         val actual = mailMessageRepository.findOneWithTypeById(mailMessage.id)
 
         // then
-        assertEquals(status, actual?.status)
+        assertEquals(state, actual?.state)
         assertEquals(startTime, actual?.sendingStartedAt)
     }
 
     @Test
-    fun updateMessageStatusAndSendingStartedTimeByIdAndStatusIn_whenStatusesDoNotMatch_doesNothing() = runTest {
+    fun updateMessageStateAndSendingStartedTimeByIdAndStateIn_whenStatesDoNotMatch_doesNothing() = runTest {
         // given
-        val status = SENDING
+        val state = SENDING
         val startTime = nowWithoutNanos()
 
         // when
-        mailMessageRepository.updateMessageStatusAndSendingStartedTimeByIdAndStatusIn(
+        mailMessageRepository.updateMessageStateAndSendingStartedTimeByIdAndStateIn(
             id = mailMessage.id,
-            statuses = listOf(CANCELED),
-            status = status,
+            states = listOf(CANCELED),
+            state = state,
             sendingStartedAt = startTime,
         )
 
         val actual = mailMessageRepository.findOneWithTypeById(mailMessage.id)
 
         // then
-        assertEquals(mailMessage.status, actual?.status)
+        assertEquals(mailMessage.state, actual?.state)
         assertEquals(mailMessage.sendingStartedAt, actual?.sendingStartedAt)
     }
 
     @Test
-    fun updateMessageStatusAndSentTime() = runTest {
+    fun updateMessageStateAndSentTime() = runTest {
         // given
-        val status = SENDING
+        val state = SENDING
         val sentAt = nowWithoutNanos()
 
         // when
-        mailMessageRepository.updateMessageStatusAndSentTime(
+        mailMessageRepository.updateMessageStateAndSentTime(
             id = mailMessage.id,
-            status = status,
+            state = state,
             sentAt = sentAt,
         )
 
         val actual = mailMessageRepository.findOneWithTypeById(mailMessage.id)
 
         // then
-        assertEquals(status, actual?.status)
+        assertEquals(state, actual?.state)
         assertEquals(sentAt, actual?.sentAt)
     }
 
     @Test
-    fun updateMessageStatusFailedCountAndSendingStartedTime() = runTest {
+    fun updateMessageStateFailedCountAndSendingStartedTime() = runTest {
         // given
-        val status = SENDING
+        val state = SENDING
         val failedCount = 123
 
         // when
-        mailMessageRepository.updateMessageStatusFailedCountAndSendingStartedTime(
+        mailMessageRepository.updateMessageStateFailedCountAndSendingStartedTime(
             id = mailMessage.id,
-            status = status,
+            state = state,
             failedCount = failedCount,
             sendingStartedAt = null,
         )
@@ -321,7 +321,7 @@ abstract class MailMessageRepositoryTest {
         val actual = mailMessageRepository.findOneWithTypeById(mailMessage.id)
 
         // then
-        assertEquals(status, actual?.status)
+        assertEquals(state, actual?.state)
         assertNull(actual?.sendingStartedAt)
     }
 }

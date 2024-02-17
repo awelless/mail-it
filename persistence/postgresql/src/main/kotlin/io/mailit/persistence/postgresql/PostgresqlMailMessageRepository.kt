@@ -2,7 +2,6 @@ package io.mailit.persistence.postgresql
 
 import io.mailit.core.exception.DuplicateUniqueKeyException
 import io.mailit.core.model.MailMessage
-import io.mailit.core.model.MailMessageStatus
 import io.mailit.core.model.Slice
 import io.mailit.core.spi.MailMessageRepository
 import io.mailit.persistence.common.createSlice
@@ -14,6 +13,7 @@ import io.mailit.persistence.postgresql.Tables.MAIL_MESSAGE
 import io.mailit.persistence.postgresql.Tables.MAIL_MESSAGE_TEMPLATE
 import io.mailit.persistence.postgresql.Tables.MAIL_MESSAGE_TYPE
 import io.mailit.value.MailId
+import io.mailit.value.MailState
 import io.smallrye.mutiny.Multi
 import io.smallrye.mutiny.coroutines.awaitSuspending
 import io.vertx.mutiny.pgclient.PgPool
@@ -31,7 +31,7 @@ private const val FIND_WITH_TYPE_BY_ID_SQL = """
            m.created_at ${MailMessageCol.CREATED_AT},
            m.sending_started_at ${MailMessageCol.SENDING_STARTED_AT},
            m.sent_at ${MailMessageCol.SENT_AT},
-           m.status ${MailMessageCol.STATUS},
+           m.state ${MailMessageCol.STATE},
            m.failed_count ${MailMessageCol.FAILED_COUNT},
            m.deduplication_id ${MailMessageCol.DEDUPLICATION_ID},
            mt.mail_message_type_id ${MailMessageTypeCol.ID},
@@ -49,7 +49,7 @@ private const val FIND_WITH_TYPE_BY_ID_SQL = """
      LEFT JOIN $MAIL_MESSAGE_TEMPLATE t ON mt.mail_message_type_id = t.mail_message_type_id 
     WHERE m.mail_message_id = $1"""
 
-private const val FIND_WITH_TYPE_BY_SENDING_STARTED_BEFORE_AND_STATUSES_SQL = """
+private const val FIND_WITH_TYPE_BY_SENDING_STARTED_BEFORE_AND_STATEES_SQL = """
     SELECT m.mail_message_id ${MailMessageCol.ID},
            m.text ${MailMessageCol.TEXT},
            m.data ${MailMessageCol.DATA},
@@ -59,7 +59,7 @@ private const val FIND_WITH_TYPE_BY_SENDING_STARTED_BEFORE_AND_STATUSES_SQL = ""
            m.created_at ${MailMessageCol.CREATED_AT},
            m.sending_started_at ${MailMessageCol.SENDING_STARTED_AT},
            m.sent_at ${MailMessageCol.SENT_AT},
-           m.status ${MailMessageCol.STATUS},
+           m.state ${MailMessageCol.STATE},
            m.failed_count ${MailMessageCol.FAILED_COUNT},
            m.deduplication_id ${MailMessageCol.DEDUPLICATION_ID},
            mt.mail_message_type_id ${MailMessageTypeCol.ID},
@@ -76,13 +76,13 @@ private const val FIND_WITH_TYPE_BY_SENDING_STARTED_BEFORE_AND_STATUSES_SQL = ""
     INNER JOIN $MAIL_MESSAGE_TYPE mt ON m.mail_message_type_id = mt.mail_message_type_id
     LEFT JOIN $MAIL_MESSAGE_TEMPLATE t ON mt.mail_message_type_id = t.mail_message_type_id
     WHERE m.sending_started_at < $1
-      AND m.status = ANY($2)
+      AND m.state = ANY($2)
     LIMIT $3"""
 
-private const val FIND_IDS_BY_STATUSES_SQL = """
+private const val FIND_IDS_BY_STATEES_SQL = """
     SELECT mail_message_id 
       FROM $MAIL_MESSAGE 
-     WHERE status = ANY($1)
+     WHERE state = ANY($1)
      LIMIT $2"""
 
 private const val FIND_ALL_SLICED_SQL = """
@@ -95,7 +95,7 @@ private const val FIND_ALL_SLICED_SQL = """
            m.created_at ${MailMessageCol.CREATED_AT},
            m.sending_started_at ${MailMessageCol.SENDING_STARTED_AT},
            m.sent_at ${MailMessageCol.SENT_AT},
-           m.status ${MailMessageCol.STATUS},
+           m.state ${MailMessageCol.STATE},
            m.failed_count ${MailMessageCol.FAILED_COUNT},
            m.deduplication_id ${MailMessageCol.DEDUPLICATION_ID},
            mt.mail_message_type_id ${MailMessageTypeCol.ID},
@@ -126,25 +126,25 @@ private const val INSERT_SQL = """
         created_at,
         sending_started_at,
         sent_at,
-        status,
+        state,
         failed_count,
         deduplication_id)
    VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)"""
 
-private const val UPDATE_STATUS_SQL = "UPDATE $MAIL_MESSAGE SET status = $1 WHERE mail_message_id = $2"
+private const val UPDATE_STATE_SQL = "UPDATE $MAIL_MESSAGE SET state = $1 WHERE mail_message_id = $2"
 
-private const val UPDATE_STATUS_AND_SENDING_START_SQL = """
+private const val UPDATE_STATE_AND_SENDING_START_SQL = """
     UPDATE $MAIL_MESSAGE SET 
-        status = $1, 
+        state = $1, 
         sending_started_at = $2 
     WHERE mail_message_id = $3 
-      AND status = ANY($4)"""
+      AND state = ANY($4)"""
 
-private const val UPDATE_STATUS_AND_SENT_AT_SQL = "UPDATE $MAIL_MESSAGE SET status = $1, sent_at = $2 WHERE mail_message_id = $3"
+private const val UPDATE_STATE_AND_SENT_AT_SQL = "UPDATE $MAIL_MESSAGE SET state = $1, sent_at = $2 WHERE mail_message_id = $3"
 
-private const val UPDATE_STATUS_FAILED_COUNT_AND_SENDING_START_SQL = """
+private const val UPDATE_STATE_FAILED_COUNT_AND_SENDING_START_SQL = """
     UPDATE mail_message SET 
-        status = $1, 
+        state = $1, 
         failed_count = $2, 
         sending_started_at = $3 
     WHERE mail_message_id = $4"""
@@ -160,29 +160,29 @@ class PostgresqlMailMessageRepository(
             .onItem().transform { if (it.hasNext()) it.next().getMailMessageWithTypeFromRow(dataSerializer) else null }
             .awaitSuspending()
 
-    override suspend fun findAllWithTypeByStatusesAndSendingStartedBefore(
-        statuses: Collection<MailMessageStatus>,
+    override suspend fun findAllWithTypeByStatesAndSendingStartedBefore(
+        states: Collection<MailState>,
         sendingStartedBefore: Instant,
         maxListSize: Int,
     ): List<MailMessage> {
-        val statusNames = statuses
+        val stateNames = states
             .map { it.name }
             .toTypedArray()
 
-        return client.preparedQuery(FIND_WITH_TYPE_BY_SENDING_STARTED_BEFORE_AND_STATUSES_SQL)
-            .execute(Tuple.of(sendingStartedBefore.toLocalDateTime(), statusNames, maxListSize))
+        return client.preparedQuery(FIND_WITH_TYPE_BY_SENDING_STARTED_BEFORE_AND_STATEES_SQL)
+            .execute(Tuple.of(sendingStartedBefore.toLocalDateTime(), stateNames, maxListSize))
             .onItem().transformToMulti { Multi.createFrom().iterable(it) }
             .onItem().transform { it.getMailMessageWithTypeFromRow(dataSerializer) }
             .collect().asList()
             .awaitSuspending()
     }
 
-    override suspend fun findAllIdsByStatusIn(statuses: Collection<MailMessageStatus>, maxListSize: Int): List<MailId> {
-        val statusNames = statuses
+    override suspend fun findAllIdsByStateIn(states: Collection<MailState>, maxListSize: Int): List<MailId> {
+        val stateNames = states
             .map { it.name }
             .toTypedArray()
 
-        return client.preparedQuery(FIND_IDS_BY_STATUSES_SQL).execute(Tuple.of(statusNames, maxListSize))
+        return client.preparedQuery(FIND_IDS_BY_STATEES_SQL).execute(Tuple.of(stateNames, maxListSize))
             .onItem().transformToMulti { Multi.createFrom().iterable(it) }
             .onItem().transform { MailId(it.getLong("mail_message_id")) }
             .collect().asList()
@@ -214,7 +214,7 @@ class PostgresqlMailMessageRepository(
             mailMessage.createdAt.toLocalDateTime(),
             mailMessage.sendingStartedAt?.toLocalDateTime(),
             mailMessage.sentAt?.toLocalDateTime(),
-            mailMessage.status.name,
+            mailMessage.state.name,
             mailMessage.failedCount,
             mailMessage.deduplicationId,
         )
@@ -229,41 +229,41 @@ class PostgresqlMailMessageRepository(
         return mailMessage
     }
 
-    override suspend fun updateMessageStatus(id: MailId, status: MailMessageStatus): Int =
-        client.preparedQuery(UPDATE_STATUS_SQL).execute(Tuple.of(status.name, id.value))
+    override suspend fun updateMessageState(id: MailId, state: MailState): Int =
+        client.preparedQuery(UPDATE_STATE_SQL).execute(Tuple.of(state.name, id.value))
             .onItem().transform { it.rowCount() }
             .awaitSuspending()
 
-    override suspend fun updateMessageStatusAndSendingStartedTimeByIdAndStatusIn(
+    override suspend fun updateMessageStateAndSendingStartedTimeByIdAndStateIn(
         id: MailId,
-        statuses: Collection<MailMessageStatus>,
-        status: MailMessageStatus,
+        states: Collection<MailState>,
+        state: MailState,
         sendingStartedAt: Instant,
     ): Int {
-        val statusNames = statuses
+        val stateNames = states
             .map { it.name }
             .toTypedArray()
 
-        return client.preparedQuery(UPDATE_STATUS_AND_SENDING_START_SQL)
-            .execute(Tuple.of(status.name, sendingStartedAt.toLocalDateTime(), id.value, statusNames))
+        return client.preparedQuery(UPDATE_STATE_AND_SENDING_START_SQL)
+            .execute(Tuple.of(state.name, sendingStartedAt.toLocalDateTime(), id.value, stateNames))
             .onItem().transform { it.rowCount() }
             .awaitSuspending()
     }
 
-    override suspend fun updateMessageStatusAndSentTime(id: MailId, status: MailMessageStatus, sentAt: Instant): Int =
-        client.preparedQuery(UPDATE_STATUS_AND_SENT_AT_SQL)
-            .execute(Tuple.of(status.name, sentAt.toLocalDateTime(), id.value))
+    override suspend fun updateMessageStateAndSentTime(id: MailId, state: MailState, sentAt: Instant): Int =
+        client.preparedQuery(UPDATE_STATE_AND_SENT_AT_SQL)
+            .execute(Tuple.of(state.name, sentAt.toLocalDateTime(), id.value))
             .onItem().transform { it.rowCount() }
             .awaitSuspending()
 
-    override suspend fun updateMessageStatusFailedCountAndSendingStartedTime(
+    override suspend fun updateMessageStateFailedCountAndSendingStartedTime(
         id: MailId,
-        status: MailMessageStatus,
+        state: MailState,
         failedCount: Int,
         sendingStartedAt: Instant?,
     ): Int =
-        client.preparedQuery(UPDATE_STATUS_FAILED_COUNT_AND_SENDING_START_SQL)
-            .execute(Tuple.of(status.name, failedCount, sendingStartedAt?.toLocalDateTime(), id.value))
+        client.preparedQuery(UPDATE_STATE_FAILED_COUNT_AND_SENDING_START_SQL)
+            .execute(Tuple.of(state.name, failedCount, sendingStartedAt?.toLocalDateTime(), id.value))
             .onItem().transform { it.rowCount() }
             .awaitSuspending()
 }

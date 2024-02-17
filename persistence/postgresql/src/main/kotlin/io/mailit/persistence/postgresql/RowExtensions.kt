@@ -3,7 +3,6 @@ package io.mailit.persistence.postgresql
 import io.mailit.apikey.spi.persistence.ApiKey
 import io.mailit.core.model.HtmlMailMessageType
 import io.mailit.core.model.MailMessage
-import io.mailit.core.model.MailMessageStatus
 import io.mailit.core.model.MailMessageTemplate
 import io.mailit.core.model.MailMessageType
 import io.mailit.core.model.MailMessageTypeState
@@ -16,6 +15,7 @@ import io.mailit.persistence.postgresql.MailMessageContent.HTML
 import io.mailit.template.spi.persistence.PersistenceTemplate
 import io.mailit.value.EmailAddress.Companion.toEmailAddress
 import io.mailit.value.MailId
+import io.mailit.value.MailState
 import io.mailit.value.MailTypeId
 import io.mailit.value.TemplateEngine
 import io.vertx.mutiny.sqlclient.Row
@@ -88,7 +88,7 @@ internal fun Row.getMailMessageWithTypeFromRow(dataSerializer: MailMessageDataSe
     val sendingStartedAt = getNullableInstant(MailMessageCol.SENDING_STARTED_AT)
     val sentAt = getNullableInstant(MailMessageCol.SENT_AT)
 
-    val status = MailMessageStatus.valueOf(getString(MailMessageCol.STATUS))
+    val status = MailState.valueOf(getString(MailMessageCol.STATE))
     val failedCount = getInteger(MailMessageCol.FAILED_COUNT)
 
     val deduplicationId = getString(MailMessageCol.DEDUPLICATION_ID)
@@ -104,7 +104,7 @@ internal fun Row.getMailMessageWithTypeFromRow(dataSerializer: MailMessageDataSe
         createdAt = createdAt,
         sendingStartedAt = sendingStartedAt,
         sentAt = sentAt,
-        status = status,
+        state = status,
         failedCount = failedCount,
         deduplicationId = deduplicationId,
     )

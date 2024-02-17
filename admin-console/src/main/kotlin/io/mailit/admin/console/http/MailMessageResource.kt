@@ -34,7 +34,7 @@ class MailMessageResource(
         createdAt = createdAt,
         sendingStartedAt = sendingStartedAt,
         sentAt = sentAt,
-        status = status,
+        status = state,
         failedCount = failedCount,
     )
 }

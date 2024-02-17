@@ -2,12 +2,12 @@ package io.mailit.test
 
 import io.mailit.core.model.HtmlMailMessageType
 import io.mailit.core.model.MailMessage
-import io.mailit.core.model.MailMessageStatus
 import io.mailit.core.model.MailMessageTemplate
 import io.mailit.core.model.MailMessageType
 import io.mailit.core.model.PlainTextMailMessageType
 import io.mailit.value.EmailAddress.Companion.toEmailAddress
 import io.mailit.value.MailId
+import io.mailit.value.MailState
 import io.mailit.value.MailTypeId
 import io.mailit.value.TemplateEngine
 import java.util.concurrent.atomic.AtomicLong
@@ -54,7 +54,7 @@ fun createMailMessage(messageType: MailMessageType): MailMessage {
         emailTo = "email@to.com".toEmailAddress(),
         type = messageType,
         createdAt = nowWithoutNanos(),
-        status = MailMessageStatus.PENDING,
+        state = MailState.PENDING,
         deduplicationId = id.toString(),
     )
 }

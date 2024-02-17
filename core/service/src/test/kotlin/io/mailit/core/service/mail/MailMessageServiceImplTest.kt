@@ -4,7 +4,6 @@ import io.mailit.core.exception.DuplicateUniqueKeyException
 import io.mailit.core.exception.ValidationException
 import io.mailit.core.external.api.CreateMailRequest
 import io.mailit.core.model.MailMessage
-import io.mailit.core.model.MailMessageStatus.PENDING
 import io.mailit.core.model.MailMessageType
 import io.mailit.core.spi.MailMessageRepository
 import io.mailit.core.spi.MailMessageTypeRepository
@@ -13,6 +12,7 @@ import io.mailit.test.createMailMessage
 import io.mailit.test.createPlainMailMessageType
 import io.mailit.value.EmailAddress.Companion.toEmailAddress
 import io.mailit.value.MailId
+import io.mailit.value.MailState.PENDING
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.impl.annotations.InjectMockKs
@@ -83,7 +83,7 @@ class MailMessageServiceImplTest {
         assertEquals(command.emailFrom, savedMailMessage.emailFrom)
         assertEquals(command.emailTo, savedMailMessage.emailTo)
         assertEquals(mailType, savedMailMessage.type)
-        assertEquals(PENDING, savedMailMessage.status)
+        assertEquals(PENDING, savedMailMessage.state)
         assertEquals(command.deduplicationId, savedMailMessage.deduplicationId)
     }
 
