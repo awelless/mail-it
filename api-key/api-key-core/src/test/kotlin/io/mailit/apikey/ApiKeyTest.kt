@@ -11,8 +11,8 @@ import io.mailit.apikey.core.RawSecret
 import io.mailit.apikey.fake.ConstantSecuredRandom
 import io.mailit.apikey.fake.InMemoryApiKeyRepository
 import io.mailit.apikey.fake.NoOpSecretHasher
-import io.mailit.apikey.lang.flatMap
 import io.mailit.apikey.spi.persistence.ApiKeyRepository
+import io.mailit.lang.flatMap
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.nanoseconds

@@ -1,4 +1,4 @@
-package io.mailit.apikey.lang
+package io.mailit.lang
 
 import java.time.Instant
 import kotlin.time.Duration

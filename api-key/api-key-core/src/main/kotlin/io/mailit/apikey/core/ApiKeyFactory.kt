@@ -1,9 +1,9 @@
 package io.mailit.apikey.core
 
 import io.mailit.apikey.api.CreateApiKeyCommand
-import io.mailit.apikey.lang.plus
 import io.mailit.apikey.spi.security.SecretHasher
 import io.mailit.apikey.spi.security.SecureRandom
+import io.mailit.lang.plus
 import java.time.Instant
 import java.util.UUID
 

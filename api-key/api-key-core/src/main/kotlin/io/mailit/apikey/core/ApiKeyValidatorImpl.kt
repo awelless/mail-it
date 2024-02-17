@@ -2,10 +2,10 @@ package io.mailit.apikey.core
 
 import io.mailit.apikey.api.ApiKeyValidator
 import io.mailit.apikey.api.InvalidApiKeyException
-import io.mailit.apikey.lang.ensure
-import io.mailit.apikey.lang.flatMap
 import io.mailit.apikey.spi.persistence.ApiKeyRepository
 import io.mailit.apikey.spi.security.SecretHasher
+import io.mailit.lang.ensure
+import io.mailit.lang.flatMap
 import java.time.Instant
 import mu.KLogging
 

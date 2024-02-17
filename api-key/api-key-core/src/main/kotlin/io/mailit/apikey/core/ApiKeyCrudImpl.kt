@@ -2,11 +2,11 @@ package io.mailit.apikey.core
 
 import io.mailit.apikey.api.ApiKeyCrud
 import io.mailit.apikey.api.CreateApiKeyCommand
-import io.mailit.apikey.lang.mapError
 import io.mailit.apikey.spi.persistence.ApiKeyRepository
 import io.mailit.core.exception.DuplicateUniqueKeyException
 import io.mailit.core.exception.NotFoundException
 import io.mailit.core.exception.ValidationException
+import io.mailit.lang.mapError
 import mu.KLogging
 
 internal class ApiKeyCrudImpl(

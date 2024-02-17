@@ -60,4 +60,9 @@ include(
     "template:template-quarkus",
     "template:template-spi-persistence",
     "template:template-test",
+    "worker:worker-api",
+    "worker:worker-core",
+    "worker:worker-quarkus",
+    "worker:worker-spi-persistence",
+    "worker:worker-test",
 )

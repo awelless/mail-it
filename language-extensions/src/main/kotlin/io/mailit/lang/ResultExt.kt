@@ -1,4 +1,4 @@
-package io.mailit.apikey.lang
+package io.mailit.lang
 
 @Suppress("UNCHECKED_CAST") // Only Result.failure is being casted.
 inline fun <T, R> Result<T>.flatMap(transform: (T) -> Result<R>) =
