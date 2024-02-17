@@ -14,6 +14,7 @@ import io.mailit.persistence.h2.MailMessageContent.HTML
 import io.mailit.persistence.h2.MailMessageContent.PLAIN_TEXT
 import io.mailit.persistence.h2.Tables.MAIL_MESSAGE_TEMPLATE
 import io.mailit.persistence.h2.Tables.MAIL_MESSAGE_TYPE
+import io.mailit.value.MailTypeId
 import java.sql.SQLException
 import java.time.Instant
 import javax.sql.DataSource
@@ -115,13 +116,13 @@ class H2MailMessageTypeRepository(
     private val singleMapper = SingleResultSetMapper { it.getMailMessageTypeFromRow() }
     private val multipleMapper = MultipleResultSetMapper { it.getMailMessageTypeFromRow() }
 
-    override suspend fun findById(id: Long): MailMessageType? =
+    override suspend fun findById(id: MailTypeId): MailMessageType? =
         dataSource.connection.use {
             queryRunner.query(
                 it,
                 FIND_BY_ID_SQL,
                 singleMapper,
-                id,
+                id.value,
             )
         }
 
@@ -157,7 +158,7 @@ class H2MailMessageTypeRepository(
                 it.withTransaction {
                     queryRunner.update(
                         it, INSERT_MAIL_TYPE_SQL,
-                        mailMessageType.id,
+                        mailMessageType.id.value,
                         mailMessageType.name,
                         mailMessageType.description,
                         mailMessageType.maxRetriesCount,
@@ -169,7 +170,7 @@ class H2MailMessageTypeRepository(
                     )
 
                     if (mailMessageType is HtmlMailMessageType) {
-                        queryRunner.update(it, INSERT_MAIL_TEMPLATE_SQL, mailMessageType.id, mailMessageType.template.compressedValue)
+                        queryRunner.update(it, INSERT_MAIL_TEMPLATE_SQL, mailMessageType.id.value, mailMessageType.template.compressedValue)
                     }
                 }
             }
@@ -192,7 +193,7 @@ class H2MailMessageTypeRepository(
                     it,
                     UPDATE_TEMPLATE_SQL,
                     (mailMessageType as? HtmlMailMessageType)?.template?.compressedValue,
-                    mailMessageType.id,
+                    mailMessageType.id.value,
                 )
 
                 queryRunner.update(
@@ -202,7 +203,7 @@ class H2MailMessageTypeRepository(
                     mailMessageType.maxRetriesCount,
                     mailMessageType.updatedAt,
                     (mailMessageType as? HtmlMailMessageType)?.templateEngine?.name,
-                    mailMessageType.id,
+                    mailMessageType.id.value,
                 )
             }
         }
@@ -214,14 +215,14 @@ class H2MailMessageTypeRepository(
         return mailMessageType
     }
 
-    override suspend fun updateState(id: Long, state: MailMessageTypeState, updatedAt: Instant): Int =
+    override suspend fun updateState(id: MailTypeId, state: MailMessageTypeState, updatedAt: Instant): Int =
         dataSource.connection.use {
             queryRunner.update(
                 it,
                 UPDATE_STATE_SQL,
                 state.name,
                 updatedAt,
-                id,
+                id.value,
             )
         }
 

@@ -46,12 +46,12 @@ class MailMessageTypeResourceTest {
     @Test
     fun getById() {
         When {
-            get(MAIL_TYPE_URL, mailType.id)
+            get(MAIL_TYPE_URL, mailType.id.value)
         } Then {
             statusCode(OK)
 
             body(
-                ID equalTo mailType.id.toString(),
+                ID equalTo mailType.id.value.toString(),
                 NAME equalTo mailType.name,
                 DESCRIPTION equalTo mailType.description,
                 MAX_RETRIES_COUNT equalTo mailType.maxRetriesCount,
@@ -72,7 +72,7 @@ class MailMessageTypeResourceTest {
             body(
                 "content.size()" equalTo 1,
 
-                "content[0].$ID" equalTo mailType.id.toString(),
+                "content[0].$ID" equalTo mailType.id.value.toString(),
                 "content[0].$NAME" equalTo mailType.name,
                 "content[0].$DESCRIPTION" equalTo mailType.description,
                 "content[0].$MAX_RETRIES_COUNT" equalTo mailType.maxRetriesCount,
@@ -94,7 +94,7 @@ class MailMessageTypeResourceTest {
             body(
                 "content.size()" equalTo 1,
 
-                "content[0].$ID" equalTo mailType.id.toString(),
+                "content[0].$ID" equalTo mailType.id.value.toString(),
                 "content[0].$NAME" equalTo mailType.name,
                 "content[0].$DESCRIPTION" equalTo mailType.description,
                 "content[0].$MAX_RETRIES_COUNT" equalTo mailType.maxRetriesCount,
@@ -143,7 +143,7 @@ class MailMessageTypeResourceTest {
             contentType(JSON)
             body(updateDto)
         } When {
-            put(MAIL_TYPE_URL, mailType.id)
+            put(MAIL_TYPE_URL, mailType.id.value)
         } Then {
             statusCode(OK)
 
@@ -159,7 +159,7 @@ class MailMessageTypeResourceTest {
         Given {
             param(FORCE_PARAM, "true")
         } When {
-            delete(MAIL_TYPE_URL, mailType.id)
+            delete(MAIL_TYPE_URL, mailType.id.value)
         } Then {
             statusCode(ACCEPTED)
         }
@@ -174,7 +174,7 @@ class MailMessageTypeResourceTest {
         Given {
             param(FORCE_PARAM, "true")
         } When {
-            delete(MAIL_TYPE_URL, mailType.id)
+            delete(MAIL_TYPE_URL, mailType.id.value)
         } Then {
             statusCode(ACCEPTED)
         }

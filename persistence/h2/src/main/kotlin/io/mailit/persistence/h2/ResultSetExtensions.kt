@@ -17,6 +17,7 @@ import io.mailit.template.api.TemplateEngine
 import io.mailit.template.spi.persistence.PersistenceTemplate
 import io.mailit.value.EmailAddress.Companion.toEmailAddress
 import io.mailit.value.MailId
+import io.mailit.value.MailTypeId
 import java.sql.ResultSet
 import java.time.Instant
 
@@ -29,7 +30,7 @@ internal fun ResultSet.getApiKeyFromRow() = ApiKey(
 )
 
 internal fun ResultSet.getMailMessageTypeFromRow(): MailMessageType {
-    val typeId = getLong(MailMessageTypeCol.ID)
+    val typeId = MailTypeId(getLong(MailMessageTypeCol.ID))
     val typeName = getString(MailMessageTypeCol.NAME)
 
     val typeDescription = getString(MailMessageTypeCol.DESCRIPTION)
@@ -114,7 +115,7 @@ internal fun ResultSet.getMailMessageWithTypeFromRow(dataSerializer: MailMessage
 }
 
 internal fun ResultSet.getTemplateFromRow() = PersistenceTemplate(
-    mailTypeId = getLong(MailMessageTypeCol.ID),
+    mailTypeId = MailTypeId(getLong(MailMessageTypeCol.ID)),
     templateContent = getBlob(MailMessageTypeCol.TEMPLATE).binaryStream.use { MailMessageTemplate.fromCompressedValue(it.readBytes()).value },
     updatedAt = getInstant(MailMessageTypeCol.UPDATED_AT),
 )

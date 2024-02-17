@@ -7,6 +7,7 @@ import io.mailit.template.core.fake.StubTemplateRepository
 import io.mailit.template.spi.persistence.PersistenceTemplate
 import io.mailit.test.assertHtmlEquals
 import io.mailit.test.readResource
+import io.mailit.value.MailTypeId
 import java.time.Instant
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -18,10 +19,10 @@ private const val EXPECTED_HTML_PATH = "templates/freemarker/FreemarkerTemplateP
 
 class FreemarkerTemplateProcessorTest {
 
-    private val mailTypeId = 1L
+    private val mailTypeId = MailTypeId(1)
     private val template = PersistenceTemplate(mailTypeId, FREEMARKER_TEST_TEMPLATE_PATH.readResource(), Instant.now())
 
-    private val invalidMailTypeId = 2L
+    private val invalidMailTypeId = MailTypeId(2)
     private val invalidTemplate = PersistenceTemplate(invalidMailTypeId, FREEMARKER_INVALID_TEMPLATE_PATH.readResource(), Instant.now())
 
     private val templateRepository = StubTemplateRepository(mailTypeId to template, invalidMailTypeId to invalidTemplate)
@@ -120,7 +121,7 @@ class FreemarkerTemplateProcessorTest {
     @Test
     fun `template doesn't exist - fails`() = runTest {
         // when
-        val error = freemarker.process(mailTypeId = 999L, emptyMap()).exceptionOrNull()
+        val error = freemarker.process(MailTypeId(999), emptyMap()).exceptionOrNull()
 
         // then
         assertTrue(error is NotFoundException)

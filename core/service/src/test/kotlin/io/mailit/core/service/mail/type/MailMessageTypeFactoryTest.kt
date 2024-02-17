@@ -9,6 +9,7 @@ import io.mailit.core.model.MailMessageTemplate
 import io.mailit.core.model.PlainTextMailMessageType
 import io.mailit.idgenerator.test.ConstantIdGenerator
 import io.mailit.template.api.TemplateEngine.FREEMARKER
+import io.mailit.value.MailTypeId
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -16,12 +17,12 @@ import org.junit.jupiter.api.assertThrows
 
 class MailMessageTypeFactoryTest {
 
-    private val plainTextMailTypeId = 1L
-    private val htmlMailTypeId = 2L
+    private val plainTextMailTypeId = MailTypeId(1)
+    private val htmlMailTypeId = MailTypeId(2)
 
     val mailMessageTypeFactory = MailMessageTypeFactoryManager(
-        PlainTextMailMessageTypeFactory(ConstantIdGenerator(plainTextMailTypeId)),
-        HtmlMailMessageTypeFactory(ConstantIdGenerator(htmlMailTypeId)),
+        PlainTextMailMessageTypeFactory(ConstantIdGenerator(plainTextMailTypeId.value)),
+        HtmlMailMessageTypeFactory(ConstantIdGenerator(htmlMailTypeId.value)),
     )
 
     @Nested

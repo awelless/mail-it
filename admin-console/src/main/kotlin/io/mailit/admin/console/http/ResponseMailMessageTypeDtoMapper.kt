@@ -15,7 +15,7 @@ class ResponseMailMessageTypeDtoMapper {
 
     fun toSingleDto(mailType: MailMessageType) =
         SingleMailMessageTypeResponseDto(
-            id = mailType.id.toString(),
+            id = mailType.id.value.toString(),
             name = mailType.name,
             description = mailType.description,
             maxRetriesCount = mailType.maxRetriesCount,
@@ -26,7 +26,7 @@ class ResponseMailMessageTypeDtoMapper {
 
     fun toPagedDto(mailType: MailMessageType) =
         PagedMailMessageTypeResponseDto(
-            id = mailType.id.toString(),
+            id = mailType.id.value.toString(),
             name = mailType.name,
             description = mailType.description,
             maxRetriesCount = mailType.maxRetriesCount,

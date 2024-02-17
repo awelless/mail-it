@@ -3,6 +3,7 @@ package io.mailit.template.core.freemarker
 import freemarker.cache.TemplateLoader
 import io.mailit.core.exception.NotFoundException
 import io.mailit.template.spi.persistence.TemplateRepository
+import io.mailit.value.MailTypeId
 import java.io.StringReader
 import kotlinx.coroutines.runBlocking
 
@@ -25,12 +26,13 @@ internal class RepositoryTemplateLoader(
         )
     }
 
-    private fun String.toMailTypeId(): Long {
+    private fun String.toMailTypeId(): MailTypeId {
         val match = nameRegex.matchEntire(this) ?: throw IllegalArgumentException("Invalid template name: $this")
-        return match.groupValues[1].toLong()
+        val longValue = match.groupValues[1].toLong()
+        return MailTypeId(longValue)
     }
 
-    override fun getLastModified(templateSource: Any) = templateSource.asTemplateSource().updatedAt
+    override fun getLastModified(templateSource: Any) = templateSource.asTemplateSource().updatedAtMillis
 
     override fun getReader(templateSource: Any, encoding: String?) =
         StringReader(templateSource.asTemplateSource().templateContent)
@@ -48,7 +50,7 @@ internal class RepositoryTemplateLoader(
 }
 
 private data class RepositoryTemplateSource(
-    val mailTypeId: Long,
+    val mailTypeId: MailTypeId,
     val templateContent: String,
-    val updatedAt: Long,
+    val updatedAtMillis: Long,
 )

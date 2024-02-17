@@ -226,7 +226,7 @@ class MysqlMailMessageRepository(
             mailMessage.subject,
             mailMessage.emailFrom?.email,
             mailMessage.emailTo.email,
-            mailMessage.type.id,
+            mailMessage.type.id.value,
             mailMessage.createdAt.toLocalDateTime(),
             mailMessage.sendingStartedAt?.toLocalDateTime(),
             mailMessage.sentAt?.toLocalDateTime(),

@@ -4,6 +4,7 @@ import io.mailit.core.model.HtmlMailMessageType
 import io.mailit.core.spi.MailMessageTypeRepository
 import io.mailit.template.spi.persistence.TemplateRepository
 import io.mailit.test.createHtmlMailMessageType
+import io.mailit.value.MailTypeId
 import jakarta.inject.Inject
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
@@ -43,7 +44,7 @@ abstract class TemplateRepositoryTest {
     @Test
     fun `findByMailId - when doesn't exist`() = runTest {
         // when
-        val template = templateRepository.findByMailTypeId(0)
+        val template = templateRepository.findByMailTypeId(MailTypeId(0))
 
         // then
         assertNull(template)

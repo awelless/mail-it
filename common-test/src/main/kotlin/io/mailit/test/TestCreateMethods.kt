@@ -9,6 +9,7 @@ import io.mailit.core.model.PlainTextMailMessageType
 import io.mailit.template.api.TemplateEngine
 import io.mailit.value.EmailAddress.Companion.toEmailAddress
 import io.mailit.value.MailId
+import io.mailit.value.MailTypeId
 import java.util.concurrent.atomic.AtomicLong
 
 private val counter = AtomicLong()
@@ -17,7 +18,7 @@ fun createPlainMailMessageType(): PlainTextMailMessageType {
     val id = counter.incrementAndGet()
 
     return PlainTextMailMessageType(
-        id = id,
+        id = MailTypeId(id),
         name = "plain-type-$id",
         description = "Some description",
         maxRetriesCount = 111,
@@ -30,7 +31,7 @@ fun createHtmlMailMessageType(): HtmlMailMessageType {
     val id = counter.incrementAndGet()
 
     return HtmlMailMessageType(
-        id = id,
+        id = MailTypeId(id),
         name = "html-type-$id",
         description = "Some description",
         createdAt = nowWithoutNanos(),

@@ -1,6 +1,7 @@
 package io.mailit.persistence.mysql
 
 import io.mailit.template.spi.persistence.TemplateRepository
+import io.mailit.value.MailTypeId
 import io.smallrye.mutiny.coroutines.awaitSuspending
 import io.vertx.mutiny.mysqlclient.MySQLPool
 import io.vertx.mutiny.sqlclient.Tuple
@@ -19,9 +20,9 @@ class MysqlTemplateRepository(
     private val client: MySQLPool,
 ) : TemplateRepository {
 
-    override suspend fun findByMailTypeId(mailTypeId: Long) =
+    override suspend fun findByMailTypeId(mailTypeId: MailTypeId) =
         client.preparedQuery(FIND_BY_MAIL_TYPE_ID_SQL)
-            .execute(Tuple.of(mailTypeId))
+            .execute(Tuple.of(mailTypeId.value))
             .onItem().transform { it.iterator() }
             .onItem().transform { if (it.hasNext()) it.next().getTemplateFromRow() else null }
             .awaitSuspending()

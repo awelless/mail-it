@@ -1,6 +1,7 @@
 package io.mailit.core.model
 
 import io.mailit.template.api.TemplateEngine
+import io.mailit.value.MailTypeId
 import java.time.Instant
 
 /**
@@ -8,7 +9,7 @@ import java.time.Instant
  */
 sealed class MailMessageType(
 
-    open val id: Long,
+    open val id: MailTypeId,
 
     /**
      * Name of actual mail type. Used in external API
@@ -43,8 +44,7 @@ enum class MailMessageTypeState {
  * [MailMessageType] for plain "text" messages
  */
 data class PlainTextMailMessageType(
-
-    override val id: Long,
+    override val id: MailTypeId,
     override val name: String,
     override var description: String? = null,
     override var maxRetriesCount: Int? = null,
@@ -57,8 +57,7 @@ data class PlainTextMailMessageType(
  * [MailMessageType] for "html" messages
  */
 data class HtmlMailMessageType(
-
-    override val id: Long,
+    override val id: MailTypeId,
     override val name: String,
     override var description: String? = null,
     override var maxRetriesCount: Int? = null,

@@ -17,6 +17,7 @@ import io.mailit.template.api.TemplateEngine
 import io.mailit.template.spi.persistence.PersistenceTemplate
 import io.mailit.value.EmailAddress.Companion.toEmailAddress
 import io.mailit.value.MailId
+import io.mailit.value.MailTypeId
 import io.vertx.mutiny.sqlclient.Row
 import java.time.Instant
 import java.time.ZoneOffset.UTC
@@ -30,7 +31,7 @@ internal fun Row.getApiKeyFromRow() = ApiKey(
 )
 
 internal fun Row.getMailMessageTypeFromRow(): MailMessageType {
-    val typeId = getLong(MailMessageTypeCol.ID)
+    val typeId = MailTypeId(getLong(MailMessageTypeCol.ID))
     val typeName = getString(MailMessageTypeCol.NAME)
 
     val typeDescription = getString(MailMessageTypeCol.DESCRIPTION)
@@ -110,7 +111,7 @@ internal fun Row.getMailMessageWithTypeFromRow(dataSerializer: MailMessageDataSe
 }
 
 internal fun Row.getTemplateFromRow() = PersistenceTemplate(
-    mailTypeId = getLong(MailMessageTypeCol.ID),
+    mailTypeId = MailTypeId(getLong(MailMessageTypeCol.ID)),
     templateContent = MailMessageTemplate.fromCompressedValue(getBuffer(MailMessageTypeCol.TEMPLATE).bytes).value,
     updatedAt = getInstant(MailMessageTypeCol.UPDATED_AT),
 )

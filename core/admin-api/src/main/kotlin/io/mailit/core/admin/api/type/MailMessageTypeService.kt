@@ -4,10 +4,11 @@ import io.mailit.core.model.MailMessageTemplate
 import io.mailit.core.model.MailMessageType
 import io.mailit.core.model.Slice
 import io.mailit.template.api.TemplateEngine
+import io.mailit.value.MailTypeId
 
 interface MailMessageTypeService {
 
-    suspend fun getById(id: Long): MailMessageType
+    suspend fun getById(id: MailTypeId): MailMessageType
 
     suspend fun getAllSliced(page: Int, size: Int): Slice<MailMessageType>
 
@@ -15,7 +16,7 @@ interface MailMessageTypeService {
 
     suspend fun updateMailType(command: UpdateMailMessageTypeCommand): MailMessageType
 
-    suspend fun deleteMailType(id: Long, force: Boolean)
+    suspend fun deleteMailType(id: MailTypeId, force: Boolean)
 }
 
 data class CreateMailMessageTypeCommand(
@@ -28,7 +29,7 @@ data class CreateMailMessageTypeCommand(
 )
 
 data class UpdateMailMessageTypeCommand(
-    val id: Long,
+    val id: MailTypeId,
     val description: String?,
     val maxRetriesCount: Int?,
     val templateEngine: TemplateEngine? = null,

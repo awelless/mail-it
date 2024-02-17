@@ -234,7 +234,7 @@ class H2MailMessageRepository(
                     mailMessage.subject,
                     mailMessage.emailFrom?.email,
                     mailMessage.emailTo.email,
-                    mailMessage.type.id,
+                    mailMessage.type.id.value,
                     mailMessage.createdAt,
                     mailMessage.sendingStartedAt,
                     mailMessage.sentAt,

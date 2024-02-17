@@ -14,6 +14,7 @@ import io.mailit.persistence.mysql.Columns.MailMessageType as MailMessageTypeCol
 import io.mailit.persistence.mysql.MailMessageContent.HTML
 import io.mailit.persistence.mysql.Tables.MAIL_MESSAGE_TEMPLATE
 import io.mailit.persistence.mysql.Tables.MAIL_MESSAGE_TYPE
+import io.mailit.value.MailTypeId
 import io.smallrye.mutiny.Multi
 import io.smallrye.mutiny.coroutines.awaitSuspending
 import io.vertx.mutiny.mysqlclient.MySQLPool
@@ -112,9 +113,9 @@ class MysqlMailMessageTypeRepository(
     private val client: MySQLPool,
 ) : MailMessageTypeRepository {
 
-    override suspend fun findById(id: Long): MailMessageType? =
+    override suspend fun findById(id: MailTypeId): MailMessageType? =
         client.preparedQuery(FIND_BY_ID_SQL)
-            .execute(Tuple.of(id))
+            .execute(Tuple.of(id.value))
             .onItem().transform { it.iterator() }
             .onItem().transform { if (it.hasNext()) it.next().getMailMessageTypeFromRow() else null }
             .awaitSuspending()
@@ -140,7 +141,7 @@ class MysqlMailMessageTypeRepository(
 
     override suspend fun create(mailMessageType: MailMessageType): MailMessageType {
         val arguments = arrayOf(
-            mailMessageType.id,
+            mailMessageType.id.value,
             mailMessageType.name,
             mailMessageType.description,
             mailMessageType.maxRetriesCount,
@@ -161,7 +162,7 @@ class MysqlMailMessageTypeRepository(
             if (mailMessageType is HtmlMailMessageType) {
                 query.onItem().transformToUni { _ ->
                     connection.preparedQuery(INSERT_MAIL_TEMPLATE_SQL)
-                        .execute(Tuple.of(mailMessageType.id, mailMessageType.template.compressedValue.toBuffer()))
+                        .execute(Tuple.of(mailMessageType.id.value, mailMessageType.template.compressedValue.toBuffer()))
                 }
             } else {
                 query
@@ -177,7 +178,7 @@ class MysqlMailMessageTypeRepository(
             mailMessageType.maxRetriesCount,
             mailMessageType.updatedAt.toLocalDateTime(),
             (mailMessageType as? HtmlMailMessageType)?.templateEngine?.name,
-            mailMessageType.id,
+            mailMessageType.id.value,
         )
 
         client.withTransaction { connection ->
@@ -200,9 +201,9 @@ class MysqlMailMessageTypeRepository(
         return mailMessageType
     }
 
-    override suspend fun updateState(id: Long, state: MailMessageTypeState, updatedAt: Instant): Int =
+    override suspend fun updateState(id: MailTypeId, state: MailMessageTypeState, updatedAt: Instant): Int =
         client.preparedQuery(UPDATE_STATE_SQL)
-            .execute(Tuple.of(state.name, updatedAt.toLocalDateTime(), id))
+            .execute(Tuple.of(state.name, updatedAt.toLocalDateTime(), id.value))
             .onItem().transform { it.rowCount() }
             .awaitSuspending()
 

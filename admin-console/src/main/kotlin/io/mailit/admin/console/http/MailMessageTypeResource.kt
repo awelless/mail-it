@@ -10,6 +10,7 @@ import io.mailit.core.admin.api.type.MailMessageTypeService
 import io.mailit.core.admin.api.type.UpdateMailMessageTypeCommand
 import io.mailit.core.model.MailMessageTemplate
 import io.mailit.core.model.Slice
+import io.mailit.value.MailTypeId
 import jakarta.annotation.security.RolesAllowed
 import jakarta.ws.rs.DELETE
 import jakarta.ws.rs.GET
@@ -32,7 +33,7 @@ class MailMessageTypeResource(
     @GET
     @Path("/{id}")
     suspend fun getById(@PathParam("id") id: Long): SingleMailMessageTypeResponseDto {
-        val mailType = mailMessageTypeService.getById(id)
+        val mailType = mailMessageTypeService.getById(MailTypeId(id))
         return mailMessageTypeDtoMapper.toSingleDto(mailType)
     }
 
@@ -66,7 +67,7 @@ class MailMessageTypeResource(
     @Path("/{id}")
     suspend fun update(@PathParam("id") id: Long, updateDto: MailMessageTypeUpdateDto): SingleMailMessageTypeResponseDto {
         val command = UpdateMailMessageTypeCommand(
-            id = id,
+            id = MailTypeId(id),
             description = updateDto.description,
             maxRetriesCount = updateDto.maxRetriesCount,
             templateEngine = updateDto.templateEngine,
@@ -82,5 +83,5 @@ class MailMessageTypeResource(
     @DELETE
     @Path("/{id}")
     suspend fun delete(@PathParam("id") id: Long, @QueryParam("force") force: Boolean?) =
-        mailMessageTypeService.deleteMailType(id, force ?: false)
+        mailMessageTypeService.deleteMailType(MailTypeId(id), force ?: false)
 }

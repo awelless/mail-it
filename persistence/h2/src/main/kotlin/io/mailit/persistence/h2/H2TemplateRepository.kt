@@ -1,6 +1,7 @@
 package io.mailit.persistence.h2
 
 import io.mailit.template.spi.persistence.TemplateRepository
+import io.mailit.value.MailTypeId
 import javax.sql.DataSource
 import org.apache.commons.dbutils.QueryRunner
 
@@ -21,12 +22,12 @@ class H2TemplateRepository(
 
     private val singleMapper = SingleResultSetMapper { it.getTemplateFromRow() }
 
-    override suspend fun findByMailTypeId(mailTypeId: Long) = dataSource.connection.use {
+    override suspend fun findByMailTypeId(mailTypeId: MailTypeId) = dataSource.connection.use {
         queryRunner.query(
             it,
             FIND_BY_MAIL_TYPE_ID_SQL,
             singleMapper,
-            mailTypeId,
+            mailTypeId.value,
         )
     }
 }

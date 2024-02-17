@@ -11,6 +11,7 @@ import io.mailit.core.model.MailMessageTypeState.DELETED
 import io.mailit.core.model.MailMessageTypeState.FORCE_DELETED
 import io.mailit.core.model.Slice
 import io.mailit.core.spi.MailMessageTypeRepository
+import io.mailit.value.MailTypeId
 import java.time.Instant
 import mu.KLogging
 
@@ -21,7 +22,7 @@ class MailMessageTypeServiceImpl(
 ) : MailMessageTypeService {
     companion object : KLogging()
 
-    override suspend fun getById(id: Long): MailMessageType =
+    override suspend fun getById(id: MailTypeId): MailMessageType =
         mailMessageTypeRepository.findById(id)
             ?: throw NotFoundException("MailMessageType with id: $id is not found")
 
@@ -56,7 +57,7 @@ class MailMessageTypeServiceImpl(
         return updatedMailType
     }
 
-    override suspend fun deleteMailType(id: Long, force: Boolean) {
+    override suspend fun deleteMailType(id: MailTypeId, force: Boolean) {
         val newState = if (force) {
             FORCE_DELETED
         } else {

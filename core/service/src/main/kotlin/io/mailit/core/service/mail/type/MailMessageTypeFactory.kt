@@ -8,6 +8,7 @@ import io.mailit.core.model.HtmlMailMessageType
 import io.mailit.core.model.MailMessageType
 import io.mailit.core.model.PlainTextMailMessageType
 import io.mailit.idgenerator.api.IdGenerator
+import io.mailit.value.MailTypeId
 import java.time.Instant
 
 interface MailMessageTypeFactory<T : MailMessageType> {
@@ -35,7 +36,7 @@ class PlainTextMailMessageTypeFactory(
         val now = Instant.now()
 
         return PlainTextMailMessageType(
-            id = idGenerator.generateId(),
+            id = MailTypeId(idGenerator.generateId()),
             name = command.name,
             description = command.description,
             maxRetriesCount = command.maxRetriesCount,
@@ -64,7 +65,7 @@ class HtmlMailMessageTypeFactory(
         val now = Instant.now()
 
         return HtmlMailMessageType(
-            id = idGenerator.generateId(),
+            id = MailTypeId(idGenerator.generateId()),
             name = command.name,
             description = command.description,
             maxRetriesCount = command.maxRetriesCount,

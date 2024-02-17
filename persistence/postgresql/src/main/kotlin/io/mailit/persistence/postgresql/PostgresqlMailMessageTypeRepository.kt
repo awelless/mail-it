@@ -14,6 +14,7 @@ import io.mailit.persistence.postgresql.Columns.MailMessageType as MailMessageTy
 import io.mailit.persistence.postgresql.MailMessageContent.HTML
 import io.mailit.persistence.postgresql.Tables.MAIL_MESSAGE_TEMPLATE
 import io.mailit.persistence.postgresql.Tables.MAIL_MESSAGE_TYPE
+import io.mailit.value.MailTypeId
 import io.smallrye.mutiny.Multi
 import io.smallrye.mutiny.Uni
 import io.smallrye.mutiny.coroutines.awaitSuspending
@@ -127,8 +128,8 @@ class PostgresqlMailMessageTypeRepository(
     private val client: PgPool,
 ) : MailMessageTypeRepository {
 
-    override suspend fun findById(id: Long): MailMessageType? =
-        client.preparedQuery(FIND_BY_ID_SQL).execute(Tuple.of(id))
+    override suspend fun findById(id: MailTypeId): MailMessageType? =
+        client.preparedQuery(FIND_BY_ID_SQL).execute(Tuple.of(id.value))
             .onItem().transform { it.iterator() }
             .onItem().transform { if (it.hasNext()) it.next().getMailMessageTypeFromRow() else null }
             .awaitSuspending()
@@ -167,7 +168,7 @@ class PostgresqlMailMessageTypeRepository(
 
     private fun prepareCreatePlainText(mailMessageType: PlainTextMailMessageType): Uni<RowSet<Row>> {
         val argumentsArray = arrayOf(
-            mailMessageType.id,
+            mailMessageType.id.value,
             mailMessageType.name,
             mailMessageType.description,
             mailMessageType.maxRetriesCount,
@@ -182,7 +183,7 @@ class PostgresqlMailMessageTypeRepository(
 
     private fun prepareCreateHtml(mailMessageType: HtmlMailMessageType): Uni<RowSet<Row>> {
         val argumentsArray = arrayOf(
-            mailMessageType.id,
+            mailMessageType.id.value,
             mailMessageType.name,
             mailMessageType.description,
             mailMessageType.maxRetriesCount,
@@ -204,7 +205,7 @@ class PostgresqlMailMessageTypeRepository(
             mailMessageType.updatedAt.toLocalDateTime(),
             (mailMessageType as? HtmlMailMessageType)?.templateEngine?.name,
             (mailMessageType as? HtmlMailMessageType)?.template?.compressedValue,
-            mailMessageType.id,
+            mailMessageType.id.value,
         )
 
         val updatedRowsCount = client.preparedQuery(UPDATE_SQL).execute(Tuple.from(arguments))
@@ -218,8 +219,8 @@ class PostgresqlMailMessageTypeRepository(
         return mailMessageType
     }
 
-    override suspend fun updateState(id: Long, state: MailMessageTypeState, updatedAt: Instant): Int =
-        client.preparedQuery(UPDATE_STATE_SQL).execute(Tuple.of(state.name, updatedAt.toLocalDateTime(), id))
+    override suspend fun updateState(id: MailTypeId, state: MailMessageTypeState, updatedAt: Instant): Int =
+        client.preparedQuery(UPDATE_STATE_SQL).execute(Tuple.of(state.name, updatedAt.toLocalDateTime(), id.value))
             .onItem().transform { it.rowCount() }
             .awaitSuspending()
 

@@ -7,6 +7,7 @@ import io.mailit.core.spi.MailMessageTypeRepository
 import io.mailit.test.createHtmlMailMessageType
 import io.mailit.test.createPlainMailMessageType
 import io.mailit.test.nowWithoutNanos
+import io.mailit.value.MailTypeId
 import jakarta.inject.Inject
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
@@ -44,7 +45,7 @@ abstract class MailMessageTypeRepositoryTest {
     @Test
     fun findById_whenNotExists_returnsNull() = runTest {
         // when
-        val actual = mailMessageTypeRepository.findById(333)
+        val actual = mailMessageTypeRepository.findById(MailTypeId(333))
 
         // then
         assertNull(actual)
