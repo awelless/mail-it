@@ -1,6 +1,6 @@
 package io.mailit.distribution.connector.http
 
-import io.mailit.core.external.api.CreateMailCommand
+import io.mailit.connector.http.web.CreateMailDto
 import io.mailit.core.model.MailMessageType
 import io.mailit.core.spi.MailMessageRepository
 import io.mailit.core.spi.MailMessageTypeRepository
@@ -46,7 +46,7 @@ class HttpConnectorTest {
 
     @Test
     fun `sendMail with valid message - saves mail to db`() = runTest {
-        val createMailDto = CreateMailCommand(
+        val createMailDto = CreateMailDto(
             text = "Hello. How are you?",
             data = null,
             subject = "Greeting",
@@ -71,14 +71,14 @@ class HttpConnectorTest {
         assertEquals(createMailDto.text, savedMail.text)
         assertNull(savedMail.data)
         assertEquals(createMailDto.subject, savedMail.subject)
-        assertEquals(createMailDto.emailFrom, savedMail.emailFrom)
-        assertEquals(createMailDto.emailTo, savedMail.emailTo)
+        assertEquals(createMailDto.emailFrom, savedMail.emailFrom?.email)
+        assertEquals(createMailDto.emailTo, savedMail.emailTo.email)
         assertEquals(mailType, savedMail.type)
     }
 
     @Test
     fun `sendMail with template data in message - saves mail to db`() = runTest {
-        val createMailDto = CreateMailCommand(
+        val createMailDto = CreateMailDto(
             text = null,
             data = mapOf("oranges" to 2.39, "apples" to 0.99),
             subject = "Purchase receipt",
@@ -103,8 +103,8 @@ class HttpConnectorTest {
         assertNull(savedMail.text)
         assertEquals(createMailDto.data, savedMail.data)
         assertEquals(createMailDto.subject, savedMail.subject)
-        assertEquals(createMailDto.emailFrom, savedMail.emailFrom)
-        assertEquals(createMailDto.emailTo, savedMail.emailTo)
+        assertEquals(createMailDto.emailFrom, savedMail.emailFrom?.email)
+        assertEquals(createMailDto.emailTo, savedMail.emailTo.email)
         assertEquals(mailType, savedMail.type)
     }
 
@@ -128,7 +128,7 @@ class HttpConnectorTest {
 
     @Test
     fun `sendMail with invalid message type - returns 400`() {
-        val createMailDto = CreateMailCommand(
+        val createMailDto = CreateMailDto(
             text = "Hello. How are you?",
             data = null,
             subject = "Greeting",

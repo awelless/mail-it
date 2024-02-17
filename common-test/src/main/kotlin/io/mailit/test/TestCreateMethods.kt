@@ -7,6 +7,7 @@ import io.mailit.core.model.MailMessageTemplate
 import io.mailit.core.model.MailMessageType
 import io.mailit.core.model.PlainTextMailMessageType
 import io.mailit.template.api.TemplateEngine
+import io.mailit.value.EmailAddress.Companion.toEmailAddress
 import java.util.concurrent.atomic.AtomicLong
 
 private val counter = AtomicLong()
@@ -47,8 +48,8 @@ fun createMailMessage(messageType: MailMessageType): MailMessage {
         text = "text",
         data = emptyMap(),
         subject = null,
-        emailFrom = "email@from.com",
-        emailTo = "email@to.com",
+        emailFrom = "email@from.com".toEmailAddress(),
+        emailTo = "email@to.com".toEmailAddress(),
         type = messageType,
         createdAt = nowWithoutNanos(),
         status = MailMessageStatus.PENDING,

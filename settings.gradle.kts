@@ -60,6 +60,7 @@ include(
     "template:template-quarkus",
     "template:template-spi-persistence",
     "template:template-test",
+    "value-classes",
     "worker:worker-api",
     "worker:worker-core",
     "worker:worker-quarkus",

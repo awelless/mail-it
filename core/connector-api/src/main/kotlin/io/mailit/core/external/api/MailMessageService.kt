@@ -1,18 +1,19 @@
 package io.mailit.core.external.api
 
 import io.mailit.core.model.MailMessage
+import io.mailit.value.EmailAddress
 
 interface MailMessageService {
 
-    suspend fun createNewMail(command: CreateMailCommand): MailMessage
+    suspend fun createNewMail(command: CreateMailRequest): MailMessage
 }
 
-data class CreateMailCommand(
+data class CreateMailRequest(
     val text: String?,
     val data: Map<String, Any>?,
     val subject: String?,
-    val emailFrom: String?,
-    val emailTo: String,
-    val mailType: String,
+    val emailFrom: EmailAddress?,
+    val emailTo: EmailAddress,
+    val mailTypeName: String,
     val deduplicationId: String?,
 )

@@ -19,8 +19,8 @@ class MailFactory(
             is HtmlMailMessageType -> htmlMessage(mailMessage, type)
         }
 
-        if (!mailMessage.emailFrom.isNullOrBlank()) {
-            mail.from = mailMessage.emailFrom
+        mailMessage.emailFrom?.let {
+            mail.from = it.email
         }
 
         // todo allow to configure domain
@@ -30,7 +30,7 @@ class MailFactory(
     }
 
     private fun plainTextMessage(mailMessage: MailMessage) =
-        Mail.withText(mailMessage.emailTo, mailMessage.subject, mailMessage.text)
+        Mail.withText(mailMessage.emailTo.email, mailMessage.subject, mailMessage.text)
 
     private suspend fun htmlMessage(mailMessage: MailMessage, mailMessageType: HtmlMailMessageType): Mail {
         val htmlMessage = templateProcessor.process(
@@ -39,6 +39,6 @@ class MailFactory(
             data = mailMessage.data.orEmpty(),
         )
 
-        return Mail.withHtml(mailMessage.emailTo, mailMessage.subject, htmlMessage.getOrThrow())
+        return Mail.withHtml(mailMessage.emailTo.email, mailMessage.subject, htmlMessage.getOrThrow())
     }
 }

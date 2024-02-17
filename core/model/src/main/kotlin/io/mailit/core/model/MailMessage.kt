@@ -1,5 +1,6 @@
 package io.mailit.core.model
 
+import io.mailit.value.EmailAddress
 import java.time.Instant
 
 data class MailMessage(
@@ -21,9 +22,9 @@ data class MailMessage(
     /**
      * Overrides default sender email address
      */
-    val emailFrom: String?,
+    val emailFrom: EmailAddress?,
 
-    val emailTo: String,
+    val emailTo: EmailAddress,
 
     val type: MailMessageType,
 

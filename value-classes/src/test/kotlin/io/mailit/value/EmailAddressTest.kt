@@ -1,11 +1,12 @@
-package io.mailit.core.service
+package io.mailit.value
 
-import org.junit.jupiter.api.Assertions.assertFalse
-import org.junit.jupiter.api.Assertions.assertTrue
+import io.mailit.value.EmailAddress.Companion.toEmailAddress
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ValueSource
 
-class StringExtensionsTest {
+class EmailAddressTest {
 
     @ParameterizedTest
     @ValueSource(
@@ -17,8 +18,10 @@ class StringExtensionsTest {
             "email@123.123.123.123",
         ],
     )
-    fun `isEmail - when valid emails are passed - return true`(string: String) {
-        assertTrue(string.isEmail())
+    fun `toEmail - when valid emails are passed - creates`(string: String) {
+        val email = string.toEmailAddress()
+
+        assertEquals(string, email.email)
     }
 
     @ParameterizedTest
@@ -32,7 +35,9 @@ class StringExtensionsTest {
             "Joe Smith <email@example.com>",
         ],
     )
-    fun `isEmail - when invalid emails are passed - return false`(string: String) {
-        assertFalse(string.isEmail())
+    fun `toEmail - when invalid emails are passed - throwsException`(string: String) {
+        val ex = assertThrows<IllegalArgumentException> { string.toEmailAddress() }
+
+        assertEquals("Invalid email format", ex.message)
     }
 }

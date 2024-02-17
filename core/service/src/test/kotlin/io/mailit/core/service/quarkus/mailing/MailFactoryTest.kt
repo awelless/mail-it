@@ -10,10 +10,6 @@ import org.junit.jupiter.api.Test
 
 class MailFactoryTest {
 
-    companion object {
-        private const val MESSAGE_ID_HEADER = "Message-ID"
-    }
-
     private val templateProcessor = StubTemplateProcessor("some html")
     private val mailFactory = MailFactory(templateProcessor)
 
@@ -29,8 +25,8 @@ class MailFactoryTest {
         // then
         assertEquals(message.text, actual.text)
         assertEquals(message.subject, actual.subject)
-        assertEquals(listOf(message.emailTo), actual.to)
-        assertEquals(message.emailFrom, actual.from)
+        assertEquals(listOf(message.emailTo.email), actual.to)
+        assertEquals(message.emailFrom?.email, actual.from)
         assertEquals(listOf("${message.id}@mail-it.io"), actual.headers[MESSAGE_ID_HEADER])
     }
 
@@ -46,8 +42,12 @@ class MailFactoryTest {
         // then
         assertEquals(templateProcessor.html, actual.html)
         assertEquals(message.subject, actual.subject)
-        assertEquals(listOf(message.emailTo), actual.to)
-        assertEquals(message.emailFrom, actual.from)
+        assertEquals(listOf(message.emailTo.email), actual.to)
+        assertEquals(message.emailFrom?.email, actual.from)
         assertEquals(listOf("${message.id}@mail-it.io"), actual.headers[MESSAGE_ID_HEADER])
+    }
+
+    companion object {
+        private const val MESSAGE_ID_HEADER = "Message-ID"
     }
 }

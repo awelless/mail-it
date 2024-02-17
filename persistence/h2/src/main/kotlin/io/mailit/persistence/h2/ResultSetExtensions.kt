@@ -15,6 +15,7 @@ import io.mailit.persistence.h2.Columns.MailMessageType as MailMessageTypeCol
 import io.mailit.persistence.h2.MailMessageContent.HTML
 import io.mailit.template.api.TemplateEngine
 import io.mailit.template.spi.persistence.PersistenceTemplate
+import io.mailit.value.EmailAddress.Companion.toEmailAddress
 import java.sql.ResultSet
 import java.time.Instant
 
@@ -99,8 +100,8 @@ internal fun ResultSet.getMailMessageWithTypeFromRow(dataSerializer: MailMessage
         text = text,
         data = data,
         subject = subject,
-        emailFrom = emailFrom,
-        emailTo = emailTo,
+        emailFrom = emailFrom?.toEmailAddress(),
+        emailTo = emailTo.toEmailAddress(),
         type = getMailMessageTypeFromRow(),
         createdAt = createdAt,
         sendingStartedAt = sendingStartedAt,

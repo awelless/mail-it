@@ -3,7 +3,7 @@ package io.mailit.distribution.connector.http
 import io.mailit.admin.console.security.UserCredentials
 import io.mailit.apikey.api.ApiKeyCrud
 import io.mailit.apikey.api.CreateApiKeyCommand
-import io.mailit.core.external.api.CreateMailCommand
+import io.mailit.connector.http.web.CreateMailDto
 import io.mailit.core.model.MailMessageType
 import io.mailit.core.spi.MailMessageTypeRepository
 import io.mailit.test.createPlainMailMessageType
@@ -50,7 +50,7 @@ class HttpConnectorSecurityTest {
     fun `sendMail with valid api key`() = runTest {
         Given {
             contentType(JSON)
-            body(createCommand())
+            body(createRequestDto())
             header(API_KEY_HEADER, apiKeyToken)
         } When {
             post(SEND_URL)
@@ -63,7 +63,7 @@ class HttpConnectorSecurityTest {
     fun `sendMail with invalid api key`() = runTest {
         Given {
             contentType(JSON)
-            body(createCommand())
+            body(createRequestDto())
             header(API_KEY_HEADER, "invalid")
         } When {
             post(SEND_URL)
@@ -82,7 +82,7 @@ class HttpConnectorSecurityTest {
 
         Given {
             contentType(JSON)
-            body(createCommand())
+            body(createRequestDto())
             header(API_KEY_HEADER, expiredToken)
         } When {
             post(SEND_URL)
@@ -95,7 +95,7 @@ class HttpConnectorSecurityTest {
     fun `sendMail as user`() = runTest {
         Given {
             contentType(JSON)
-            body(createCommand())
+            body(createRequestDto())
             auth().form(userCredentials.username, String(userCredentials.password), FormAuthConfig("/api/admin/login", "username", "password"))
         } When {
             post(SEND_URL)
@@ -104,7 +104,7 @@ class HttpConnectorSecurityTest {
         }
     }
 
-    private fun createCommand() = CreateMailCommand(
+    private fun createRequestDto() = CreateMailDto(
         text = "Hello. How are you?",
         data = null,
         subject = "Greeting",

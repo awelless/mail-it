@@ -2,7 +2,7 @@ package io.mailit.core.service.mail
 
 import io.mailit.core.exception.DuplicateUniqueKeyException
 import io.mailit.core.exception.ValidationException
-import io.mailit.core.external.api.CreateMailCommand
+import io.mailit.core.external.api.CreateMailRequest
 import io.mailit.core.model.MailMessage
 import io.mailit.core.model.MailMessageStatus.PENDING
 import io.mailit.core.model.MailMessageType
@@ -11,6 +11,7 @@ import io.mailit.core.spi.MailMessageTypeRepository
 import io.mailit.idgenerator.test.ConstantIdGenerator
 import io.mailit.test.createMailMessage
 import io.mailit.test.createPlainMailMessageType
+import io.mailit.value.EmailAddress.Companion.toEmailAddress
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.impl.annotations.InjectMockKs
@@ -25,10 +26,6 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
-import org.junit.jupiter.params.ParameterizedTest
-import org.junit.jupiter.params.provider.Arguments
-import org.junit.jupiter.params.provider.Arguments.arguments
-import org.junit.jupiter.params.provider.MethodSource
 
 @ExtendWith(MockKExtension::class)
 class MailMessageServiceImplTest {
@@ -59,13 +56,13 @@ class MailMessageServiceImplTest {
     @Test
     fun `createNewMail - when everything is correct - creates`() = runTest {
         // given
-        val command = CreateMailCommand(
+        val command = CreateMailRequest(
             text = "Some message",
             data = mapOf("name" to "john"),
             subject = "subject",
-            emailFrom = "from@gmail.com",
-            emailTo = "to@mail.com",
-            mailType = mailType.name,
+            emailFrom = "from@gmail.com".toEmailAddress(),
+            emailTo = "to@mail.com".toEmailAddress(),
+            mailTypeName = mailType.name,
             deduplicationId = "deduplication",
         )
 
@@ -92,13 +89,13 @@ class MailMessageServiceImplTest {
     @Test
     fun `createNewMail - when mail is duplicate - does nothing`() = runTest {
         // given
-        val command = CreateMailCommand(
+        val command = CreateMailRequest(
             text = "Some message",
             data = mapOf("name" to "john"),
             subject = "subject",
-            emailFrom = "from@gmail.com",
-            emailTo = "to@mail.com",
-            mailType = mailType.name,
+            emailFrom = "from@gmail.com".toEmailAddress(),
+            emailTo = "to@mail.com".toEmailAddress(),
+            mailTypeName = mailType.name,
             deduplicationId = "deduplication",
         )
 
@@ -114,56 +111,20 @@ class MailMessageServiceImplTest {
 
     @Test
     fun `createNewMail - when message type is invalid - throws exception`() = runTest {
-        val command = CreateMailCommand(
+        val command = CreateMailRequest(
             text = "Some message",
             data = mapOf("name" to "john"),
             subject = "subject",
-            emailFrom = "from@gmail.com",
-            emailTo = "to@mail.com",
-            mailType = "invalid",
+            emailFrom = "from@gmail.com".toEmailAddress(),
+            emailTo = "to@mail.com".toEmailAddress(),
+            mailTypeName = "invalid",
             deduplicationId = "deduplication",
         )
 
-        coEvery { mailMessageTypeRepository.findByName(command.mailType) } returns null
+        coEvery { mailMessageTypeRepository.findByName(command.mailTypeName) } returns null
 
         assertThrows<ValidationException> { mailMessageService.createNewMail(command) }
 
         coVerify(exactly = 0) { mailMessageRepository.create(any()) }
-    }
-
-    @ParameterizedTest
-    @MethodSource("invalidDataForCreation")
-    fun `createNewMail - with invalid data - throws exception`(
-        subject: String?,
-        emailFrom: String?,
-        emailTo: String,
-        expectedMessage: String,
-    ) = runTest {
-        val command = CreateMailCommand(
-            text = "123",
-            data = emptyMap(),
-            subject = subject,
-            emailFrom = emailFrom,
-            emailTo = emailTo,
-            mailType = "123",
-            deduplicationId = "deduplication",
-        )
-
-        val exception = assertThrows<ValidationException> {
-            mailMessageService.createNewMail(command)
-        }
-
-        assertEquals(expectedMessage, exception.message)
-
-        coVerify(exactly = 0) { mailMessageRepository.create(any()) }
-    }
-
-    companion object {
-        @JvmStatic
-        private fun invalidDataForCreation(): List<Arguments> = listOf(
-            arguments("subject", "email.email.com", "email@gmail.com", "emailFrom is incorrect"),
-            arguments("subject", "email@email.com", "", "emailTo shouldn't be blank"),
-            arguments("subject", null, "email.email.com", "emailTo is incorrect"),
-        )
     }
 }

@@ -15,6 +15,7 @@ import io.mailit.persistence.postgresql.Columns.MailMessageType as MailMessageTy
 import io.mailit.persistence.postgresql.MailMessageContent.HTML
 import io.mailit.template.api.TemplateEngine
 import io.mailit.template.spi.persistence.PersistenceTemplate
+import io.mailit.value.EmailAddress.Companion.toEmailAddress
 import io.vertx.mutiny.sqlclient.Row
 import java.time.Instant
 import java.time.ZoneOffset.UTC
@@ -95,8 +96,8 @@ internal fun Row.getMailMessageWithTypeFromRow(dataSerializer: MailMessageDataSe
         text = text,
         data = data,
         subject = subject,
-        emailFrom = emailFrom,
-        emailTo = emailTo,
+        emailFrom = emailFrom?.toEmailAddress(),
+        emailTo = emailTo.toEmailAddress(),
         type = getMailMessageTypeFromRow(),
         createdAt = createdAt,
         sendingStartedAt = sendingStartedAt,
