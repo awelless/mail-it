@@ -8,6 +8,7 @@ import io.mailit.core.model.MailMessageType
 import io.mailit.core.model.PlainTextMailMessageType
 import io.mailit.template.api.TemplateEngine
 import io.mailit.value.EmailAddress.Companion.toEmailAddress
+import io.mailit.value.MailId
 import java.util.concurrent.atomic.AtomicLong
 
 private val counter = AtomicLong()
@@ -44,7 +45,7 @@ fun createMailMessage(messageType: MailMessageType): MailMessage {
     val id = counter.incrementAndGet()
 
     return MailMessage(
-        id = id,
+        id = MailId(id),
         text = "text",
         data = emptyMap(),
         subject = null,

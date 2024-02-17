@@ -9,13 +9,15 @@ import io.mailit.core.model.MailMessageStatus.RETRY
 import io.mailit.core.model.MailMessageStatus.SENDING
 import io.mailit.core.model.MailMessageStatus.SENT
 import io.mailit.core.spi.MailMessageRepository
-import java.time.Instant
+import io.mailit.value.MailId
+import java.time.Clock
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.toJavaDuration
 import mu.KLogging
 
 class MailMessageService(
     private val mailMessageRepository: MailMessageRepository,
+    private val clock: Clock,
 ) {
     companion object : KLogging()
 
@@ -25,17 +27,17 @@ class MailMessageService(
     private val possibleToSendMessageStatuses = listOf(PENDING, RETRY)
 
     suspend fun getHungMessages(maxListSize: Int) =
-        mailMessageRepository.findAllWithTypeByStatusesAndSendingStartedBefore(hungMessageStatuses, Instant.now().minus(hungMessageDuration), maxListSize)
+        mailMessageRepository.findAllWithTypeByStatusesAndSendingStartedBefore(hungMessageStatuses, clock.instant().minus(hungMessageDuration), maxListSize)
 
     suspend fun getAllIdsOfPossibleToSentMessages(maxListSize: Int) =
         mailMessageRepository.findAllIdsByStatusIn(possibleToSendMessageStatuses, maxListSize)
 
-    suspend fun getMessageForSending(messageId: Long): MailMessage {
+    suspend fun getMessageForSending(messageId: MailId): MailMessage {
         val messagesUpdated = mailMessageRepository.updateMessageStatusAndSendingStartedTimeByIdAndStatusIn(
             id = messageId,
             statuses = possibleToSendMessageStatuses,
             status = SENDING,
-            sendingStartedAt = Instant.now(),
+            sendingStartedAt = clock.instant(),
         )
 
         if (messagesUpdated == 0) {
@@ -49,7 +51,7 @@ class MailMessageService(
     suspend fun processSuccessfulDelivery(mailMessage: MailMessage) {
         mailMessage.apply {
             status = SENT
-            sentAt = Instant.now()
+            sentAt = clock.instant()
         }
 
         mailMessageRepository.updateMessageStatusAndSentTime(mailMessage.id, mailMessage.status, mailMessage.sentAt!!)

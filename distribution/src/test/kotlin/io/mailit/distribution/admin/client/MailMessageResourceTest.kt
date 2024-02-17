@@ -62,7 +62,7 @@ class MailMessageResourceTest {
             body(
                 "content.size()" equalTo 2,
 
-                "content[0].id" equalTo mail2.id.toString(),
+                "content[0].id" equalTo mail2.id.value.toString(),
                 "content[0].emailFrom" equalTo mail2.emailFrom?.email,
                 "content[0].emailTo" equalTo mail2.emailTo.email,
                 "content[0].type.id" equalTo mail2.type.id.toString(),
@@ -70,7 +70,7 @@ class MailMessageResourceTest {
                 "content[0].status" equalTo mail2.status.name,
                 "content[0].failedCount" equalTo mail2.failedCount,
 
-                "content[1].id" equalTo mail1.id.toString(),
+                "content[1].id" equalTo mail1.id.value.toString(),
                 "content[1].emailFrom" equalTo mail1.emailFrom?.email,
                 "content[1].emailTo" equalTo mail1.emailTo.email,
                 "content[1].type.id" equalTo mail1.type.id.toString(),

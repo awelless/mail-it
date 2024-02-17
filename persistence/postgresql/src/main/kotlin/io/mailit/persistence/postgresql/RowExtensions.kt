@@ -16,6 +16,7 @@ import io.mailit.persistence.postgresql.MailMessageContent.HTML
 import io.mailit.template.api.TemplateEngine
 import io.mailit.template.spi.persistence.PersistenceTemplate
 import io.mailit.value.EmailAddress.Companion.toEmailAddress
+import io.mailit.value.MailId
 import io.vertx.mutiny.sqlclient.Row
 import java.time.Instant
 import java.time.ZoneOffset.UTC
@@ -92,7 +93,7 @@ internal fun Row.getMailMessageWithTypeFromRow(dataSerializer: MailMessageDataSe
     val deduplicationId = getString(MailMessageCol.DEDUPLICATION_ID)
 
     return MailMessage(
-        id = id,
+        id = MailId(id),
         text = text,
         data = data,
         subject = subject,

@@ -13,9 +13,11 @@ import io.mailit.test.createMailMessage
 import io.mailit.test.createPlainMailMessageType
 import io.mockk.coEvery
 import io.mockk.coVerify
-import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.junit5.MockKExtension
+import java.time.Clock
+import java.time.Instant
+import java.time.ZoneOffset
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
@@ -28,10 +30,11 @@ class MailMessageServiceTest {
 
     private val possibleToSendMessageStatuses = listOf(PENDING, RETRY)
 
+    private val frozenNow = Instant.now()
+
     @RelaxedMockK
     lateinit var mailMessageRepository: MailMessageRepository
 
-    @InjectMockKs
     lateinit var mailMessageService: MailMessageService
 
     lateinit var mailMessageType: MailMessageType
@@ -41,6 +44,8 @@ class MailMessageServiceTest {
     fun setUp() {
         mailMessageType = createPlainMailMessageType()
         mailMessage = createMailMessage(mailMessageType)
+
+        mailMessageService = MailMessageService(mailMessageRepository, Clock.fixed(frozenNow, ZoneOffset.UTC))
     }
 
     @Test
@@ -50,7 +55,7 @@ class MailMessageServiceTest {
                 id = mailMessage.id,
                 statuses = possibleToSendMessageStatuses,
                 status = SENDING,
-                sendingStartedAt = any(),
+                sendingStartedAt = frozenNow,
             )
         }.returns(1)
         coEvery { mailMessageRepository.findOneWithTypeById(mailMessage.id) }.returns(mailMessage)
@@ -67,7 +72,7 @@ class MailMessageServiceTest {
                 id = mailMessage.id,
                 statuses = possibleToSendMessageStatuses,
                 status = SENDING,
-                sendingStartedAt = any(),
+                sendingStartedAt = frozenNow,
             )
         }.returns(0)
 
@@ -78,7 +83,7 @@ class MailMessageServiceTest {
     fun processSuccessfulDelivery_marksStatusSent() = runTest {
         mailMessageService.processSuccessfulDelivery(mailMessage)
 
-        coVerify { mailMessageRepository.updateMessageStatusAndSentTime(eq(mailMessage.id), eq(SENT), any()) }
+        coVerify { mailMessageRepository.updateMessageStatusAndSentTime(mailMessage.id, SENT, frozenNow) }
     }
 
     @Test

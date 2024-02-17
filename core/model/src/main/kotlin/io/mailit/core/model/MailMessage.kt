@@ -1,11 +1,12 @@
 package io.mailit.core.model
 
 import io.mailit.value.EmailAddress
+import io.mailit.value.MailId
 import java.time.Instant
 
 data class MailMessage(
 
-    val id: Long,
+    val id: MailId,
 
     /**
      * Text that is used for [PlainTextMailMessageType]
@@ -48,32 +49,32 @@ data class MailMessage(
 enum class MailMessageStatus {
 
     /**
-     * Just created. Available for sending
+     * Just created. Available for sending.
      */
     PENDING,
 
     /**
-     * Sending failed one or several times, but has some more attempts to be sent. Available for sending
+     * Sending failed one or several times, but can be retried. Available for sending.
      */
     RETRY,
 
     /**
-     * Message is being sent now
+     * Message is being sent right now.
      */
     SENDING,
 
     /**
-     * Message is successfully sent
+     * Message has been sent successfully.
      */
     SENT,
 
     /**
-     * Message sending failed and all available retries were failed
+     * Message sending failed and all available retries failed.
      */
     FAILED,
 
     /**
-     * Message is canceled (e.g. [MailMessageType] has been force deleted)
+     * Message sending was canceled (e.g. [MailMessageType] had been force deleted).
      */
     CANCELED,
 }

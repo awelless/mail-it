@@ -16,6 +16,7 @@ import io.mailit.persistence.h2.MailMessageContent.HTML
 import io.mailit.template.api.TemplateEngine
 import io.mailit.template.spi.persistence.PersistenceTemplate
 import io.mailit.value.EmailAddress.Companion.toEmailAddress
+import io.mailit.value.MailId
 import java.sql.ResultSet
 import java.time.Instant
 
@@ -96,7 +97,7 @@ internal fun ResultSet.getMailMessageWithTypeFromRow(dataSerializer: MailMessage
     val deduplicationId = getString(MailMessageCol.DEDUPLICATION_ID)
 
     return MailMessage(
-        id = id,
+        id = MailId(id),
         text = text,
         data = data,
         subject = subject,

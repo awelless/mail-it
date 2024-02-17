@@ -12,6 +12,7 @@ import io.mailit.idgenerator.test.ConstantIdGenerator
 import io.mailit.test.createMailMessage
 import io.mailit.test.createPlainMailMessageType
 import io.mailit.value.EmailAddress.Companion.toEmailAddress
+import io.mailit.value.MailId
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.impl.annotations.InjectMockKs
@@ -76,7 +77,7 @@ class MailMessageServiceImplTest {
         coVerify(exactly = 1) { mailMessageRepository.create(any()) }
 
         val savedMailMessage = mailMessageSlot.captured
-        assertEquals(mailId, savedMailMessage.id)
+        assertEquals(MailId(mailId), savedMailMessage.id)
         assertEquals(command.text, savedMailMessage.text)
         assertEquals(command.subject, savedMailMessage.subject)
         assertEquals(command.emailFrom, savedMailMessage.emailFrom)

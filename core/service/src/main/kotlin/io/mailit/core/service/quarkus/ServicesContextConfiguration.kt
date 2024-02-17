@@ -25,6 +25,7 @@ import io.mailit.idgenerator.api.IdGenerator
 import io.mailit.template.api.TemplateProcessor
 import io.quarkus.mailer.reactive.ReactiveMailer
 import jakarta.inject.Singleton
+import java.time.Clock
 
 class ServicesContextConfiguration {
 
@@ -58,7 +59,7 @@ class ServicesContextConfiguration {
 class MailingContextConfiguration {
 
     @Singleton
-    fun mailMessageService(mailMessageRepository: MailMessageRepository) = MailMessageService(mailMessageRepository)
+    fun mailMessageService(mailMessageRepository: MailMessageRepository) = MailMessageService(mailMessageRepository, Clock.systemUTC())
 
     @Singleton
     fun mailSender(

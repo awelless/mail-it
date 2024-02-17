@@ -1,6 +1,7 @@
 package io.mailit.core.service.mail.sending
 
 import io.mailit.core.model.MailMessageTypeState.FORCE_DELETED
+import io.mailit.value.MailId
 import mu.KLogging
 
 class SendMailMessageService(
@@ -9,7 +10,7 @@ class SendMailMessageService(
 ) {
     companion object : KLogging()
 
-    suspend fun sendMail(messageId: Long) {
+    suspend fun sendMail(messageId: MailId) {
         logger.debug { "Sending mail: $messageId" }
 
         val message = mailMessageService.getMessageForSending(messageId)

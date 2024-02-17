@@ -1,5 +1,6 @@
 package io.mailit.core.service.mail.sending
 
+import io.mailit.value.MailId
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -40,7 +41,7 @@ class UnsentMailProcessor(
         }
     }
 
-    private suspend fun sendMail(id: Long) {
+    private suspend fun sendMail(id: MailId) {
         try {
             sendService.sendMail(id)
         } catch (e: Exception) {

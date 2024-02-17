@@ -11,6 +11,7 @@ import io.mailit.core.spi.MailMessageTypeRepository
 import io.mailit.test.createPlainMailMessageType
 import io.mailit.test.nowWithoutNanos
 import io.mailit.value.EmailAddress.Companion.toEmailAddress
+import io.mailit.value.MailId
 import jakarta.inject.Inject
 import java.time.Instant
 import kotlinx.coroutines.runBlocking
@@ -41,7 +42,7 @@ abstract class MailMessageRepositoryTest {
             mailMessageTypeRepository.create(mailMessageType)
 
             mailMessage = MailMessage(
-                id = 1,
+                id = MailId(1),
                 text = "text",
                 data = emptyMap(),
                 subject = null,
@@ -83,7 +84,7 @@ abstract class MailMessageRepositoryTest {
         val messageSendingStartedAt = Instant.now().minusSeconds(10)
 
         val sendingMessage = MailMessage(
-            id = 2,
+            id = MailId(2),
             text = "text2",
             data = emptyMap(),
             subject = null,
@@ -109,7 +110,7 @@ abstract class MailMessageRepositoryTest {
     fun findAllIdsByStatusIn_returnsIdsOnly() = runTest {
         // given
         val message2 = MailMessage(
-            id = 2,
+            id = MailId(2),
             text = "text2",
             data = emptyMap(),
             subject = null,
@@ -134,7 +135,7 @@ abstract class MailMessageRepositoryTest {
     fun findAllSlicedDescendingIdSorted() = runTest {
         // given
         val message2 = MailMessage(
-            id = 2,
+            id = MailId(2),
             text = "text",
             data = emptyMap(),
             subject = null,
@@ -159,7 +160,7 @@ abstract class MailMessageRepositoryTest {
     fun create() = runTest {
         // given
         val message = MailMessage(
-            id = 555,
+            id = MailId(555),
             text = null,
             data = mapOf("name" to "Name", "age" to 20),
             subject = null,
@@ -184,7 +185,7 @@ abstract class MailMessageRepositoryTest {
     fun `create with the same deduplication id`() = runTest {
         // given
         val message = MailMessage(
-            id = 123,
+            id = MailId(123),
             text = null,
             data = mapOf("name" to "Name", "age" to 20),
             subject = null,
@@ -204,7 +205,7 @@ abstract class MailMessageRepositoryTest {
     fun `create without deduplication ids`() = runTest {
         // given
         val message = MailMessage(
-            id = 123,
+            id = MailId(123),
             text = null,
             data = mapOf("name" to "Name", "age" to 20),
             subject = null,
@@ -216,7 +217,7 @@ abstract class MailMessageRepositoryTest {
             deduplicationId = null,
         )
 
-        val message2 = message.copy(id = 124)
+        val message2 = message.copy(id = MailId(124))
 
         // when
         mailMessageRepository.create(message)

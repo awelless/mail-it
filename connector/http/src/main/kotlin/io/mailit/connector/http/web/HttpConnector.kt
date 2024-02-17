@@ -20,7 +20,7 @@ class HttpConnector(
     @POST
     suspend fun sendMail(dto: CreateMailDto): IdDto {
         val savedMail = mailMessageService.createNewMail(dto.toRequest())
-        return IdDto(savedMail.id.toString())
+        return IdDto(savedMail.id.value.toString())
     }
 
     private fun CreateMailDto.toRequest() = CreateMailRequest(

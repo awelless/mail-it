@@ -13,6 +13,7 @@ import io.mailit.persistence.postgresql.Columns.MailMessageType as MailMessageTy
 import io.mailit.persistence.postgresql.Tables.MAIL_MESSAGE
 import io.mailit.persistence.postgresql.Tables.MAIL_MESSAGE_TEMPLATE
 import io.mailit.persistence.postgresql.Tables.MAIL_MESSAGE_TYPE
+import io.mailit.value.MailId
 import io.smallrye.mutiny.Multi
 import io.smallrye.mutiny.coroutines.awaitSuspending
 import io.vertx.mutiny.pgclient.PgPool
@@ -153,8 +154,8 @@ class PostgresqlMailMessageRepository(
     private val dataSerializer: MailMessageDataSerializer,
 ) : MailMessageRepository {
 
-    override suspend fun findOneWithTypeById(id: Long): MailMessage? =
-        client.preparedQuery(FIND_WITH_TYPE_BY_ID_SQL).execute(Tuple.of(id))
+    override suspend fun findOneWithTypeById(id: MailId): MailMessage? =
+        client.preparedQuery(FIND_WITH_TYPE_BY_ID_SQL).execute(Tuple.of(id.value))
             .onItem().transform { it.iterator() }
             .onItem().transform { if (it.hasNext()) it.next().getMailMessageWithTypeFromRow(dataSerializer) else null }
             .awaitSuspending()
@@ -176,14 +177,14 @@ class PostgresqlMailMessageRepository(
             .awaitSuspending()
     }
 
-    override suspend fun findAllIdsByStatusIn(statuses: Collection<MailMessageStatus>, maxListSize: Int): List<Long> {
+    override suspend fun findAllIdsByStatusIn(statuses: Collection<MailMessageStatus>, maxListSize: Int): List<MailId> {
         val statusNames = statuses
             .map { it.name }
             .toTypedArray()
 
         return client.preparedQuery(FIND_IDS_BY_STATUSES_SQL).execute(Tuple.of(statusNames, maxListSize))
             .onItem().transformToMulti { Multi.createFrom().iterable(it) }
-            .onItem().transform { it.getLong("mail_message_id") }
+            .onItem().transform { MailId(it.getLong("mail_message_id")) }
             .collect().asList()
             .awaitSuspending()
     }
@@ -203,7 +204,7 @@ class PostgresqlMailMessageRepository(
         val data = dataSerializer.write(mailMessage.data)
 
         val argumentsArray = arrayOf(
-            mailMessage.id,
+            mailMessage.id.value,
             mailMessage.text,
             data,
             mailMessage.subject,
@@ -228,13 +229,13 @@ class PostgresqlMailMessageRepository(
         return mailMessage
     }
 
-    override suspend fun updateMessageStatus(id: Long, status: MailMessageStatus): Int =
-        client.preparedQuery(UPDATE_STATUS_SQL).execute(Tuple.of(status.name, id))
+    override suspend fun updateMessageStatus(id: MailId, status: MailMessageStatus): Int =
+        client.preparedQuery(UPDATE_STATUS_SQL).execute(Tuple.of(status.name, id.value))
             .onItem().transform { it.rowCount() }
             .awaitSuspending()
 
     override suspend fun updateMessageStatusAndSendingStartedTimeByIdAndStatusIn(
-        id: Long,
+        id: MailId,
         statuses: Collection<MailMessageStatus>,
         status: MailMessageStatus,
         sendingStartedAt: Instant,
@@ -243,24 +244,26 @@ class PostgresqlMailMessageRepository(
             .map { it.name }
             .toTypedArray()
 
-        return client.preparedQuery(UPDATE_STATUS_AND_SENDING_START_SQL).execute(Tuple.of(status.name, sendingStartedAt.toLocalDateTime(), id, statusNames))
+        return client.preparedQuery(UPDATE_STATUS_AND_SENDING_START_SQL)
+            .execute(Tuple.of(status.name, sendingStartedAt.toLocalDateTime(), id.value, statusNames))
             .onItem().transform { it.rowCount() }
             .awaitSuspending()
     }
 
-    override suspend fun updateMessageStatusAndSentTime(id: Long, status: MailMessageStatus, sentAt: Instant): Int =
-        client.preparedQuery(UPDATE_STATUS_AND_SENT_AT_SQL).execute(Tuple.of(status.name, sentAt.toLocalDateTime(), id))
+    override suspend fun updateMessageStatusAndSentTime(id: MailId, status: MailMessageStatus, sentAt: Instant): Int =
+        client.preparedQuery(UPDATE_STATUS_AND_SENT_AT_SQL)
+            .execute(Tuple.of(status.name, sentAt.toLocalDateTime(), id.value))
             .onItem().transform { it.rowCount() }
             .awaitSuspending()
 
     override suspend fun updateMessageStatusFailedCountAndSendingStartedTime(
-        id: Long,
+        id: MailId,
         status: MailMessageStatus,
         failedCount: Int,
         sendingStartedAt: Instant?,
     ): Int =
         client.preparedQuery(UPDATE_STATUS_FAILED_COUNT_AND_SENDING_START_SQL)
-            .execute(Tuple.of(status.name, failedCount, sendingStartedAt?.toLocalDateTime(), id))
+            .execute(Tuple.of(status.name, failedCount, sendingStartedAt?.toLocalDateTime(), id.value))
             .onItem().transform { it.rowCount() }
             .awaitSuspending()
 }

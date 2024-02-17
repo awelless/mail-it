@@ -27,8 +27,3 @@ internal class MultipleResultSetMapper<T>(private val mapper: (ResultSet) -> T) 
         return objects
     }
 }
-
-/**
- * Used to extract list of ids. Thread safe
- */
-internal val MULTIPLE_IDS_RESULT_SET_MAPPER = MultipleResultSetMapper { it.getLong(1) }

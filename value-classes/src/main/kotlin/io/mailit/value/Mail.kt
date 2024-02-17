@@ -1,6 +1,9 @@
 package io.mailit.value
 
 @JvmInline
+value class MailId(val value: Long)
+
+@JvmInline
 value class EmailAddress private constructor(val email: String) {
 
     companion object {

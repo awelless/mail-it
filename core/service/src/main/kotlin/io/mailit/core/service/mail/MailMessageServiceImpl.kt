@@ -11,6 +11,7 @@ import io.mailit.core.model.Slice
 import io.mailit.core.spi.MailMessageRepository
 import io.mailit.core.spi.MailMessageTypeRepository
 import io.mailit.idgenerator.api.IdGenerator
+import io.mailit.value.MailId
 import java.time.Instant
 import mu.KLogging
 
@@ -28,7 +29,7 @@ class MailMessageServiceImpl(
             ?: throw ValidationException("Invalid type: ${command.mailTypeName} is passed")
 
         val message = MailMessage(
-            id = idGenerator.generateId(),
+            id = MailId(idGenerator.generateId()),
             text = command.text,
             data = command.data,
             subject = command.subject,

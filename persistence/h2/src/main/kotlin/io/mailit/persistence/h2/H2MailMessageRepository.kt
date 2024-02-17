@@ -12,6 +12,7 @@ import io.mailit.persistence.h2.Columns.MailMessageType as MailMessageTypeCol
 import io.mailit.persistence.h2.Tables.MAIL_MESSAGE
 import io.mailit.persistence.h2.Tables.MAIL_MESSAGE_TEMPLATE
 import io.mailit.persistence.h2.Tables.MAIL_MESSAGE_TYPE
+import io.mailit.value.MailId
 import java.sql.SQLException
 import java.time.Instant
 import javax.sql.DataSource
@@ -154,14 +155,15 @@ class H2MailMessageRepository(
 
     private val singleMapper = SingleResultSetMapper { it.getMailMessageWithTypeFromRow(dataSerializer) }
     private val multipleMapper = MultipleResultSetMapper { it.getMailMessageWithTypeFromRow(dataSerializer) }
+    private val multipleIdsMapper = MultipleResultSetMapper { MailId(it.getLong(1)) }
 
-    override suspend fun findOneWithTypeById(id: Long): MailMessage? =
+    override suspend fun findOneWithTypeById(id: MailId): MailMessage? =
         dataSource.connection.use {
             queryRunner.query(
                 it,
                 FIND_WITH_TYPE_BY_ID_SQL,
                 this.singleMapper,
-                id,
+                id.value,
             )
         }
 
@@ -186,7 +188,7 @@ class H2MailMessageRepository(
         }
     }
 
-    override suspend fun findAllIdsByStatusIn(statuses: Collection<MailMessageStatus>, maxListSize: Int): List<Long> {
+    override suspend fun findAllIdsByStatusIn(statuses: Collection<MailMessageStatus>, maxListSize: Int): List<MailId> {
         val statusNames = statuses
             .map { it.name }
             .toTypedArray()
@@ -195,7 +197,7 @@ class H2MailMessageRepository(
             queryRunner.query(
                 it,
                 FIND_IDS_BY_STATUSES_SQL,
-                MULTIPLE_IDS_RESULT_SET_MAPPER,
+                multipleIdsMapper,
                 statusNames,
                 maxListSize,
             )
@@ -226,7 +228,7 @@ class H2MailMessageRepository(
                 val dataBlob = data?.let { bytes -> it.createBlob().apply { setBytes(1, bytes) } }
 
                 val params = arrayOf(
-                    mailMessage.id,
+                    mailMessage.id.value,
                     mailMessage.text,
                     dataBlob,
                     mailMessage.subject,
@@ -255,18 +257,18 @@ class H2MailMessageRepository(
         return mailMessage
     }
 
-    override suspend fun updateMessageStatus(id: Long, status: MailMessageStatus): Int =
+    override suspend fun updateMessageStatus(id: MailId, status: MailMessageStatus): Int =
         dataSource.connection.use {
             queryRunner.update(
                 it,
                 UPDATE_STATUS_SQL,
                 status.name,
-                id,
+                id.value,
             )
         }
 
     override suspend fun updateMessageStatusAndSendingStartedTimeByIdAndStatusIn(
-        id: Long,
+        id: MailId,
         statuses: Collection<MailMessageStatus>,
         status: MailMessageStatus,
         sendingStartedAt: Instant,
@@ -281,25 +283,25 @@ class H2MailMessageRepository(
                 UPDATE_STATUS_AND_SENDING_START_SQL,
                 status.name,
                 sendingStartedAt,
-                id,
+                id.value,
                 statusNames,
             )
         }
     }
 
-    override suspend fun updateMessageStatusAndSentTime(id: Long, status: MailMessageStatus, sentAt: Instant): Int =
+    override suspend fun updateMessageStatusAndSentTime(id: MailId, status: MailMessageStatus, sentAt: Instant): Int =
         dataSource.connection.use {
             queryRunner.update(
                 it,
                 UPDATE_STATUS_AND_SENT_AT_SQL,
                 status.name,
                 sentAt,
-                id,
+                id.value,
             )
         }
 
     override suspend fun updateMessageStatusFailedCountAndSendingStartedTime(
-        id: Long,
+        id: MailId,
         status: MailMessageStatus,
         failedCount: Int,
         sendingStartedAt: Instant?,
@@ -311,7 +313,7 @@ class H2MailMessageRepository(
                 status.name,
                 failedCount,
                 sendingStartedAt,
-                id,
+                id.value,
             )
         }
 }
