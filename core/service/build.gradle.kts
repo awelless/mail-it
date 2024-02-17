@@ -5,6 +5,7 @@ dependencies {
     implementation(project(":core:model"))
     implementation(project(":core:spi"))
     implementation(project(":id-generator:id-generator-api"))
+    implementation(project(":template:template-api"))
 
     implementation("io.smallrye.reactive:mutiny-kotlin")
 
@@ -18,4 +19,5 @@ dependencies {
 
     testImplementation(project(":common-test"))
     testImplementation(project(":id-generator:id-generator-test"))
+    testImplementation(project(":template:template-test"))
 }

@@ -3,10 +3,10 @@ package io.mailit.core.service.mail.type
 import io.mailit.core.admin.api.type.UpdateMailMessageTypeCommand
 import io.mailit.core.exception.ValidationException
 import io.mailit.core.model.HtmlMailMessageType
-import io.mailit.core.model.HtmlTemplateEngine.FREEMARKER
-import io.mailit.core.model.HtmlTemplateEngine.NONE
 import io.mailit.core.model.MailMessageTemplate
 import io.mailit.core.model.PlainTextMailMessageType
+import io.mailit.template.api.TemplateEngine.FREEMARKER
+import io.mailit.template.api.TemplateEngine.NONE
 import io.mailit.test.createHtmlMailMessageType
 import io.mailit.test.createPlainMailMessageType
 import io.mockk.junit5.MockKExtension

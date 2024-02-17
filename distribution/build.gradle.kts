@@ -16,6 +16,7 @@ dependencies {
     implementation(project(":admin-console")) // admin console implementation
     implementation(project(":api-key:api-key-quarkus"))
     implementation(project(":id-generator:id-generator-quarkus"))
+    implementation(project(":template:template-quarkus"))
     databaseProviderImplementation()
     connectorsImplementation()
 

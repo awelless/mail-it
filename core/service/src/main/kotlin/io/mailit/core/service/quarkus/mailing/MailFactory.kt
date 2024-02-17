@@ -3,7 +3,7 @@ package io.mailit.core.service.quarkus.mailing
 import io.mailit.core.model.HtmlMailMessageType
 import io.mailit.core.model.MailMessage
 import io.mailit.core.model.PlainTextMailMessageType
-import io.mailit.core.service.mail.sending.templates.TemplateProcessor
+import io.mailit.template.api.TemplateProcessor
 import io.quarkus.mailer.Mail
 
 class MailFactory(
@@ -34,10 +34,11 @@ class MailFactory(
 
     private suspend fun htmlMessage(mailMessage: MailMessage, mailMessageType: HtmlMailMessageType): Mail {
         val htmlMessage = templateProcessor.process(
-            mailMessageType = mailMessageType,
+            mailTypeId = mailMessageType.id,
+            templateEngine = mailMessageType.templateEngine,
             data = mailMessage.data.orEmpty(),
         )
 
-        return Mail.withHtml(mailMessage.emailTo, mailMessage.subject, htmlMessage)
+        return Mail.withHtml(mailMessage.emailTo, mailMessage.subject, htmlMessage.getOrThrow())
     }
 }

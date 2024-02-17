@@ -99,7 +99,7 @@ subprojects {
     }
 
     tasks.withType<Jar> {
-        duplicatesStrategy = DuplicatesStrategy.INCLUDE
+        duplicatesStrategy = DuplicatesStrategy.WARN
     }
 }
 

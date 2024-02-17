@@ -2,7 +2,6 @@ package io.mailit.persistence.h2
 
 import io.mailit.apikey.spi.persistence.ApiKey
 import io.mailit.core.model.HtmlMailMessageType
-import io.mailit.core.model.HtmlTemplateEngine
 import io.mailit.core.model.MailMessage
 import io.mailit.core.model.MailMessageStatus
 import io.mailit.core.model.MailMessageTemplate
@@ -14,6 +13,8 @@ import io.mailit.persistence.h2.Columns.ApiKey as ApiKeyCol
 import io.mailit.persistence.h2.Columns.MailMessage as MailMessageCol
 import io.mailit.persistence.h2.Columns.MailMessageType as MailMessageTypeCol
 import io.mailit.persistence.h2.MailMessageContent.HTML
+import io.mailit.template.api.TemplateEngine
+import io.mailit.template.spi.persistence.PersistenceTemplate
 import java.sql.ResultSet
 import java.time.Instant
 
@@ -41,7 +42,7 @@ internal fun ResultSet.getMailMessageTypeFromRow(): MailMessageType {
     val contentType = MailMessageContent.valueOf(getString(MailMessageTypeCol.CONTENT_TYPE))
 
     val templateEngineValue = getString(MailMessageTypeCol.TEMPLATE_ENGINE)
-    val templateEngine = if (wasNull()) null else HtmlTemplateEngine.valueOf(templateEngineValue)
+    val templateEngine = if (wasNull()) null else TemplateEngine.valueOf(templateEngineValue)
 
     val template = getBlob(MailMessageTypeCol.TEMPLATE)?.binaryStream?.use { it.readBytes() }
 
@@ -109,6 +110,12 @@ internal fun ResultSet.getMailMessageWithTypeFromRow(dataSerializer: MailMessage
         deduplicationId = deduplicationId,
     )
 }
+
+internal fun ResultSet.getTemplateFromRow() = PersistenceTemplate(
+    mailTypeId = getLong(MailMessageTypeCol.ID),
+    templateContent = getBlob(MailMessageTypeCol.TEMPLATE).binaryStream.use { MailMessageTemplate.fromCompressedValue(it.readBytes()).value },
+    updatedAt = getInstant(MailMessageTypeCol.UPDATED_AT),
+)
 
 private fun ResultSet.getNullableInstant(columnLabel: String): Instant? = getObject(columnLabel, Instant::class.java)
 private fun ResultSet.getInstant(columnLabel: String): Instant = getObject(columnLabel, Instant::class.java)

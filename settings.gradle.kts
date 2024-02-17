@@ -55,4 +55,9 @@ include(
     "persistence:mysql",
     "persistence:postgresql",
     "persistence:tests",
+    "template:template-api",
+    "template:template-core",
+    "template:template-quarkus",
+    "template:template-spi-persistence",
+    "template:template-test",
 )

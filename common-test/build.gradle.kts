@@ -1,5 +1,6 @@
 dependencies {
     api(project(":core:model"))
+    api(project(":template:template-api"))
 
     api("io.mockk:mockk")
     api("io.quarkus:quarkus-junit5")

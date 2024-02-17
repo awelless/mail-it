@@ -5,6 +5,7 @@ import io.mailit.persistence.postgresql.PostgresqlApiKeyRepository
 import io.mailit.persistence.postgresql.PostgresqlMailMessageRepository
 import io.mailit.persistence.postgresql.PostgresqlMailMessageTypeRepository
 import io.mailit.persistence.postgresql.PostgresqlServerLeaseLocks
+import io.mailit.persistence.postgresql.PostgresqlTemplateRepository
 import io.vertx.mutiny.pgclient.PgPool
 import jakarta.inject.Singleton
 
@@ -20,6 +21,9 @@ class RepositoriesConfiguration(
 
     @Singleton
     fun mailMessageRepository(dataSerializer: MailMessageDataSerializer) = PostgresqlMailMessageRepository(pgPool, dataSerializer)
+
+    @Singleton
+    fun templateRepository() = PostgresqlTemplateRepository(pgPool)
 
     @Singleton
     fun instanceIdLocks() = PostgresqlServerLeaseLocks(pgPool)

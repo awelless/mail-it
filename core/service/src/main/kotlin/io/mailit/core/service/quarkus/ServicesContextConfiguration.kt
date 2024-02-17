@@ -7,12 +7,6 @@ import io.mailit.core.service.mail.sending.MailMessageService
 import io.mailit.core.service.mail.sending.MailSender
 import io.mailit.core.service.mail.sending.SendMailMessageService
 import io.mailit.core.service.mail.sending.UnsentMailProcessor
-import io.mailit.core.service.mail.sending.templates.TemplateProcessor
-import io.mailit.core.service.mail.sending.templates.TemplateProcessorManager
-import io.mailit.core.service.mail.sending.templates.freemarker.Configuration
-import io.mailit.core.service.mail.sending.templates.freemarker.FreemarkerTemplateProcessor
-import io.mailit.core.service.mail.sending.templates.freemarker.RepositoryTemplateLoader
-import io.mailit.core.service.mail.sending.templates.none.NoneTemplateProcessor
 import io.mailit.core.service.mail.type.HtmlMailMessageTypeFactory
 import io.mailit.core.service.mail.type.HtmlMailMessageTypeStateUpdater
 import io.mailit.core.service.mail.type.MailMessageTypeFactory
@@ -28,6 +22,7 @@ import io.mailit.core.service.quarkus.mailing.QuarkusMailSender
 import io.mailit.core.spi.MailMessageRepository
 import io.mailit.core.spi.MailMessageTypeRepository
 import io.mailit.idgenerator.api.IdGenerator
+import io.mailit.template.api.TemplateProcessor
 import io.quarkus.mailer.reactive.ReactiveMailer
 import jakarta.inject.Singleton
 
@@ -91,17 +86,4 @@ class MailingContextConfiguration {
 
     @Singleton
     fun mailFactory(templateProcessor: TemplateProcessor) = MailFactory(templateProcessor)
-
-    @Singleton
-    fun templateProcessorManager(mailMessageTypeRepository: MailMessageTypeRepository) = TemplateProcessorManager(
-        NoneTemplateProcessor(),
-        FreemarkerTemplateProcessor(mailMessageTypeRepository),
-    )
-
-    private fun FreemarkerTemplateProcessor(mailMessageTypeRepository: MailMessageTypeRepository): FreemarkerTemplateProcessor {
-        val templateLoader = RepositoryTemplateLoader(mailMessageTypeRepository)
-        val configuration = Configuration(templateLoader)
-
-        return FreemarkerTemplateProcessor(configuration)
-    }
 }

@@ -5,10 +5,10 @@ import io.mailit.core.admin.api.type.MailMessageContentType.HTML
 import io.mailit.core.admin.api.type.MailMessageContentType.PLAIN_TEXT
 import io.mailit.core.exception.ValidationException
 import io.mailit.core.model.HtmlMailMessageType
-import io.mailit.core.model.HtmlTemplateEngine.FREEMARKER
 import io.mailit.core.model.MailMessageTemplate
 import io.mailit.core.model.PlainTextMailMessageType
 import io.mailit.idgenerator.test.ConstantIdGenerator
+import io.mailit.template.api.TemplateEngine.FREEMARKER
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test

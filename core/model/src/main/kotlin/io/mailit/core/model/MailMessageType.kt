@@ -1,5 +1,6 @@
 package io.mailit.core.model
 
+import io.mailit.template.api.TemplateEngine
 import java.time.Instant
 
 /**
@@ -50,7 +51,6 @@ data class PlainTextMailMessageType(
     override var state: MailMessageTypeState = MailMessageTypeState.ENABLED,
     override val createdAt: Instant,
     override var updatedAt: Instant,
-
 ) : MailMessageType(id, name, description, maxRetriesCount, state, createdAt, updatedAt)
 
 /**
@@ -66,24 +66,10 @@ data class HtmlMailMessageType(
     override val createdAt: Instant,
     override var updatedAt: Instant,
 
-    var templateEngine: HtmlTemplateEngine,
+    var templateEngine: TemplateEngine,
 
     /**
      * Template that will be used by [templateEngine]
      */
     var template: MailMessageTemplate,
-
 ) : MailMessageType(id, name, description, maxRetriesCount, state, createdAt, updatedAt)
-
-enum class HtmlTemplateEngine {
-
-    /**
-     * Plain html, template is sent as it is, without any transformations
-     */
-    NONE,
-
-    /**
-     * [Freemarker docs](https://freemarker.apache.org/)
-     */
-    FREEMARKER,
-}

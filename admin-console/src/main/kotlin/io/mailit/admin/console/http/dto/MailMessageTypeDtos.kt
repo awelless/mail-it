@@ -1,7 +1,7 @@
 package io.mailit.admin.console.http.dto
 
 import io.mailit.core.admin.api.type.MailMessageContentType
-import io.mailit.core.model.HtmlTemplateEngine
+import io.mailit.template.api.TemplateEngine
 import io.quarkus.runtime.annotations.RegisterForReflection
 
 @RegisterForReflection
@@ -23,7 +23,7 @@ data class SingleMailMessageTypeResponseDto(
     /**
      * Not null if [contentType] is [MailMessageContentType.HTML]
      */
-    val templateEngine: HtmlTemplateEngine?,
+    val templateEngine: TemplateEngine?,
     /**
      * Not null if [contentType] is [MailMessageContentType.HTML]
      */
@@ -38,7 +38,7 @@ data class MailMessageTypeCreateDto(
     /**
      * Not null if [contentType] is [MailMessageContentType.HTML]
      */
-    val templateEngine: HtmlTemplateEngine? = null,
+    val templateEngine: TemplateEngine? = null,
     /**
      * Not null if [contentType] is [MailMessageContentType.HTML]
      */
@@ -48,6 +48,6 @@ data class MailMessageTypeCreateDto(
 data class MailMessageTypeUpdateDto(
     val description: String?,
     val maxRetriesCount: Int?,
-    val templateEngine: HtmlTemplateEngine? = null,
+    val templateEngine: TemplateEngine? = null,
     val template: String? = null,
 )

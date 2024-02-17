@@ -1,12 +1,12 @@
 package io.mailit.test
 
 import io.mailit.core.model.HtmlMailMessageType
-import io.mailit.core.model.HtmlTemplateEngine.NONE
 import io.mailit.core.model.MailMessage
 import io.mailit.core.model.MailMessageStatus
 import io.mailit.core.model.MailMessageTemplate
 import io.mailit.core.model.MailMessageType
 import io.mailit.core.model.PlainTextMailMessageType
+import io.mailit.template.api.TemplateEngine
 import java.util.concurrent.atomic.AtomicLong
 
 private val counter = AtomicLong()
@@ -34,7 +34,7 @@ fun createHtmlMailMessageType(): HtmlMailMessageType {
         createdAt = nowWithoutNanos(),
         updatedAt = nowWithoutNanos(),
         maxRetriesCount = 111,
-        templateEngine = NONE,
+        templateEngine = TemplateEngine.NONE,
         template = MailMessageTemplate("<html></html>"),
     )
 }

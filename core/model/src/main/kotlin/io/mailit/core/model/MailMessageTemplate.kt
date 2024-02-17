@@ -6,6 +6,7 @@ import java.util.zip.GZIPInputStream
 import java.util.zip.GZIPOutputStream
 import kotlin.text.Charsets.UTF_8
 
+// todo: move inside persistence.
 @JvmInline
 value class MailMessageTemplate(val value: String) {
 

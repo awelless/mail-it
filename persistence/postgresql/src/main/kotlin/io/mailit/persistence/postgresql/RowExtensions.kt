@@ -2,7 +2,6 @@ package io.mailit.persistence.postgresql
 
 import io.mailit.apikey.spi.persistence.ApiKey
 import io.mailit.core.model.HtmlMailMessageType
-import io.mailit.core.model.HtmlTemplateEngine
 import io.mailit.core.model.MailMessage
 import io.mailit.core.model.MailMessageStatus
 import io.mailit.core.model.MailMessageTemplate
@@ -14,6 +13,8 @@ import io.mailit.persistence.postgresql.Columns.ApiKey as ApiKeyCol
 import io.mailit.persistence.postgresql.Columns.MailMessage as MailMessageCol
 import io.mailit.persistence.postgresql.Columns.MailMessageType as MailMessageTypeCol
 import io.mailit.persistence.postgresql.MailMessageContent.HTML
+import io.mailit.template.api.TemplateEngine
+import io.mailit.template.spi.persistence.PersistenceTemplate
 import io.vertx.mutiny.sqlclient.Row
 import java.time.Instant
 import java.time.ZoneOffset.UTC
@@ -41,7 +42,7 @@ internal fun Row.getMailMessageTypeFromRow(): MailMessageType {
 
     val contentType = MailMessageContent.valueOf(getString(MailMessageTypeCol.CONTENT_TYPE))
 
-    val templateEngine = getString(MailMessageTypeCol.TEMPLATE_ENGINE)?.let { HtmlTemplateEngine.valueOf(it) }
+    val templateEngine = getString(MailMessageTypeCol.TEMPLATE_ENGINE)?.let { TemplateEngine.valueOf(it) }
 
     val template = getBuffer(MailMessageTypeCol.TEMPLATE)?.bytes
 
@@ -105,6 +106,12 @@ internal fun Row.getMailMessageWithTypeFromRow(dataSerializer: MailMessageDataSe
         deduplicationId = deduplicationId,
     )
 }
+
+internal fun Row.getTemplateFromRow() = PersistenceTemplate(
+    mailTypeId = getLong(MailMessageTypeCol.ID),
+    templateContent = MailMessageTemplate.fromCompressedValue(getBuffer(MailMessageTypeCol.TEMPLATE).bytes).value,
+    updatedAt = getInstant(MailMessageTypeCol.UPDATED_AT),
+)
 
 private fun Row.getNullableInstant(column: String) = getLocalDateTime(column)?.toInstant(UTC)
 private fun Row.getInstant(column: String): Instant = getLocalDateTime(column).toInstant(UTC)
