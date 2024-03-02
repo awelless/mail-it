@@ -25,10 +25,6 @@ paths:
       responses:
         202:
           description: Successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/IdObject'
         400:
           description: Invalid email is supplied
         401:
@@ -76,12 +72,6 @@ components:
           type: string
           description: Name of MailMessageType this mail belongs to
           example: Authorization mail
-    IdObject:
-      type: object
-      properties:
-        id:
-          type: string
-          example: 654325215
   securitySchemes:
     ApiKey:
       type: apiKey

@@ -49,11 +49,7 @@ class ServicesContextConfiguration {
     ) = MailMessageTypeServiceImpl(mailMessageTypeRepository, mailMessageTypeFactory, mailMessageTypeStateUpdated)
 
     @Singleton
-    fun mailMessageService(
-        idGenerator: IdGenerator,
-        mailMessageRepository: MailMessageRepository,
-        mailMessageTypeRepository: MailMessageTypeRepository,
-    ) = MailMessageServiceImpl(idGenerator, mailMessageRepository, mailMessageTypeRepository)
+    fun mailMessageService(mailMessageRepository: MailMessageRepository) = MailMessageServiceImpl(mailMessageRepository)
 }
 
 class MailingContextConfiguration {

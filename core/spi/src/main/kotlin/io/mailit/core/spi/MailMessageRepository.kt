@@ -23,8 +23,6 @@ interface MailMessageRepository {
      */
     suspend fun findAllSlicedDescendingIdSorted(page: Int, size: Int): Slice<MailMessage>
 
-    suspend fun create(mailMessage: MailMessage): MailMessage
-
     suspend fun updateMessageState(id: MailId, state: MailState): Int
 
     suspend fun updateMessageStateAndSendingStartedTimeByIdAndStateIn(

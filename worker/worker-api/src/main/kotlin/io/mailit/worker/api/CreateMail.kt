@@ -1,11 +1,10 @@
-package io.mailit.core.external.api
+package io.mailit.worker.api
 
-import io.mailit.core.model.MailMessage
 import io.mailit.value.EmailAddress
 
-interface MailMessageService {
+interface CreateMail {
 
-    suspend fun createNewMail(command: CreateMailRequest): MailMessage
+    suspend operator fun invoke(request: CreateMailRequest): Result<Unit>
 }
 
 data class CreateMailRequest(

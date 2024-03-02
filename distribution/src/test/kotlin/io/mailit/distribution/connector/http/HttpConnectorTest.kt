@@ -5,11 +5,9 @@ import io.mailit.core.model.MailMessageType
 import io.mailit.core.spi.MailMessageRepository
 import io.mailit.core.spi.MailMessageTypeRepository
 import io.mailit.test.createPlainMailMessageType
-import io.mailit.value.MailId
 import io.quarkus.test.junit.QuarkusTest
 import io.quarkus.test.security.TestSecurity
 import io.restassured.http.ContentType.JSON
-import io.restassured.module.kotlin.extensions.Extract
 import io.restassured.module.kotlin.extensions.Given
 import io.restassured.module.kotlin.extensions.Then
 import io.restassured.module.kotlin.extensions.When
@@ -57,18 +55,16 @@ class HttpConnectorTest {
             deduplicationId = "dedup",
         )
 
-        val messageId: String = Given {
+        Given {
             contentType(JSON)
             body(createMailDto)
         } When {
             post(SEND_URL)
         } Then {
             statusCode(ACCEPTED)
-        } Extract {
-            path("id")
         }
 
-        val savedMail = mailMessageRepository.findOneWithTypeById(MailId(messageId.toLong()))!!
+        val savedMail = mailMessageRepository.findAllSlicedDescendingIdSorted(0, 1).content.first()
         assertEquals(createMailDto.text, savedMail.text)
         assertNull(savedMail.data)
         assertEquals(createMailDto.subject, savedMail.subject)
@@ -89,18 +85,16 @@ class HttpConnectorTest {
             deduplicationId = "dedup",
         )
 
-        val messageId: String = Given {
+        Given {
             contentType(JSON)
             body(createMailDto)
         } When {
             post(SEND_URL)
         } Then {
             statusCode(ACCEPTED)
-        } Extract {
-            path("id")
         }
 
-        val savedMail = mailMessageRepository.findOneWithTypeById(MailId(messageId.toLong()))!!
+        val savedMail = mailMessageRepository.findAllSlicedDescendingIdSorted(0, 1).content.first()
         assertNull(savedMail.text)
         assertEquals(createMailDto.data, savedMail.data)
         assertEquals(createMailDto.subject, savedMail.subject)

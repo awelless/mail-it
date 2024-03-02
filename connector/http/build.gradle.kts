@@ -4,7 +4,8 @@ plugins {
 
 dependencies {
     implementation(project(":api-key:api-key-api"))
-    implementation(project(":core:connector-api"))
+    implementation(project(":core:exception"))
+    implementation(project(":worker:worker-api"))
 
     implementation("io.github.microutils:kotlin-logging-jvm")
 

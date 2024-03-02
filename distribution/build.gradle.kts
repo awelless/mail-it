@@ -17,6 +17,7 @@ dependencies {
     implementation(project(":api-key:api-key-quarkus"))
     implementation(project(":id-generator:id-generator-quarkus"))
     implementation(project(":template:template-quarkus"))
+    implementation(project(":worker:worker-quarkus"))
     databaseProviderImplementation()
     connectorsImplementation()
 
@@ -30,6 +31,7 @@ dependencies {
     testImplementation(project(":core:admin-api"))
     testImplementation(project(":core:connector-api"))
     testImplementation(project(":core:spi"))
+    testImplementation(project(":worker:worker-spi-persistence"))
 
     testImplementation("io.quarkus:quarkus-resteasy-reactive")
 }
