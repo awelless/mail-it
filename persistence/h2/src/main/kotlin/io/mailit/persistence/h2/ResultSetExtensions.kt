@@ -5,7 +5,6 @@ import io.mailit.core.model.HtmlMailMessageType
 import io.mailit.core.model.MailMessage
 import io.mailit.core.model.MailMessageTemplate
 import io.mailit.core.model.MailMessageType
-import io.mailit.core.model.MailMessageTypeState
 import io.mailit.core.model.PlainTextMailMessageType
 import io.mailit.persistence.common.serialization.MailMessageDataSerializer
 import io.mailit.persistence.h2.Columns.ApiKey as ApiKeyCol
@@ -17,6 +16,7 @@ import io.mailit.value.EmailAddress.Companion.toEmailAddress
 import io.mailit.value.MailId
 import io.mailit.value.MailState
 import io.mailit.value.MailTypeId
+import io.mailit.value.MailTypeState
 import io.mailit.value.TemplateEngine
 import java.sql.ResultSet
 import java.time.Instant
@@ -37,7 +37,7 @@ internal fun ResultSet.getMailMessageTypeFromRow(): MailMessageType {
 
     val typeMaxRetriesCount = getNullableInt(MailMessageTypeCol.MAX_RETRIES_COUNT)
 
-    val typeState = MailMessageTypeState.valueOf(getString(MailMessageTypeCol.STATE))
+    val typeState = MailTypeState.valueOf(getString(MailMessageTypeCol.STATE))
 
     val createdAt = getInstant(MailMessageTypeCol.CREATED_AT)
     val updatedAt = getInstant(MailMessageTypeCol.UPDATED_AT)

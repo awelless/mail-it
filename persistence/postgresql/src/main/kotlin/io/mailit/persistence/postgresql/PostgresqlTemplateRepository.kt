@@ -13,7 +13,7 @@ private const val FIND_BY_MAIL_TYPE_ID_SQL = """
       FROM ${Tables.MAIL_MESSAGE_TYPE} mt
       LEFT JOIN ${Tables.MAIL_MESSAGE_TEMPLATE} t ON mt.mail_message_type_id = t.mail_message_type_id
      WHERE mt.mail_message_type_id = $1
-       AND mt.state = 'ENABLED'
+       AND mt.state = 'ACTIVE'
 """
 
 class PostgresqlTemplateRepository(

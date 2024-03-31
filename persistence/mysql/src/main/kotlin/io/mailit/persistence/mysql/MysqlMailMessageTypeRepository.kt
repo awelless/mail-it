@@ -4,7 +4,6 @@ import io.mailit.core.exception.DuplicateUniqueKeyException
 import io.mailit.core.exception.PersistenceException
 import io.mailit.core.model.HtmlMailMessageType
 import io.mailit.core.model.MailMessageType
-import io.mailit.core.model.MailMessageTypeState
 import io.mailit.core.model.PlainTextMailMessageType
 import io.mailit.core.model.Slice
 import io.mailit.core.spi.MailMessageTypeRepository
@@ -15,6 +14,7 @@ import io.mailit.persistence.mysql.MailMessageContent.HTML
 import io.mailit.persistence.mysql.Tables.MAIL_MESSAGE_TEMPLATE
 import io.mailit.persistence.mysql.Tables.MAIL_MESSAGE_TYPE
 import io.mailit.value.MailTypeId
+import io.mailit.value.MailTypeState
 import io.mailit.worker.spi.persistence.MailTypeRepository
 import io.smallrye.mutiny.Multi
 import io.smallrye.mutiny.coroutines.awaitSuspending
@@ -37,7 +37,7 @@ private const val FIND_BY_ID_SQL = """
       FROM $MAIL_MESSAGE_TYPE mt
       LEFT JOIN $MAIL_MESSAGE_TEMPLATE t ON mt.mail_message_type_id = t.mail_message_type_id
      WHERE mt.mail_message_type_id = ?
-       AND state = 'ENABLED'"""
+       AND state = 'ACTIVE'"""
 
 private const val FIND_BY_NAME_SQL = """
     SELECT mt.mail_message_type_id ${MailMessageTypeCol.ID},
@@ -53,13 +53,13 @@ private const val FIND_BY_NAME_SQL = """
       FROM $MAIL_MESSAGE_TYPE mt
       LEFT JOIN $MAIL_MESSAGE_TEMPLATE t ON mt.mail_message_type_id = t.mail_message_type_id
      WHERE mt.name = ?
-       AND mt.state = 'ENABLED'"""
+       AND mt.state = 'ACTIVE'"""
 
 private const val FIND_ID_BY_NAME_SQL = """
     SELECT mail_message_type_id
       FROM $MAIL_MESSAGE_TYPE
      WHERE name = ?
-       AND state = 'ENABLED'"""
+       AND state = 'ACTIVE'"""
 
 private const val FIND_ALL_SLICED_SQL = """
     SELECT mt.mail_message_type_id ${MailMessageTypeCol.ID},
@@ -74,7 +74,7 @@ private const val FIND_ALL_SLICED_SQL = """
            t.template ${MailMessageTypeCol.TEMPLATE}
       FROM $MAIL_MESSAGE_TYPE mt
       LEFT JOIN $MAIL_MESSAGE_TEMPLATE t ON mt.mail_message_type_id = t.mail_message_type_id
-     WHERE mt.state = 'ENABLED'
+     WHERE mt.state = 'ACTIVE'
      ORDER BY mt.mail_message_type_id DESC
      LIMIT ? OFFSET ?"""
 
@@ -134,7 +134,7 @@ class MysqlMailMessageTypeRepository(
             .onItem().transform { if (it.hasNext()) it.next().getMailMessageTypeFromRow() else null }
             .awaitSuspending()
 
-    override suspend fun findIdByName(name: String): MailTypeId? =
+    override suspend fun findActiveIdByName(name: String): MailTypeId? =
         client.preparedQuery(FIND_ID_BY_NAME_SQL)
             .execute(Tuple.of(name))
             .onItem().transform { it.iterator() }
@@ -215,7 +215,7 @@ class MysqlMailMessageTypeRepository(
         return mailMessageType
     }
 
-    override suspend fun updateState(id: MailTypeId, state: MailMessageTypeState, updatedAt: Instant): Int =
+    override suspend fun updateState(id: MailTypeId, state: MailTypeState, updatedAt: Instant): Int =
         client.preparedQuery(UPDATE_STATE_SQL)
             .execute(Tuple.of(state.name, updatedAt.toLocalDateTime(), id.value))
             .onItem().transform { it.rowCount() }

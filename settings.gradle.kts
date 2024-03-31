@@ -37,7 +37,6 @@ include(
     "common-test",
     "connector:http",
     "core:admin-api",
-    "core:connector-api",
     "core:exception",
     "core:model",
     "core:service",

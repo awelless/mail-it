@@ -1,6 +1,7 @@
 package io.mailit.core.model
 
 import io.mailit.value.MailTypeId
+import io.mailit.value.MailTypeState
 import io.mailit.value.TemplateEngine
 import java.time.Instant
 
@@ -26,19 +27,12 @@ sealed class MailMessageType(
      */
     open var maxRetriesCount: Int?,
 
-    open var state: MailMessageTypeState,
+    open var state: MailTypeState,
 
     open val createdAt: Instant,
 
     open var updatedAt: Instant,
 )
-
-enum class MailMessageTypeState {
-
-    ENABLED,
-    DELETED,
-    FORCE_DELETED,
-}
 
 /**
  * [MailMessageType] for plain "text" messages
@@ -48,7 +42,7 @@ data class PlainTextMailMessageType(
     override val name: String,
     override var description: String? = null,
     override var maxRetriesCount: Int? = null,
-    override var state: MailMessageTypeState = MailMessageTypeState.ENABLED,
+    override var state: MailTypeState = MailTypeState.ACTIVE,
     override val createdAt: Instant,
     override var updatedAt: Instant,
 ) : MailMessageType(id, name, description, maxRetriesCount, state, createdAt, updatedAt)
@@ -61,7 +55,7 @@ data class HtmlMailMessageType(
     override val name: String,
     override var description: String? = null,
     override var maxRetriesCount: Int? = null,
-    override var state: MailMessageTypeState = MailMessageTypeState.ENABLED,
+    override var state: MailTypeState = MailTypeState.ACTIVE,
     override val createdAt: Instant,
     override var updatedAt: Instant,
 

@@ -22,7 +22,7 @@ internal class CreateMailImpl(
 ) : CreateMail {
 
     override suspend fun invoke(request: CreateMailRequest): Result<Unit> {
-        val mailTypeId = mailTypeRepository.findIdByName(request.mailTypeName)
+        val mailTypeId = mailTypeRepository.findActiveIdByName(request.mailTypeName)
             ?: return Result.failure(ValidationException("Invalid type: ${request.mailTypeName} is passed"))
 
         val mail = PersistenceMail(

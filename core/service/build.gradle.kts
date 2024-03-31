@@ -1,6 +1,5 @@
 dependencies {
     implementation(project(":core:admin-api"))
-    implementation(project(":core:connector-api"))
     implementation(project(":core:exception"))
     implementation(project(":core:model"))
     implementation(project(":core:spi"))

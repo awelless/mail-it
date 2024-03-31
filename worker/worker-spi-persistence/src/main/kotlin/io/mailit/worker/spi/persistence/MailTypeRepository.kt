@@ -4,5 +4,5 @@ import io.mailit.value.MailTypeId
 
 interface MailTypeRepository {
 
-    suspend fun findIdByName(name: String): MailTypeId?
+    suspend fun findActiveIdByName(name: String): MailTypeId?
 }

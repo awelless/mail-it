@@ -4,7 +4,6 @@ import io.mailit.core.exception.DuplicateUniqueKeyException
 import io.mailit.core.exception.PersistenceException
 import io.mailit.core.model.HtmlMailMessageType
 import io.mailit.core.model.MailMessageType
-import io.mailit.core.model.MailMessageTypeState
 import io.mailit.core.model.PlainTextMailMessageType
 import io.mailit.core.model.Slice
 import io.mailit.core.spi.MailMessageTypeRepository
@@ -15,6 +14,7 @@ import io.mailit.persistence.h2.MailMessageContent.PLAIN_TEXT
 import io.mailit.persistence.h2.Tables.MAIL_MESSAGE_TEMPLATE
 import io.mailit.persistence.h2.Tables.MAIL_MESSAGE_TYPE
 import io.mailit.value.MailTypeId
+import io.mailit.value.MailTypeState
 import io.mailit.worker.spi.persistence.MailTypeRepository
 import java.sql.SQLException
 import java.time.Instant
@@ -36,7 +36,7 @@ private const val FIND_BY_ID_SQL = """
       FROM $MAIL_MESSAGE_TYPE mt
       LEFT JOIN $MAIL_MESSAGE_TEMPLATE t ON mt.mail_message_type_id = t.mail_message_type_id
      WHERE mt.mail_message_type_id = ?
-       AND mt.state = 'ENABLED'"""
+       AND mt.state = 'ACTIVE'"""
 
 private const val FIND_BY_NAME_SQL = """
     SELECT mt.mail_message_type_id ${MailMessageTypeCol.ID},
@@ -52,13 +52,13 @@ private const val FIND_BY_NAME_SQL = """
       FROM $MAIL_MESSAGE_TYPE mt
       LEFT JOIN $MAIL_MESSAGE_TEMPLATE t ON mt.mail_message_type_id = t.mail_message_type_id
      WHERE mt.name = ?
-       AND mt.state = 'ENABLED'"""
+       AND mt.state = 'ACTIVE'"""
 
 private const val FIND_ID_BY_NAME_SQL = """
     SELECT mail_message_type_id
       FROM $MAIL_MESSAGE_TYPE
      WHERE name = ?
-       AND state = 'ENABLED'"""
+       AND state = 'ACTIVE'"""
 
 private const val FIND_ALL_SLICED_SQL = """
     SELECT mt.mail_message_type_id ${MailMessageTypeCol.ID},
@@ -73,7 +73,7 @@ private const val FIND_ALL_SLICED_SQL = """
            t.template ${MailMessageTypeCol.TEMPLATE}
       FROM $MAIL_MESSAGE_TYPE mt
       LEFT JOIN $MAIL_MESSAGE_TEMPLATE t ON mt.mail_message_type_id = t.mail_message_type_id
-     WHERE mt.state = 'ENABLED'
+     WHERE mt.state = 'ACTIVE'
      ORDER BY mt.mail_message_type_id DESC
      LIMIT ? OFFSET ?"""
 
@@ -145,7 +145,7 @@ class H2MailMessageTypeRepository(
             )
         }
 
-    override suspend fun findIdByName(name: String) =
+    override suspend fun findActiveIdByName(name: String) =
         dataSource.connection.use {
             queryRunner.query(
                 it,
@@ -234,7 +234,7 @@ class H2MailMessageTypeRepository(
         return mailMessageType
     }
 
-    override suspend fun updateState(id: MailTypeId, state: MailMessageTypeState, updatedAt: Instant): Int =
+    override suspend fun updateState(id: MailTypeId, state: MailTypeState, updatedAt: Instant): Int =
         dataSource.connection.use {
             queryRunner.update(
                 it,
