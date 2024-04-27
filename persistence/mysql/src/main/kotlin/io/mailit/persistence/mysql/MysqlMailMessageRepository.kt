@@ -15,7 +15,7 @@ import io.mailit.persistence.mysql.Tables.MAIL_MESSAGE_TYPE
 import io.mailit.value.MailId
 import io.mailit.value.MailState
 import io.mailit.worker.spi.persistence.MailRepository
-import io.mailit.worker.spi.persistence.PersistenceMail
+import io.mailit.worker.spi.persistence.WritePersistenceMail
 import io.smallrye.mutiny.Multi
 import io.smallrye.mutiny.coroutines.awaitSuspending
 import io.vertx.mutiny.mysqlclient.MySQLPool
@@ -218,7 +218,7 @@ class MysqlMailMessageRepository(
             .awaitSuspending()
     }
 
-    override suspend fun create(mail: PersistenceMail): Result<Unit> {
+    override suspend fun create(mail: WritePersistenceMail): Result<Unit> {
         val data = dataSerializer.write(mail.data)
 
         val arguments = arrayOf(

@@ -3,6 +3,11 @@ package io.mailit.value
 @JvmInline
 value class MailTypeId(val value: Long)
 
+enum class MailTypeContent {
+    PLAIN_TEXT,
+    HTML,
+}
+
 enum class TemplateEngine {
     /**
      * Plain html, template is sent as it is, without any transformations.

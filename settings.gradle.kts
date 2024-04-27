@@ -63,6 +63,7 @@ include(
     "worker:worker-api",
     "worker:worker-core",
     "worker:worker-quarkus",
+    "worker:worker-spi-mailing",
     "worker:worker-spi-persistence",
     "worker:worker-test",
 )

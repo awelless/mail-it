@@ -10,7 +10,7 @@ import io.mailit.value.EmailAddress.Companion.toEmailAddress
 import io.mailit.value.MailId
 import io.mailit.value.MailState
 import io.mailit.worker.spi.persistence.MailRepository
-import io.mailit.worker.spi.persistence.PersistenceMail
+import io.mailit.worker.spi.persistence.WritePersistenceMail
 import jakarta.inject.Inject
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
@@ -31,7 +31,7 @@ abstract class WorkerMailRepositoryTest {
     @Inject
     lateinit var mailMessageTypeRepository: MailMessageTypeRepository
 
-    lateinit var mailMessage: PersistenceMail
+    lateinit var mailMessage: WritePersistenceMail
     lateinit var mailMessageType: MailMessageType
 
     @BeforeEach
@@ -40,7 +40,7 @@ abstract class WorkerMailRepositoryTest {
             mailMessageType = createPlainMailMessageType()
             mailMessageTypeRepository.create(mailMessageType)
 
-            mailMessage = PersistenceMail(
+            mailMessage = WritePersistenceMail(
                 id = MailId(1),
                 mailTypeId = mailMessageType.id,
                 text = "text",
@@ -62,7 +62,7 @@ abstract class WorkerMailRepositoryTest {
     @Test
     fun create() = runTest {
         // given
-        val message = PersistenceMail(
+        val message = WritePersistenceMail(
             id = MailId(555),
             mailTypeId = mailMessageType.id,
             text = null,
@@ -102,7 +102,7 @@ abstract class WorkerMailRepositoryTest {
     @Test
     fun `create - with the same deduplication id - return error`() = runTest {
         // given
-        val message = PersistenceMail(
+        val message = WritePersistenceMail(
             id = MailId(123),
             mailTypeId = mailMessageType.id,
             text = null,
@@ -128,7 +128,7 @@ abstract class WorkerMailRepositoryTest {
     @Test
     fun `create - without deduplication ids - create 2`() = runTest {
         // given
-        val message = PersistenceMail(
+        val message = WritePersistenceMail(
             id = MailId(123),
             mailTypeId = mailMessageType.id,
             text = null,

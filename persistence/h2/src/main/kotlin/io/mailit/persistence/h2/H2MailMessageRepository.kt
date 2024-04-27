@@ -14,7 +14,7 @@ import io.mailit.persistence.h2.Tables.MAIL_MESSAGE_TYPE
 import io.mailit.value.MailId
 import io.mailit.value.MailState
 import io.mailit.worker.spi.persistence.MailRepository
-import io.mailit.worker.spi.persistence.PersistenceMail
+import io.mailit.worker.spi.persistence.WritePersistenceMail
 import java.sql.SQLException
 import java.time.Instant
 import javax.sql.DataSource
@@ -222,7 +222,7 @@ class H2MailMessageRepository(
         return createSlice(content, page, size)
     }
 
-    override suspend fun create(mail: PersistenceMail): Result<Unit> = try {
+    override suspend fun create(mail: WritePersistenceMail): Result<Unit> = try {
         val data = dataSerializer.write(mail.data)
 
         dataSource.connection.use {

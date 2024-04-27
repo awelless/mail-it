@@ -1,6 +1,6 @@
 package io.mailit.core.exception
 
-sealed class ApplicationException(message: String, cause: Exception? = null) : Exception(message, cause) {
+open class ApplicationException(message: String, cause: Exception? = null) : Exception(message, cause) {
 
     override val message: String
         get() = super.message!! // Message is always present.

@@ -12,7 +12,7 @@ import io.mailit.value.EmailAddress.Companion.toEmailAddress
 import io.mailit.value.MailId
 import io.mailit.value.MailState
 import io.mailit.worker.spi.persistence.MailRepository
-import io.mailit.worker.spi.persistence.PersistenceMail
+import io.mailit.worker.spi.persistence.WritePersistenceMail
 import io.quarkus.test.junit.QuarkusTest
 import io.quarkus.test.security.TestSecurity
 import io.restassured.module.kotlin.extensions.Given
@@ -40,8 +40,8 @@ class MailMessageResourceTest {
     lateinit var mailRepository: MailRepository
 
     lateinit var mailType: MailMessageType
-    lateinit var mail1: PersistenceMail
-    lateinit var mail2: PersistenceMail
+    lateinit var mail1: WritePersistenceMail
+    lateinit var mail2: WritePersistenceMail
 
     @BeforeEach
     fun setUp() {
@@ -88,10 +88,10 @@ class MailMessageResourceTest {
         }
     }
 
-    private suspend fun createMail(messageType: MailMessageType): PersistenceMail {
+    private suspend fun createMail(messageType: MailMessageType): WritePersistenceMail {
         val id = counter.incrementAndGet()
 
-        return PersistenceMail(
+        return WritePersistenceMail(
             id = MailId(id),
             mailTypeId = messageType.id,
             text = "text",

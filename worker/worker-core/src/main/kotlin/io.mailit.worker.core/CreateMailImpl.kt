@@ -10,7 +10,7 @@ import io.mailit.worker.api.CreateMail
 import io.mailit.worker.api.CreateMailRequest
 import io.mailit.worker.spi.persistence.MailRepository
 import io.mailit.worker.spi.persistence.MailTypeRepository
-import io.mailit.worker.spi.persistence.PersistenceMail
+import io.mailit.worker.spi.persistence.WritePersistenceMail
 import java.time.Clock
 import mu.KLogging
 
@@ -25,7 +25,7 @@ internal class CreateMailImpl(
         val mailTypeId = mailTypeRepository.findActiveIdByName(request.mailTypeName)
             ?: return Result.failure(ValidationException("Invalid type: ${request.mailTypeName} is passed"))
 
-        val mail = PersistenceMail(
+        val mail = WritePersistenceMail(
             id = MailId(idGenerator.generateId()),
             mailTypeId = mailTypeId,
             text = request.text,

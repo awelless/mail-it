@@ -11,7 +11,7 @@ import io.mailit.value.MailState.CANCELED
 import io.mailit.value.MailState.PENDING
 import io.mailit.value.MailState.SENDING
 import io.mailit.worker.spi.persistence.MailRepository
-import io.mailit.worker.spi.persistence.PersistenceMail
+import io.mailit.worker.spi.persistence.WritePersistenceMail
 import jakarta.inject.Inject
 import java.time.Instant
 import kotlinx.coroutines.runBlocking
@@ -33,7 +33,7 @@ abstract class MailMessageRepositoryTest {
     @Inject
     lateinit var mailMessageRepository: MailMessageRepository
 
-    lateinit var mailMessage: PersistenceMail
+    lateinit var mailMessage: WritePersistenceMail
     lateinit var mailMessageType: MailMessageType
 
     @BeforeEach
@@ -42,7 +42,7 @@ abstract class MailMessageRepositoryTest {
             mailMessageType = createPlainMailMessageType()
             mailMessageTypeRepository.create(mailMessageType)
 
-            mailMessage = PersistenceMail(
+            mailMessage = WritePersistenceMail(
                 id = MailId(1),
                 mailTypeId = mailMessageType.id,
                 text = "text",
@@ -87,7 +87,7 @@ abstract class MailMessageRepositoryTest {
         // given
         val messageSendingStartedAt = Instant.now().minusSeconds(10)
 
-        val sendingMessage = PersistenceMail(
+        val sendingMessage = WritePersistenceMail(
             id = MailId(2),
             mailTypeId = mailMessageType.id,
             text = "text2",
@@ -115,7 +115,7 @@ abstract class MailMessageRepositoryTest {
     @Test
     fun findAllIdsByStateIn_returnsIdsOnly() = runTest {
         // given
-        val message2 = PersistenceMail(
+        val message2 = WritePersistenceMail(
             id = MailId(2),
             mailTypeId = mailMessageType.id,
             text = "text2",
@@ -143,7 +143,7 @@ abstract class MailMessageRepositoryTest {
     @Test
     fun findAllSlicedDescendingIdSorted() = runTest {
         // given
-        val message2 = PersistenceMail(
+        val message2 = WritePersistenceMail(
             id = MailId(2),
             mailTypeId = mailMessageType.id,
             text = "text",
