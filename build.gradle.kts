@@ -33,7 +33,7 @@ subprojects {
 
     val dbUtilsVersion = "1.8.1" // https://mvnrepository.com/artifact/commons-dbutils/commons-dbutils
     val freemarkerVersion = "2.3.33" // https://mvnrepository.com/artifact/org.freemarker/freemarker
-    val jsoupVersion = "1.18.1" // https://mvnrepository.com/artifact/org.jsoup/jsoup
+    val jsoupVersion = "1.18.3" // https://mvnrepository.com/artifact/org.jsoup/jsoup
     val kotlinLoggingVersion = "3.0.5" // https://mvnrepository.com/artifact/io.github.microutils/kotlin-logging
     val kryoVersion = "5.6.2" // https://mvnrepository.com/artifact/com.esotericsoftware/kryo
     val quarkusVersion = "3.6.8" // https://mvnrepository.com/artifact/io.quarkus.platform/quarkus-bom
