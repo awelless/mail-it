@@ -1,5 +1,7 @@
 package io.mailit.persistence.test
 
+import io.mailit.core.exception.DuplicateUniqueKeyException
+import io.mailit.core.model.MailMessage
 import io.mailit.core.model.MailMessageType
 import io.mailit.core.spi.MailMessageRepository
 import io.mailit.core.spi.MailMessageTypeRepository
@@ -10,22 +12,19 @@ import io.mailit.value.MailId
 import io.mailit.value.MailState.CANCELED
 import io.mailit.value.MailState.PENDING
 import io.mailit.value.MailState.SENDING
-import io.mailit.worker.spi.persistence.MailRepository
-import io.mailit.worker.spi.persistence.PersistenceMail
 import jakarta.inject.Inject
 import java.time.Instant
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 
 abstract class MailMessageRepositoryTest {
-
-    @Inject
-    lateinit var mailRepository: MailRepository
 
     @Inject
     lateinit var mailMessageTypeRepository: MailMessageTypeRepository
@@ -33,7 +32,7 @@ abstract class MailMessageRepositoryTest {
     @Inject
     lateinit var mailMessageRepository: MailMessageRepository
 
-    lateinit var mailMessage: PersistenceMail
+    lateinit var mailMessage: MailMessage
     lateinit var mailMessageType: MailMessageType
 
     @BeforeEach
@@ -42,22 +41,19 @@ abstract class MailMessageRepositoryTest {
             mailMessageType = createPlainMailMessageType()
             mailMessageTypeRepository.create(mailMessageType)
 
-            mailMessage = PersistenceMail(
+            mailMessage = MailMessage(
                 id = MailId(1),
-                mailTypeId = mailMessageType.id,
                 text = "text",
                 data = emptyMap(),
                 subject = null,
                 emailFrom = "email@from.com".toEmailAddress(),
                 emailTo = "email@to.com".toEmailAddress(),
+                type = mailMessageType,
                 createdAt = nowWithoutNanos(),
-                sendingStartedAt = null,
-                sentAt = null,
                 state = PENDING,
-                failedCount = 0,
                 deduplicationId = "deduplication1",
             )
-            mailRepository.create(mailMessage)
+            mailMessageRepository.create(mailMessage)
         }
     }
 
@@ -87,22 +83,20 @@ abstract class MailMessageRepositoryTest {
         // given
         val messageSendingStartedAt = Instant.now().minusSeconds(10)
 
-        val sendingMessage = PersistenceMail(
+        val sendingMessage = MailMessage(
             id = MailId(2),
-            mailTypeId = mailMessageType.id,
             text = "text2",
             data = emptyMap(),
             subject = null,
             emailFrom = "email@from.com".toEmailAddress(),
             emailTo = "email@to.com".toEmailAddress(),
+            type = mailMessageType,
             createdAt = Instant.now().minusSeconds(100),
             sendingStartedAt = messageSendingStartedAt,
-            sentAt = null,
             state = SENDING,
-            failedCount = 0,
             deduplicationId = "deduplication2",
         )
-        mailRepository.create(sendingMessage)
+        mailMessageRepository.create(sendingMessage)
 
         // when
         val actual = mailMessageRepository.findAllWithTypeByStatesAndSendingStartedBefore(listOf(SENDING), Instant.now(), 1000)
@@ -115,22 +109,19 @@ abstract class MailMessageRepositoryTest {
     @Test
     fun findAllIdsByStateIn_returnsIdsOnly() = runTest {
         // given
-        val message2 = PersistenceMail(
+        val message2 = MailMessage(
             id = MailId(2),
-            mailTypeId = mailMessageType.id,
             text = "text2",
             data = emptyMap(),
             subject = null,
             emailFrom = "email@from.com".toEmailAddress(),
             emailTo = "email@to.com".toEmailAddress(),
+            type = mailMessageType,
             createdAt = Instant.now(),
-            sendingStartedAt = null,
-            sentAt = null,
             state = PENDING,
-            failedCount = 0,
             deduplicationId = "deduplication2",
         )
-        mailRepository.create(message2)
+        mailMessageRepository.create(message2)
 
         // when
         val actual = mailMessageRepository.findAllIdsByStateIn(listOf(PENDING), 1000)
@@ -143,30 +134,98 @@ abstract class MailMessageRepositoryTest {
     @Test
     fun findAllSlicedDescendingIdSorted() = runTest {
         // given
-        val message2 = PersistenceMail(
+        val message2 = MailMessage(
             id = MailId(2),
-            mailTypeId = mailMessageType.id,
             text = "text",
             data = emptyMap(),
             subject = null,
             emailFrom = "email@from.com".toEmailAddress(),
             emailTo = "email@to.com".toEmailAddress(),
+            type = mailMessageType,
             createdAt = Instant.now(),
-            sendingStartedAt = null,
-            sentAt = null,
             state = PENDING,
-            failedCount = 0,
             deduplicationId = "deduplication2",
         )
-        mailRepository.create(message2)
+        mailMessageRepository.create(message2)
 
         // when
         val actual = mailMessageRepository.findAllSlicedDescendingIdSorted(page = 1, size = 1)
 
         // then
-        assertEquals(1, actual.size)
-        assertEquals(mailMessage.id, actual.content[0].id)
+        assertEquals(listOf(mailMessage), actual.content)
         assertTrue(actual.last)
+    }
+
+    @Test
+    fun create() = runTest {
+        // given
+        val message = MailMessage(
+            id = MailId(555),
+            text = null,
+            data = mapOf("name" to "Name", "age" to 20),
+            subject = null,
+            emailFrom = "email@from.com".toEmailAddress(),
+            emailTo = "email@to.com".toEmailAddress(),
+            type = mailMessageType,
+            createdAt = nowWithoutNanos(),
+            state = PENDING,
+            deduplicationId = "deduplication555",
+        )
+
+        // when
+        mailMessageRepository.create(message)
+
+        val actual = mailMessageRepository.findOneWithTypeById(message.id)
+
+        // then
+        assertEquals(message, actual)
+    }
+
+    @Test
+    fun `create with the same deduplication id`() = runTest {
+        // given
+        val message = MailMessage(
+            id = MailId(123),
+            text = null,
+            data = mapOf("name" to "Name", "age" to 20),
+            subject = null,
+            emailFrom = "email@from.com".toEmailAddress(),
+            emailTo = "email@to.com".toEmailAddress(),
+            type = mailMessageType,
+            createdAt = nowWithoutNanos(),
+            state = PENDING,
+            deduplicationId = mailMessage.deduplicationId,
+        )
+
+        // when + then
+        assertThrows<DuplicateUniqueKeyException> { mailMessageRepository.create(message) }
+    }
+
+    @Test
+    fun `create without deduplication ids`() = runTest {
+        // given
+        val message = MailMessage(
+            id = MailId(123),
+            text = null,
+            data = mapOf("name" to "Name", "age" to 20),
+            subject = null,
+            emailFrom = "email@from.com".toEmailAddress(),
+            emailTo = "email@to.com".toEmailAddress(),
+            type = mailMessageType,
+            createdAt = nowWithoutNanos(),
+            state = PENDING,
+            deduplicationId = null,
+        )
+
+        val message2 = message.copy(id = MailId(124))
+
+        // when
+        mailMessageRepository.create(message)
+        mailMessageRepository.create(message2)
+
+        // then
+        assertNotNull(mailMessageRepository.findOneWithTypeById(message.id))
+        assertNotNull(mailMessageRepository.findOneWithTypeById(message2.id))
     }
 
     @Test

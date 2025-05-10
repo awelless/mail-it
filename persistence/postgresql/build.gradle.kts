@@ -9,7 +9,6 @@ dependencies {
     implementation(project(":persistence:common"))
     implementation(project(":persistence:liquibase"))
     implementation(project(":template:template-spi-persistence"))
-    implementation(project(":worker:worker-spi-persistence"))
 
     implementation("io.quarkus:quarkus-config-yaml")
     implementation("io.quarkus:quarkus-kotlin")

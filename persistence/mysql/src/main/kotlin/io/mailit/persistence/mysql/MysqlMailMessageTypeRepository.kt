@@ -15,7 +15,6 @@ import io.mailit.persistence.mysql.MailMessageContent.HTML
 import io.mailit.persistence.mysql.Tables.MAIL_MESSAGE_TEMPLATE
 import io.mailit.persistence.mysql.Tables.MAIL_MESSAGE_TYPE
 import io.mailit.value.MailTypeId
-import io.mailit.worker.spi.persistence.MailTypeRepository
 import io.smallrye.mutiny.Multi
 import io.smallrye.mutiny.coroutines.awaitSuspending
 import io.vertx.mutiny.mysqlclient.MySQLPool
@@ -54,12 +53,6 @@ private const val FIND_BY_NAME_SQL = """
       LEFT JOIN $MAIL_MESSAGE_TEMPLATE t ON mt.mail_message_type_id = t.mail_message_type_id
      WHERE mt.name = ?
        AND mt.state = 'ENABLED'"""
-
-private const val FIND_ID_BY_NAME_SQL = """
-    SELECT mail_message_type_id
-      FROM $MAIL_MESSAGE_TYPE
-     WHERE name = ?
-       AND state = 'ENABLED'"""
 
 private const val FIND_ALL_SLICED_SQL = """
     SELECT mt.mail_message_type_id ${MailMessageTypeCol.ID},
@@ -118,7 +111,7 @@ private const val UPDATE_STATE_SQL = """
 
 class MysqlMailMessageTypeRepository(
     private val client: MySQLPool,
-) : MailMessageTypeRepository, MailTypeRepository {
+) : MailMessageTypeRepository {
 
     override suspend fun findById(id: MailTypeId): MailMessageType? =
         client.preparedQuery(FIND_BY_ID_SQL)
@@ -132,13 +125,6 @@ class MysqlMailMessageTypeRepository(
             .execute(Tuple.of(name))
             .onItem().transform { it.iterator() }
             .onItem().transform { if (it.hasNext()) it.next().getMailMessageTypeFromRow() else null }
-            .awaitSuspending()
-
-    override suspend fun findIdByName(name: String): MailTypeId? =
-        client.preparedQuery(FIND_ID_BY_NAME_SQL)
-            .execute(Tuple.of(name))
-            .onItem().transform { it.iterator() }
-            .onItem().transform { if (it.hasNext()) MailTypeId(it.next().getLong(0)) else null }
             .awaitSuspending()
 
     override suspend fun findAllSliced(page: Int, size: Int): Slice<MailMessageType> {

@@ -14,8 +14,6 @@ import io.mailit.persistence.mysql.Tables.MAIL_MESSAGE_TEMPLATE
 import io.mailit.persistence.mysql.Tables.MAIL_MESSAGE_TYPE
 import io.mailit.value.MailId
 import io.mailit.value.MailState
-import io.mailit.worker.spi.persistence.MailRepository
-import io.mailit.worker.spi.persistence.PersistenceMail
 import io.smallrye.mutiny.Multi
 import io.smallrye.mutiny.coroutines.awaitSuspending
 import io.vertx.mutiny.mysqlclient.MySQLPool
@@ -163,7 +161,7 @@ private fun inClause(entries: Int) = (1..entries).joinToString(
 class MysqlMailMessageRepository(
     private val client: MySQLPool,
     private val dataSerializer: MailMessageDataSerializer,
-) : MailMessageRepository, MailRepository {
+) : MailMessageRepository {
 
     override suspend fun findOneWithTypeById(id: MailId): MailMessage? =
         client.preparedQuery(FIND_WITH_TYPE_BY_ID_SQL)
@@ -218,33 +216,33 @@ class MysqlMailMessageRepository(
             .awaitSuspending()
     }
 
-    override suspend fun create(mail: PersistenceMail): Result<Unit> {
-        val data = dataSerializer.write(mail.data)
+    override suspend fun create(mailMessage: MailMessage): MailMessage {
+        val data = dataSerializer.write(mailMessage.data)
 
         val arguments = arrayOf(
-            mail.id.value,
-            mail.text,
+            mailMessage.id.value,
+            mailMessage.text,
             data?.toBuffer(),
-            mail.subject,
-            mail.emailFrom?.email,
-            mail.emailTo.email,
-            mail.mailTypeId.value,
-            mail.createdAt.toLocalDateTime(),
-            mail.sendingStartedAt?.toLocalDateTime(),
-            mail.sentAt?.toLocalDateTime(),
-            mail.state.name,
-            mail.failedCount,
-            mail.deduplicationId,
+            mailMessage.subject,
+            mailMessage.emailFrom?.email,
+            mailMessage.emailTo.email,
+            mailMessage.type.id.value,
+            mailMessage.createdAt.toLocalDateTime(),
+            mailMessage.sendingStartedAt?.toLocalDateTime(),
+            mailMessage.sentAt?.toLocalDateTime(),
+            mailMessage.state.name,
+            mailMessage.failedCount,
+            mailMessage.deduplicationId,
         )
 
-        return client.preparedQuery(INSERT_SQL)
+        client.preparedQuery(INSERT_SQL)
             .execute(Tuple.from(arguments))
-            .onItem().transform { Result.success(Unit) }
-            .onFailure().recoverWithItem { e: Throwable ->
-                val err = if ((e as? MySQLException)?.errorCode == 1062) DuplicateUniqueKeyException(e.message, e) else e
-                Result.failure(err)
+            .onFailure(MySQLException::class.java).transform {
+                if ((it as? MySQLException)?.errorCode == 1062) DuplicateUniqueKeyException(it.message, it) else it
             }
             .awaitSuspending()
+
+        return mailMessage
     }
 
     override suspend fun updateMessageState(id: MailId, state: MailState): Int =

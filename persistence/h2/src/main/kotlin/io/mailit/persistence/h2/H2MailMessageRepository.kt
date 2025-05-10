@@ -13,8 +13,6 @@ import io.mailit.persistence.h2.Tables.MAIL_MESSAGE_TEMPLATE
 import io.mailit.persistence.h2.Tables.MAIL_MESSAGE_TYPE
 import io.mailit.value.MailId
 import io.mailit.value.MailState
-import io.mailit.worker.spi.persistence.MailRepository
-import io.mailit.worker.spi.persistence.PersistenceMail
 import java.sql.SQLException
 import java.time.Instant
 import javax.sql.DataSource
@@ -153,7 +151,7 @@ class H2MailMessageRepository(
     private val dataSource: DataSource,
     private val queryRunner: QueryRunner,
     private val dataSerializer: MailMessageDataSerializer,
-) : MailMessageRepository, MailRepository {
+) : MailMessageRepository {
 
     private val singleMapper = SingleResultSetMapper { it.getMailMessageWithTypeFromRow(dataSerializer) }
     private val multipleMapper = MultipleResultSetMapper { it.getMailMessageWithTypeFromRow(dataSerializer) }
@@ -222,41 +220,41 @@ class H2MailMessageRepository(
         return createSlice(content, page, size)
     }
 
-    override suspend fun create(mail: PersistenceMail): Result<Unit> = try {
-        val data = dataSerializer.write(mail.data)
+    override suspend fun create(mailMessage: MailMessage): MailMessage {
+        val data = dataSerializer.write(mailMessage.data)
 
-        dataSource.connection.use {
-            val dataBlob = data?.let { bytes -> it.createBlob().apply { setBytes(1, bytes) } }
+        try {
+            dataSource.connection.use {
+                val dataBlob = data?.let { bytes -> it.createBlob().apply { setBytes(1, bytes) } }
 
-            val params = arrayOf(
-                mail.id.value,
-                mail.text,
-                dataBlob,
-                mail.subject,
-                mail.emailFrom?.email,
-                mail.emailTo.email,
-                mail.mailTypeId.value,
-                mail.createdAt,
-                mail.sendingStartedAt,
-                mail.sentAt,
-                mail.state.name,
-                mail.failedCount,
-                mail.deduplicationId,
-            )
+                val params = arrayOf(
+                    mailMessage.id.value,
+                    mailMessage.text,
+                    dataBlob,
+                    mailMessage.subject,
+                    mailMessage.emailFrom?.email,
+                    mailMessage.emailTo.email,
+                    mailMessage.type.id.value,
+                    mailMessage.createdAt,
+                    mailMessage.sendingStartedAt,
+                    mailMessage.sentAt,
+                    mailMessage.state.name,
+                    mailMessage.failedCount,
+                    mailMessage.deduplicationId,
+                )
 
-            queryRunner.update(it, INSERT_SQL, *params)
+                queryRunner.update(it, INSERT_SQL, *params)
+            }
+        } catch (e: SQLException) {
+            // todo replace with custom exception handler?
+            throw if (e.errorCode == ErrorCode.DUPLICATE_KEY_1) {
+                DuplicateUniqueKeyException(e.message, e)
+            } else {
+                e
+            }
         }
 
-        Result.success(Unit)
-    } catch (e: SQLException) {
-        // todo replace with custom exception handler?
-        val err = if (e.errorCode == ErrorCode.DUPLICATE_KEY_1) {
-            DuplicateUniqueKeyException(e.message, e)
-        } else {
-            e
-        }
-
-        Result.failure(err)
+        return mailMessage
     }
 
     override suspend fun updateMessageState(id: MailId, state: MailState): Int =

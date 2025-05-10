@@ -13,12 +13,6 @@ inline fun <reified E : Throwable, T> Result<T>.mapError(transform: (E) -> Throw
         else -> this
     }
 
-inline fun <reified E : Throwable, T> Result<T>.recoverIf(recovery: (E) -> T) =
-    when (val exception = exceptionOrNull()) {
-        is E -> Result.success(recovery(exception))
-        else -> this
-    }
-
 inline fun <T> Result<T>.ensure(condition: (T) -> Boolean, error: (T) -> Throwable) =
     when (val value = getOrNull()) {
         null -> this

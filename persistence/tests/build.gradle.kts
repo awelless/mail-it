@@ -5,7 +5,6 @@ dependencies {
     api(project(":core:spi"))
     api(project(":id-generator:id-generator-spi-locking"))
     api(project(":template:template-spi-persistence"))
-    api(project(":worker:worker-spi-persistence"))
 
     implementation(project(":persistence:common"))
     implementation("io.quarkus:quarkus-liquibase")

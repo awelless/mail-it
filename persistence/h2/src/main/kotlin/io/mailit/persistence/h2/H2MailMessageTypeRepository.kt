@@ -15,7 +15,6 @@ import io.mailit.persistence.h2.MailMessageContent.PLAIN_TEXT
 import io.mailit.persistence.h2.Tables.MAIL_MESSAGE_TEMPLATE
 import io.mailit.persistence.h2.Tables.MAIL_MESSAGE_TYPE
 import io.mailit.value.MailTypeId
-import io.mailit.worker.spi.persistence.MailTypeRepository
 import java.sql.SQLException
 import java.time.Instant
 import javax.sql.DataSource
@@ -53,12 +52,6 @@ private const val FIND_BY_NAME_SQL = """
       LEFT JOIN $MAIL_MESSAGE_TEMPLATE t ON mt.mail_message_type_id = t.mail_message_type_id
      WHERE mt.name = ?
        AND mt.state = 'ENABLED'"""
-
-private const val FIND_ID_BY_NAME_SQL = """
-    SELECT mail_message_type_id
-      FROM $MAIL_MESSAGE_TYPE
-     WHERE name = ?
-       AND state = 'ENABLED'"""
 
 private const val FIND_ALL_SLICED_SQL = """
     SELECT mt.mail_message_type_id ${MailMessageTypeCol.ID},
@@ -118,12 +111,10 @@ private const val UPDATE_STATE_SQL = """
 class H2MailMessageTypeRepository(
     private val dataSource: DataSource,
     private val queryRunner: QueryRunner,
-) : MailMessageTypeRepository, MailTypeRepository {
+) : MailMessageTypeRepository {
 
     private val singleMapper = SingleResultSetMapper { it.getMailMessageTypeFromRow() }
     private val multipleMapper = MultipleResultSetMapper { it.getMailMessageTypeFromRow() }
-
-    private val singleIdMapper = SingleResultSetMapper { MailTypeId(it.getLong(1)) }
 
     override suspend fun findById(id: MailTypeId): MailMessageType? =
         dataSource.connection.use {
@@ -141,16 +132,6 @@ class H2MailMessageTypeRepository(
                 it,
                 FIND_BY_NAME_SQL,
                 singleMapper,
-                name,
-            )
-        }
-
-    override suspend fun findIdByName(name: String) =
-        dataSource.connection.use {
-            queryRunner.query(
-                it,
-                FIND_ID_BY_NAME_SQL,
-                singleIdMapper,
                 name,
             )
         }

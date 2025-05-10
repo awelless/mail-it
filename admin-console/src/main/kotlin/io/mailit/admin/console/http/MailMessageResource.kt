@@ -30,7 +30,7 @@ class MailMessageResource(
         id = id.value.toString(),
         emailFrom = emailFrom?.email,
         emailTo = emailTo.email,
-        type = IdNameDto(type.id.value.toString(), type.name),
+        type = IdNameDto(type.id.toString(), type.name),
         createdAt = createdAt,
         sendingStartedAt = sendingStartedAt,
         sentAt = sentAt,
