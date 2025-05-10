@@ -5,6 +5,7 @@ dependencies {
     implementation(project(":core:core-api-scheduler"))
 
     // Own spi.
+    implementation(project(":core:core-spi-mailer"))
     implementation(project(":core:core-spi-persistence"))
 
     // Dependencies on other modules.
@@ -21,9 +22,6 @@ dependencies {
     implementation("io.quarkus:quarkus-config-yaml")
     implementation("io.quarkus:quarkus-elytron-security")
     implementation("io.quarkus:quarkus-kotlin")
-    implementation("io.quarkus:quarkus-mailer")
-
-    implementation("org.freemarker:freemarker")
 
     testImplementation(project(":common-test"))
     testImplementation(project(":id-generator:id-generator-test"))

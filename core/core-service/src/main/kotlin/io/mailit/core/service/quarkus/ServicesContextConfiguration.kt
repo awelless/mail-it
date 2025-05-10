@@ -3,8 +3,8 @@ package io.mailit.core.service.quarkus
 import io.mailit.core.model.MailMessageType
 import io.mailit.core.service.mail.MailMessageServiceImpl
 import io.mailit.core.service.mail.sending.HungMailsResetManager
+import io.mailit.core.service.mail.sending.MailFactory
 import io.mailit.core.service.mail.sending.MailMessageService
-import io.mailit.core.service.mail.sending.MailSender
 import io.mailit.core.service.mail.sending.SendMailMessageService
 import io.mailit.core.service.mail.sending.UnsentMailProcessor
 import io.mailit.core.service.mail.type.HtmlMailMessageTypeFactory
@@ -16,14 +16,11 @@ import io.mailit.core.service.mail.type.MailMessageTypeStateUpdater
 import io.mailit.core.service.mail.type.MailMessageTypeStateUpdaterManager
 import io.mailit.core.service.mail.type.PlainTextMailMessageTypeFactory
 import io.mailit.core.service.mail.type.PlainTextMailMessageTypeStateUpdater
-import io.mailit.core.service.quarkus.mailing.MailFactory
-import io.mailit.core.service.quarkus.mailing.MailSenderImpl
-import io.mailit.core.service.quarkus.mailing.QuarkusMailSender
 import io.mailit.core.spi.MailMessageRepository
 import io.mailit.core.spi.MailMessageTypeRepository
+import io.mailit.core.spi.mailer.MailSender
 import io.mailit.idgenerator.api.IdGenerator
 import io.mailit.template.api.TemplateProcessor
-import io.quarkus.mailer.reactive.ReactiveMailer
 import jakarta.inject.Singleton
 import java.time.Clock
 
@@ -62,19 +59,11 @@ class MailingContextConfiguration {
     fun mailMessageService(mailMessageRepository: MailMessageRepository) = MailMessageService(mailMessageRepository, Clock.systemUTC())
 
     @Singleton
-    fun mailSender(
-        mailFactory: MailFactory,
-        mailSender: QuarkusMailSender,
-    ) = MailSenderImpl(mailFactory, mailSender)
-
-    @Singleton
-    fun quarkusMailSender(mailer: ReactiveMailer) = QuarkusMailSender(mailer)
-
-    @Singleton
     fun sendMailMessageService(
+        mailFactory: MailFactory,
         mailSender: MailSender,
         mailMessageService: MailMessageService,
-    ) = SendMailMessageService(mailSender, mailMessageService)
+    ) = SendMailMessageService(mailFactory, mailSender, mailMessageService)
 
     @Singleton
     fun hungMailsResetManager(mailMessageService: MailMessageService) = HungMailsResetManager(mailMessageService)

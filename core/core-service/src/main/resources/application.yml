@@ -1,21 +1,8 @@
 quarkus:
-  mailer:
-    auth-methods: ${SMTP_AUTH_METHODS}
-    host: ${SMTP_HOST:host.not.set}
-    port: ${SMTP_PORT}
-    ssl: ${SMTP_SSL:false}
-    start-tls: ${SMTP_TLS:OPTIONAL}
-    username: ${SMTP_USERNAME}
-    password: ${SMTP_PASSWORD}
-    from: ${DEFAULT_EMAIL_FROM}
   quartz:
     clustered: false
     store-type: ram
     thread-count: 2 # should be configured according to an amount of scheduled tasks
-  log:
-    category:
-      quarkus-mailer:
-        level: WARN
 
 application:
   database:

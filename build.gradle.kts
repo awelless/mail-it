@@ -70,6 +70,10 @@ subprojects {
         implementation("org.jetbrains.kotlin:kotlin-stdlib")
 
         implementation("io.github.microutils:kotlin-logging-jvm")
+
+        if (name != "language-extensions") {
+            implementation(project(":language-extensions"))
+        }
     }
 
     java {

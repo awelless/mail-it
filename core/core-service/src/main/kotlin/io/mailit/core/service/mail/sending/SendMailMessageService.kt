@@ -1,10 +1,13 @@
 package io.mailit.core.service.mail.sending
 
 import io.mailit.core.model.MailMessageTypeState.FORCE_DELETED
+import io.mailit.core.spi.mailer.MailSender
+import io.mailit.lang.flatMap
 import io.mailit.value.MailId
 import mu.KLogging
 
 class SendMailMessageService(
+    private val mailFactory: MailFactory,
     private val mailSender: MailSender,
     private val mailMessageService: MailMessageService,
 ) {
@@ -20,14 +23,15 @@ class SendMailMessageService(
             return
         }
 
-        try {
-            mailSender.send(message)
-            logger.debug { "Successfully sent message: ${message.id}" }
-
-            mailMessageService.processSuccessfulDelivery(message)
-        } catch (e: Exception) {
-            logger.warn(e) { "Failed to send message: ${message.id}. Cause: ${e.message}" }
-            mailMessageService.processFailedDelivery(message)
-        }
+        mailFactory.create(message)
+            .flatMap { mailSender.send(it) }
+            .onSuccess {
+                logger.debug { "Successfully sent message: ${message.id}" }
+                mailMessageService.processSuccessfulDelivery(message)
+            }
+            .onFailure {
+                logger.warn(it) { "Failed to send message: ${message.id}. Cause: ${it.message}" }
+                mailMessageService.processFailedDelivery(message)
+            }
     }
 }

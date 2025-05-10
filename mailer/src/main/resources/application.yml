@@ -1,0 +1,14 @@
+quarkus:
+  mailer:
+    auth-methods: ${SMTP_AUTH_METHODS}
+    host: ${SMTP_HOST:host.not.set}
+    port: ${SMTP_PORT}
+    ssl: ${SMTP_SSL:false}
+    start-tls: ${SMTP_TLS:OPTIONAL}
+    username: ${SMTP_USERNAME}
+    password: ${SMTP_PASSWORD}
+    from: ${DEFAULT_EMAIL_FROM}
+  log:
+    category:
+      quarkus-mailer:
+        level: WARN

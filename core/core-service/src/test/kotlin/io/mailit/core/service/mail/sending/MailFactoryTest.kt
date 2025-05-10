@@ -1,5 +1,6 @@
-package io.mailit.core.service.quarkus.mailing
+package io.mailit.core.service.mail.sending
 
+import io.mailit.core.spi.mailer.MailContent
 import io.mailit.template.test.StubTemplateProcessor
 import io.mailit.test.createHtmlMailMessageType
 import io.mailit.test.createMailMessage
@@ -20,13 +21,13 @@ class MailFactoryTest {
         val message = createMailMessage(plainMessageType)
 
         // when
-        val actual = mailFactory.create(message)
+        val actual = mailFactory.create(message).getOrThrow()
 
         // then
-        assertEquals(message.text, actual.text)
+        assertEquals(MailContent.Text(message.text.orEmpty()), actual.content)
         assertEquals(message.subject, actual.subject)
-        assertEquals(listOf(message.emailTo.email), actual.to)
-        assertEquals(message.emailFrom?.email, actual.from)
+        assertEquals(message.emailTo, actual.emailTo)
+        assertEquals(message.emailFrom, actual.emailFrom)
         assertEquals(listOf("${message.id}@mail-it.io"), actual.headers[MESSAGE_ID_HEADER])
     }
 
@@ -37,13 +38,13 @@ class MailFactoryTest {
         val message = createMailMessage(htmlMessageType)
 
         // when
-        val actual = mailFactory.create(message)
+        val actual = mailFactory.create(message).getOrThrow()
 
         // then
-        assertEquals(templateProcessor.html, actual.html)
+        assertEquals(MailContent.Html(templateProcessor.html), actual.content)
         assertEquals(message.subject, actual.subject)
-        assertEquals(listOf(message.emailTo.email), actual.to)
-        assertEquals(message.emailFrom?.email, actual.from)
+        assertEquals(message.emailTo, actual.emailTo)
+        assertEquals(message.emailFrom, actual.emailFrom)
         assertEquals(listOf("${message.id}@mail-it.io"), actual.headers[MESSAGE_ID_HEADER])
     }
 
