@@ -61,9 +61,4 @@ include(
     "template:template-spi-persistence",
     "template:template-test",
     "value-classes",
-    "worker:worker-api",
-    "worker:worker-core",
-    "worker:worker-quarkus",
-    "worker:worker-spi-persistence",
-    "worker:worker-test",
 )
