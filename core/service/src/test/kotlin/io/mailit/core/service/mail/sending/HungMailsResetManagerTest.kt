@@ -42,7 +42,7 @@ class HungMailsResetManagerTest {
         coEvery { mailMessageService.getHungMessages(batchSize) }.returns(listOf(mail1, mail2))
 
         // when
-        hungMailsResetManager.resetAllHungMails()
+        hungMailsResetManager()
 
         // then
         coVerify { mailMessageService.processFailedDelivery(mail1) }
@@ -57,7 +57,7 @@ class HungMailsResetManagerTest {
         coEvery { mailMessageService.getHungMessages(batchSize) } returns manyMails andThen listOf(mail1, mail2)
 
         // when
-        hungMailsResetManager.resetAllHungMails()
+        hungMailsResetManager()
 
         // then
         coVerify(exactly = 202) { mailMessageService.processFailedDelivery(any()) }

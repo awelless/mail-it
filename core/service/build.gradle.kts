@@ -1,6 +1,8 @@
 dependencies {
     implementation(project(":core:admin-api"))
     implementation(project(":core:connector-api"))
+    implementation(project(":core:scheduler-api"))
+
     implementation(project(":core:exception"))
     implementation(project(":core:model"))
     implementation(project(":core:spi"))
@@ -13,7 +15,6 @@ dependencies {
     implementation("io.quarkus:quarkus-elytron-security")
     implementation("io.quarkus:quarkus-kotlin")
     implementation("io.quarkus:quarkus-mailer")
-    implementation("io.quarkus:quarkus-quartz")
 
     implementation("org.freemarker:freemarker")
 

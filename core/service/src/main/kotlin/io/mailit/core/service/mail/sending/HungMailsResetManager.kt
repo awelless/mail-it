@@ -1,5 +1,6 @@
 package io.mailit.core.service.mail.sending
 
+import io.mailit.core.api.scheduler.ResetHungMails
 import io.mailit.core.model.MailMessage
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
@@ -9,12 +10,12 @@ import mu.KLogging
 
 class HungMailsResetManager(
     private val mailMessageService: MailMessageService,
-) {
+) : ResetHungMails {
     companion object : KLogging() {
-        const val BATCH_SIZE = 200
+        private const val BATCH_SIZE = 200
     }
 
-    suspend fun resetAllHungMails() {
+    override suspend operator fun invoke() {
         logger.info { "Hung mails processing has started" }
 
         resetBatchOfHungMails() // recursive method

@@ -16,9 +16,10 @@ dependencies {
     implementation(project(":admin-console")) // admin console implementation
     implementation(project(":api-key:api-key-quarkus"))
     implementation(project(":id-generator:id-generator-quarkus"))
+    implementation(project(":scheduler"))
     implementation(project(":template:template-quarkus"))
-    databaseProviderImplementation()
     connectorsImplementation()
+    persistenceImplementation()
 
     implementation("io.quarkus:quarkus-config-yaml")
     implementation("io.quarkus:quarkus-kotlin")
@@ -45,8 +46,8 @@ tasks.getByName("quarkusDependenciesBuild") {
 /**
  * Resolves database provider dependency, depending on property passed for task
  */
-fun DependencyHandler.databaseProviderImplementation(): Dependency? {
-    // database provider names should be the same as modules in :persistence
+fun DependencyHandler.persistenceImplementation(): Dependency? {
+    // Persistence module names should be the same as modules in :persistence.
     val supportedDatabaseProviders = setOf("h2", "mysql", "postgresql")
     val databaseProviderProperty = "databaseProvider"
 

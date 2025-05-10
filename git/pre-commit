@@ -1,3 +1,4 @@
 #!/bin/sh
 
+./gradlew setUpGitHooks
 ./gradlew ktlintCheck test --fail-fast

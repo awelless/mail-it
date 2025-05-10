@@ -1,5 +1,6 @@
 package io.mailit.core.service.mail.sending
 
+import io.mailit.core.api.scheduler.SendMails
 import io.mailit.value.MailId
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
@@ -10,12 +11,12 @@ import mu.KLogging
 class UnsentMailProcessor(
     private val mailMessageService: MailMessageService,
     private val sendService: SendMailMessageService,
-) {
+) : SendMails {
     companion object : KLogging() {
         const val BATCH_SIZE = 200
     }
 
-    suspend fun processUnsentMail() {
+    override suspend operator fun invoke() {
         logger.info { "Unsent mails processing has started" }
 
         processUnsentMailBatch() // recursive method
