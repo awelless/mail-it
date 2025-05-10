@@ -36,7 +36,7 @@ subprojects {
     val jsoupVersion = "1.20.1" // https://mvnrepository.com/artifact/org.jsoup/jsoup
     val kotlinLoggingVersion = "3.0.5" // https://mvnrepository.com/artifact/io.github.microutils/kotlin-logging
     val kryoVersion = "5.6.2" // https://mvnrepository.com/artifact/com.esotericsoftware/kryo
-    val quarkusVersion = "3.6.8" // https://mvnrepository.com/artifact/io.quarkus.platform/quarkus-bom
+    val quarkusVersion = "3.22.2" // https://mvnrepository.com/artifact/io.quarkus.platform/quarkus-bom
     val restAssuredKotlinExtensionsVersion = "5.5.1" // https://mvnrepository.com/artifact/io.rest-assured/kotlin-extensions
     val svmVersion = "24.2.1" // https://mvnrepository.com/artifact/org.graalvm.nativeimage/svm
 
