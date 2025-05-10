@@ -7,11 +7,11 @@ import io.mailit.core.exception.DuplicateUniqueKeyException
 import io.mailit.core.exception.NotFoundException
 import io.mailit.core.exception.ValidationException
 import io.mailit.core.model.MailMessageType
+import io.mailit.core.model.MailMessageTypeState.DELETED
+import io.mailit.core.model.MailMessageTypeState.FORCE_DELETED
 import io.mailit.core.model.Slice
 import io.mailit.core.spi.MailMessageTypeRepository
 import io.mailit.value.MailTypeId
-import io.mailit.value.MailTypeState.DELETED
-import io.mailit.value.MailTypeState.FORCE_DELETED
 import java.time.Instant
 import mu.KLogging
 

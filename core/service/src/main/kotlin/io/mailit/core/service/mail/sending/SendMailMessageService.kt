@@ -1,7 +1,7 @@
 package io.mailit.core.service.mail.sending
 
+import io.mailit.core.model.MailMessageTypeState.FORCE_DELETED
 import io.mailit.value.MailId
-import io.mailit.value.MailTypeState.FORCE_DELETED
 import mu.KLogging
 
 class SendMailMessageService(

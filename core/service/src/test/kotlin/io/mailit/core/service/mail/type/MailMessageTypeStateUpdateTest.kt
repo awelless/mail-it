@@ -18,7 +18,7 @@ import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
 
 @ExtendWith(MockKExtension::class)
-class MailTypeStateUpdateTest {
+class MailMessageTypeStateUpdateTest {
 
     val mailMessageTypeFactory = MailMessageTypeStateUpdaterManager(
         PlainTextMailMessageTypeStateUpdater(),

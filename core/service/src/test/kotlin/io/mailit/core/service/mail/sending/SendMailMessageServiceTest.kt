@@ -2,9 +2,9 @@ package io.mailit.core.service.mail.sending
 
 import io.mailit.core.model.MailMessage
 import io.mailit.core.model.MailMessageType
+import io.mailit.core.model.MailMessageTypeState.FORCE_DELETED
 import io.mailit.test.createMailMessage
 import io.mailit.test.createPlainMailMessageType
-import io.mailit.value.MailTypeState.FORCE_DELETED
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.impl.annotations.InjectMockKs

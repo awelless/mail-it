@@ -29,6 +29,7 @@ dependencies {
     testImplementation(project(":api-key:api-key-spi-persistence"))
     testImplementation(project(":common-test"))
     testImplementation(project(":core:admin-api"))
+    testImplementation(project(":core:connector-api"))
     testImplementation(project(":core:spi"))
     testImplementation(project(":worker:worker-spi-persistence"))
 

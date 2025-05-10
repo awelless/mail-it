@@ -11,5 +11,5 @@ class InMemoryMailTypeRepository : MailTypeRepository {
         types[id] = name
     }
 
-    override suspend fun findActiveIdByName(name: String) = types.filterValues { it == name }.entries.firstOrNull()?.key
+    override suspend fun findIdByName(name: String) = types.filterValues { it == name }.entries.firstOrNull()?.key
 }

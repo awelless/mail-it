@@ -4,6 +4,7 @@ import io.mailit.core.exception.DuplicateUniqueKeyException
 import io.mailit.core.exception.PersistenceException
 import io.mailit.core.model.HtmlMailMessageType
 import io.mailit.core.model.MailMessageType
+import io.mailit.core.model.MailMessageTypeState
 import io.mailit.core.model.PlainTextMailMessageType
 import io.mailit.core.model.Slice
 import io.mailit.core.spi.MailMessageTypeRepository
@@ -14,7 +15,6 @@ import io.mailit.persistence.postgresql.MailMessageContent.HTML
 import io.mailit.persistence.postgresql.Tables.MAIL_MESSAGE_TEMPLATE
 import io.mailit.persistence.postgresql.Tables.MAIL_MESSAGE_TYPE
 import io.mailit.value.MailTypeId
-import io.mailit.value.MailTypeState
 import io.mailit.worker.spi.persistence.MailTypeRepository
 import io.smallrye.mutiny.Multi
 import io.smallrye.mutiny.Uni
@@ -40,7 +40,7 @@ private const val FIND_BY_ID_SQL = """
       FROM $MAIL_MESSAGE_TYPE mt
       LEFT JOIN $MAIL_MESSAGE_TEMPLATE t ON mt.mail_message_type_id = t.mail_message_type_id 
      WHERE mt.mail_message_type_id = $1
-       AND mt.state = 'ACTIVE'"""
+       AND mt.state = 'ENABLED'"""
 
 private const val FIND_BY_NAME_SQL = """
     SELECT mt.mail_message_type_id ${MailMessageTypeCol.ID},
@@ -56,13 +56,13 @@ private const val FIND_BY_NAME_SQL = """
       FROM $MAIL_MESSAGE_TYPE mt
       LEFT JOIN $MAIL_MESSAGE_TEMPLATE t ON mt.mail_message_type_id = t.mail_message_type_id
      WHERE mt.name = $1
-       AND mt.state = 'ACTIVE'"""
+       AND mt.state = 'ENABLED'"""
 
 private const val FIND_ID_BY_NAME_SQL = """
     SELECT mail_message_type_id
       FROM $MAIL_MESSAGE_TYPE
      WHERE name = $1
-       AND state = 'ACTIVE'"""
+       AND state = 'ENABLED'"""
 
 private const val FIND_ALL_SLICED_SQL = """
     SELECT mt.mail_message_type_id ${MailMessageTypeCol.ID},
@@ -77,7 +77,7 @@ private const val FIND_ALL_SLICED_SQL = """
            t.template ${MailMessageTypeCol.TEMPLATE}
       FROM $MAIL_MESSAGE_TYPE mt
       LEFT JOIN $MAIL_MESSAGE_TEMPLATE t ON mt.mail_message_type_id = t.mail_message_type_id
-     WHERE mt.state = 'ACTIVE'
+     WHERE mt.state = 'ENABLED'
      ORDER BY mt.mail_message_type_id DESC
      LIMIT $1 OFFSET $2"""
 
@@ -147,7 +147,7 @@ class PostgresqlMailMessageTypeRepository(
             .onItem().transform { if (it.hasNext()) it.next().getMailMessageTypeFromRow() else null }
             .awaitSuspending()
 
-    override suspend fun findActiveIdByName(name: String): MailTypeId? =
+    override suspend fun findIdByName(name: String): MailTypeId? =
         client.preparedQuery(FIND_ID_BY_NAME_SQL)
             .execute(Tuple.of(name))
             .onItem().transform { it.iterator() }
@@ -233,7 +233,7 @@ class PostgresqlMailMessageTypeRepository(
         return mailMessageType
     }
 
-    override suspend fun updateState(id: MailTypeId, state: MailTypeState, updatedAt: Instant): Int =
+    override suspend fun updateState(id: MailTypeId, state: MailMessageTypeState, updatedAt: Instant): Int =
         client.preparedQuery(UPDATE_STATE_SQL).execute(Tuple.of(state.name, updatedAt.toLocalDateTime(), id.value))
             .onItem().transform { it.rowCount() }
             .awaitSuspending()

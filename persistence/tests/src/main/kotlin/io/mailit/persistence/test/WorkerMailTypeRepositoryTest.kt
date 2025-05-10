@@ -31,18 +31,18 @@ abstract class WorkerMailTypeRepositoryTest {
     }
 
     @Test
-    fun `findActiveIdByName - when exists - returns id`() = runTest {
+    fun `findIdByName - when exists - returns id`() = runTest {
         // when
-        val actual = mailTypeRepository.findActiveIdByName(mailMessageType.name)
+        val actual = mailTypeRepository.findIdByName(mailMessageType.name)
 
         // then
         assertEquals(mailMessageType.id, actual)
     }
 
     @Test
-    fun `findActiveIdByName - when doesn't exists - returns null`() = runTest {
+    fun `findIdByName - when doesn't exists - returns null`() = runTest {
         // when
-        val actual = mailTypeRepository.findActiveIdByName("invalid")
+        val actual = mailTypeRepository.findIdByName("invalid")
 
         // then
         assertNull(actual)
