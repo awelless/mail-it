@@ -4,7 +4,7 @@ import io.mailit.admin.console.http.PAGE_PARAM
 import io.mailit.admin.console.http.SIZE_PARAM
 import io.mailit.admin.console.http.dto.MailMessageTypeCreateDto
 import io.mailit.admin.console.http.dto.MailMessageTypeUpdateDto
-import io.mailit.core.admin.api.type.MailMessageContentType
+import io.mailit.core.api.admin.type.MailMessageContentType
 import io.mailit.core.model.MailMessageType
 import io.mailit.core.spi.MailMessageTypeRepository
 import io.mailit.test.createPlainMailMessageType

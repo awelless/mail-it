@@ -12,7 +12,7 @@ dependencies {
     compileOnly("org.freemarker:freemarker")
     compileOnly("org.graalvm.nativeimage:svm")
 
-    implementation(project(":core:service")) // core implementation
+    implementation(project(":core:core-service")) // core implementation
     implementation(project(":admin-console")) // admin console implementation
     implementation(project(":api-key:api-key-quarkus"))
     implementation(project(":id-generator:id-generator-quarkus"))
@@ -28,9 +28,9 @@ dependencies {
     testImplementation(project(":api-key:api-key-api"))
     testImplementation(project(":api-key:api-key-spi-persistence"))
     testImplementation(project(":common-test"))
-    testImplementation(project(":core:admin-api"))
-    testImplementation(project(":core:connector-api"))
-    testImplementation(project(":core:spi"))
+    testImplementation(project(":core:core-api-admin"))
+    testImplementation(project(":core:core-api-connector"))
+    testImplementation(project(":core:core-spi-persistence"))
 
     testImplementation("io.quarkus:quarkus-resteasy-reactive")
 }

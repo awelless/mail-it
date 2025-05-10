@@ -3,12 +3,8 @@ apply {
 }
 
 dependencies {
-    implementation(project(":api-key:api-key-spi-persistence"))
-    implementation(project(":core:spi"))
-    implementation(project(":id-generator:id-generator-spi-locking"))
     implementation(project(":persistence:common"))
     implementation(project(":persistence:liquibase"))
-    implementation(project(":template:template-spi-persistence"))
 
     implementation("io.quarkus:quarkus-config-yaml")
     implementation("io.quarkus:quarkus-kotlin")

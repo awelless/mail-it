@@ -1,8 +1,14 @@
 dependencies {
+    // Persistence spi modules.
+    api(project(":api-key:api-key-spi-persistence"))
+    api(project(":core:core-spi-persistence"))
+    api(project(":id-generator:id-generator-spi-locking"))
+    api(project(":template:template-spi-persistence"))
+
     api(project(":core:exception"))
+    api(project(":value-classes"))
     api("commons-dbutils:commons-dbutils")
 
-    implementation(project(":core:model"))
     implementation("com.esotericsoftware:kryo")
 
     implementation("io.quarkus:quarkus-kotlin")

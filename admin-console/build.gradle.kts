@@ -6,7 +6,7 @@ plugins {
 
 dependencies {
     implementation(project(":api-key:api-key-api"))
-    implementation(project(":core:admin-api"))
+    implementation(project(":core:core-api-admin"))
 
     implementation("io.github.microutils:kotlin-logging-jvm")
 

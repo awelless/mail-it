@@ -1,8 +1,8 @@
 package io.mailit.connector.http.web
 
 import io.mailit.connector.http.security.Roles.APPLICATION
-import io.mailit.core.external.api.CreateMailRequest
-import io.mailit.core.external.api.MailMessageService
+import io.mailit.core.api.connector.CreateMailRequest
+import io.mailit.core.api.connector.MailMessageService
 import io.mailit.value.EmailAddress.Companion.toEmailAddress
 import jakarta.annotation.security.RolesAllowed
 import jakarta.ws.rs.POST

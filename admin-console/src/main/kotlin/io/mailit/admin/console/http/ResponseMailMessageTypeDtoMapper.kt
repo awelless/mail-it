@@ -2,9 +2,9 @@ package io.mailit.admin.console.http
 
 import io.mailit.admin.console.http.dto.PagedMailMessageTypeResponseDto
 import io.mailit.admin.console.http.dto.SingleMailMessageTypeResponseDto
-import io.mailit.core.admin.api.type.MailMessageContentType
-import io.mailit.core.admin.api.type.MailMessageContentType.HTML
-import io.mailit.core.admin.api.type.MailMessageContentType.PLAIN_TEXT
+import io.mailit.core.api.admin.type.MailMessageContentType
+import io.mailit.core.api.admin.type.MailMessageContentType.HTML
+import io.mailit.core.api.admin.type.MailMessageContentType.PLAIN_TEXT
 import io.mailit.core.model.HtmlMailMessageType
 import io.mailit.core.model.MailMessageType
 import io.mailit.core.model.PlainTextMailMessageType

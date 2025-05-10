@@ -5,9 +5,9 @@ import io.mailit.admin.console.http.dto.MailMessageTypeUpdateDto
 import io.mailit.admin.console.http.dto.PagedMailMessageTypeResponseDto
 import io.mailit.admin.console.http.dto.SingleMailMessageTypeResponseDto
 import io.mailit.admin.console.security.Roles.ADMIN
-import io.mailit.core.admin.api.type.CreateMailMessageTypeCommand
-import io.mailit.core.admin.api.type.MailMessageTypeService
-import io.mailit.core.admin.api.type.UpdateMailMessageTypeCommand
+import io.mailit.core.api.admin.type.CreateMailMessageTypeCommand
+import io.mailit.core.api.admin.type.MailMessageTypeService
+import io.mailit.core.api.admin.type.UpdateMailMessageTypeCommand
 import io.mailit.core.model.MailMessageTemplate
 import io.mailit.value.MailTypeId
 import io.mailit.value.Slice
