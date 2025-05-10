@@ -6,12 +6,12 @@ import io.mailit.core.exception.ValidationException
 import io.mailit.core.external.api.CreateMailRequest
 import io.mailit.core.external.api.MailMessageService as ConnectorMailMessageService
 import io.mailit.core.model.MailMessage
-import io.mailit.core.model.Slice
 import io.mailit.core.spi.MailMessageRepository
 import io.mailit.core.spi.MailMessageTypeRepository
 import io.mailit.idgenerator.api.IdGenerator
 import io.mailit.value.MailId
 import io.mailit.value.MailState
+import io.mailit.value.Slice
 import java.time.Instant
 import mu.KLogging
 

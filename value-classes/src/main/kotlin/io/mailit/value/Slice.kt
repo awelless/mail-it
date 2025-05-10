@@ -1,4 +1,4 @@
-package io.mailit.core.model
+package io.mailit.value
 
 data class Slice<T>(
     val content: List<T>,

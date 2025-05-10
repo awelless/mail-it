@@ -9,8 +9,8 @@ import io.mailit.core.admin.api.type.CreateMailMessageTypeCommand
 import io.mailit.core.admin.api.type.MailMessageTypeService
 import io.mailit.core.admin.api.type.UpdateMailMessageTypeCommand
 import io.mailit.core.model.MailMessageTemplate
-import io.mailit.core.model.Slice
 import io.mailit.value.MailTypeId
+import io.mailit.value.Slice
 import jakarta.annotation.security.RolesAllowed
 import jakarta.ws.rs.DELETE
 import jakarta.ws.rs.GET

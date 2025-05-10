@@ -1,9 +1,9 @@
 package io.mailit.core.spi
 
 import io.mailit.core.model.MailMessage
-import io.mailit.core.model.Slice
 import io.mailit.value.MailId
 import io.mailit.value.MailState
+import io.mailit.value.Slice
 import java.time.Instant
 
 interface MailMessageRepository {

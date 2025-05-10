@@ -6,7 +6,6 @@ import io.mailit.core.model.HtmlMailMessageType
 import io.mailit.core.model.MailMessageType
 import io.mailit.core.model.MailMessageTypeState
 import io.mailit.core.model.PlainTextMailMessageType
-import io.mailit.core.model.Slice
 import io.mailit.core.spi.MailMessageTypeRepository
 import io.mailit.persistence.common.createSlice
 import io.mailit.persistence.common.toLocalDateTime
@@ -15,6 +14,7 @@ import io.mailit.persistence.postgresql.MailMessageContent.HTML
 import io.mailit.persistence.postgresql.Tables.MAIL_MESSAGE_TEMPLATE
 import io.mailit.persistence.postgresql.Tables.MAIL_MESSAGE_TYPE
 import io.mailit.value.MailTypeId
+import io.mailit.value.Slice
 import io.smallrye.mutiny.Multi
 import io.smallrye.mutiny.Uni
 import io.smallrye.mutiny.coroutines.awaitSuspending

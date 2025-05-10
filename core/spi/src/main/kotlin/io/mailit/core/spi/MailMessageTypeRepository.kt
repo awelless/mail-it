@@ -2,8 +2,8 @@ package io.mailit.core.spi
 
 import io.mailit.core.model.MailMessageType
 import io.mailit.core.model.MailMessageTypeState
-import io.mailit.core.model.Slice
 import io.mailit.value.MailTypeId
+import io.mailit.value.Slice
 import java.time.Instant
 
 interface MailMessageTypeRepository {

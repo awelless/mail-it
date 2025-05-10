@@ -1,6 +1,6 @@
 package io.mailit.persistence.common
 
-import io.mailit.core.model.Slice
+import io.mailit.value.Slice
 
 /**
  * Creates [Slice] from selected [content].

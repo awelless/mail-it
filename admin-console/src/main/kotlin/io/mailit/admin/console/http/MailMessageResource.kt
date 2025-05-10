@@ -5,7 +5,7 @@ import io.mailit.admin.console.http.dto.IdNameDto
 import io.mailit.admin.console.security.Roles.ADMIN
 import io.mailit.core.admin.api.mail.MailMessageService
 import io.mailit.core.model.MailMessage
-import io.mailit.core.model.Slice
+import io.mailit.value.Slice
 import jakarta.annotation.security.RolesAllowed
 import jakarta.ws.rs.GET
 import jakarta.ws.rs.Path
