@@ -1,6 +1,5 @@
 dependencies {
     api(project(":common-test"))
-    api(project(":core:exception"))
 
     implementation(project(":persistence:common"))
     implementation("io.quarkus:quarkus-liquibase")

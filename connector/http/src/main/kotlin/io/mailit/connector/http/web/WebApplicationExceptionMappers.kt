@@ -1,6 +1,6 @@
 package io.mailit.connector.http.web
 
-import io.mailit.core.exception.ValidationException
+import io.mailit.value.exception.ValidationException
 import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
 import jakarta.ws.rs.core.Response.Status.BAD_REQUEST

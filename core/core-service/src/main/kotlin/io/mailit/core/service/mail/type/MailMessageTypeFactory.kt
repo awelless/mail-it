@@ -3,12 +3,12 @@ package io.mailit.core.service.mail.type
 import io.mailit.core.api.admin.type.CreateMailMessageTypeCommand
 import io.mailit.core.api.admin.type.MailMessageContentType.HTML
 import io.mailit.core.api.admin.type.MailMessageContentType.PLAIN_TEXT
-import io.mailit.core.exception.ValidationException
 import io.mailit.core.model.HtmlMailMessageType
 import io.mailit.core.model.MailMessageType
 import io.mailit.core.model.PlainTextMailMessageType
 import io.mailit.idgenerator.api.IdGenerator
 import io.mailit.value.MailTypeId
+import io.mailit.value.exception.ValidationException
 import java.time.Instant
 
 interface MailMessageTypeFactory<T : MailMessageType> {

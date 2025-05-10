@@ -1,7 +1,7 @@
 dependencies {
-    implementation(project(":core:exception"))
     implementation(project(":template:template-api"))
     implementation(project(":template:template-spi-persistence"))
+    implementation(project(":value-classes"))
 
     implementation("org.freemarker:freemarker")
 

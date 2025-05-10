@@ -1,6 +1,5 @@
 package io.mailit.persistence.test
 
-import io.mailit.core.exception.DuplicateUniqueKeyException
 import io.mailit.core.model.MailMessage
 import io.mailit.core.model.MailMessageType
 import io.mailit.core.spi.MailMessageRepository
@@ -12,6 +11,7 @@ import io.mailit.value.MailId
 import io.mailit.value.MailState.CANCELED
 import io.mailit.value.MailState.PENDING
 import io.mailit.value.MailState.SENDING
+import io.mailit.value.exception.DuplicateUniqueKeyException
 import jakarta.inject.Inject
 import java.time.Instant
 import kotlinx.coroutines.runBlocking

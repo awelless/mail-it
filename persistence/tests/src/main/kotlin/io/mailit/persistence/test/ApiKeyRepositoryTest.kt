@@ -2,10 +2,10 @@ package io.mailit.persistence.test
 
 import io.mailit.apikey.spi.persistence.ApiKey
 import io.mailit.apikey.spi.persistence.ApiKeyRepository
-import io.mailit.core.exception.DuplicateUniqueKeyException
 import io.mailit.test.minus
 import io.mailit.test.nowWithoutNanos
 import io.mailit.test.plus
+import io.mailit.value.exception.DuplicateUniqueKeyException
 import jakarta.inject.Inject
 import kotlin.time.Duration.Companion.days
 import kotlinx.coroutines.runBlocking

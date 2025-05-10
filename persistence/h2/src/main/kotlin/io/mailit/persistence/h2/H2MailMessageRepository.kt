@@ -1,6 +1,5 @@
 package io.mailit.persistence.h2
 
-import io.mailit.core.exception.DuplicateUniqueKeyException
 import io.mailit.core.model.MailMessage
 import io.mailit.core.spi.MailMessageRepository
 import io.mailit.persistence.common.createSlice
@@ -13,6 +12,7 @@ import io.mailit.persistence.h2.Tables.MAIL_MESSAGE_TYPE
 import io.mailit.value.MailId
 import io.mailit.value.MailState
 import io.mailit.value.Slice
+import io.mailit.value.exception.DuplicateUniqueKeyException
 import java.sql.SQLException
 import java.time.Instant
 import javax.sql.DataSource

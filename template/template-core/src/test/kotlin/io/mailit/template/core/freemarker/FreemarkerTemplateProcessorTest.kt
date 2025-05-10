@@ -2,12 +2,12 @@ package io.mailit.template.core.freemarker
 
 import freemarker.core.InvalidReferenceException
 import freemarker.core.ParseException
-import io.mailit.core.exception.NotFoundException
 import io.mailit.template.core.fake.StubTemplateRepository
 import io.mailit.template.spi.persistence.PersistenceTemplate
 import io.mailit.test.assertHtmlEquals
 import io.mailit.test.readResource
 import io.mailit.value.MailTypeId
+import io.mailit.value.exception.NotFoundException
 import java.time.Instant
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertTrue

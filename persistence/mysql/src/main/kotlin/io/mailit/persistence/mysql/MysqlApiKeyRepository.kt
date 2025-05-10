@@ -2,10 +2,10 @@ package io.mailit.persistence.mysql
 
 import io.mailit.apikey.spi.persistence.ApiKey
 import io.mailit.apikey.spi.persistence.ApiKeyRepository
-import io.mailit.core.exception.DuplicateUniqueKeyException
 import io.mailit.persistence.common.toLocalDateTime
 import io.mailit.persistence.mysql.Columns.ApiKey as ApiKeyCol
 import io.mailit.persistence.mysql.Tables.API_KEY
+import io.mailit.value.exception.DuplicateUniqueKeyException
 import io.smallrye.mutiny.Multi
 import io.smallrye.mutiny.Uni
 import io.smallrye.mutiny.coroutines.awaitSuspending

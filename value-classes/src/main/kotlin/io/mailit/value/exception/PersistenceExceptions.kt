@@ -1,4 +1,4 @@
-package io.mailit.core.exception
+package io.mailit.value.exception
 
 open class PersistenceException(message: String?, cause: Exception? = null) : Exception(message, cause)
 

@@ -1,10 +1,10 @@
 package io.mailit.template.core.none
 
-import io.mailit.core.exception.NotFoundException
 import io.mailit.template.api.TemplateProcessor
 import io.mailit.template.spi.persistence.TemplateRepository
 import io.mailit.value.MailTypeId
 import io.mailit.value.TemplateEngine
+import io.mailit.value.exception.NotFoundException
 
 /**
  * [TemplateProcessor] for [TemplateEngine.NONE].

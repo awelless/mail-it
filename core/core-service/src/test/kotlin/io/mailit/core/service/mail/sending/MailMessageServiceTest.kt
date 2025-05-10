@@ -1,6 +1,5 @@
 package io.mailit.core.service.mail.sending
 
-import io.mailit.core.exception.NotFoundException
 import io.mailit.core.model.MailMessage
 import io.mailit.core.model.MailMessageType
 import io.mailit.core.spi.MailMessageRepository
@@ -11,6 +10,7 @@ import io.mailit.value.MailState.PENDING
 import io.mailit.value.MailState.RETRY
 import io.mailit.value.MailState.SENDING
 import io.mailit.value.MailState.SENT
+import io.mailit.value.exception.NotFoundException
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.impl.annotations.RelaxedMockK

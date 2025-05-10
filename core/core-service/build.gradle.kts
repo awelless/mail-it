@@ -10,9 +10,9 @@ dependencies {
     // Dependencies on other modules.
     implementation(project(":id-generator:id-generator-api"))
     implementation(project(":template:template-api"))
+    implementation(project(":value-classes"))
 
     // Own submodules.
-    implementation(project(":core:exception"))
     implementation(project(":core:core-model"))
 
     // External dependencies.

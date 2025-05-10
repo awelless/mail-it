@@ -1,7 +1,7 @@
 package io.mailit.admin.console.http
 
-import io.mailit.core.exception.NotFoundException
-import io.mailit.core.exception.ValidationException
+import io.mailit.value.exception.NotFoundException
+import io.mailit.value.exception.ValidationException
 import jakarta.ws.rs.core.MediaType.APPLICATION_JSON
 import jakarta.ws.rs.core.Response
 import jakarta.ws.rs.core.Response.Status.BAD_REQUEST

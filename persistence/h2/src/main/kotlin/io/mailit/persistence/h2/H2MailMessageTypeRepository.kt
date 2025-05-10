@@ -1,7 +1,5 @@
 package io.mailit.persistence.h2
 
-import io.mailit.core.exception.DuplicateUniqueKeyException
-import io.mailit.core.exception.PersistenceException
 import io.mailit.core.model.HtmlMailMessageType
 import io.mailit.core.model.MailMessageType
 import io.mailit.core.model.MailMessageTypeState
@@ -15,6 +13,8 @@ import io.mailit.persistence.h2.Tables.MAIL_MESSAGE_TEMPLATE
 import io.mailit.persistence.h2.Tables.MAIL_MESSAGE_TYPE
 import io.mailit.value.MailTypeId
 import io.mailit.value.Slice
+import io.mailit.value.exception.DuplicateUniqueKeyException
+import io.mailit.value.exception.PersistenceException
 import java.sql.SQLException
 import java.time.Instant
 import javax.sql.DataSource

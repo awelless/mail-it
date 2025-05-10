@@ -42,7 +42,6 @@ include(
     "core:core-spi-persistence",
     "core:core-model",
     "core:core-service",
-    "core:exception",
     "distribution",
     "id-generator:id-generator-api",
     "id-generator:id-generator-core",

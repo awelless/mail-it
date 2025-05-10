@@ -1,10 +1,10 @@
 package io.mailit.core.service.mail.type
 
 import io.mailit.core.api.admin.type.UpdateMailMessageTypeCommand
-import io.mailit.core.exception.ValidationException
 import io.mailit.core.model.HtmlMailMessageType
 import io.mailit.core.model.MailMessageType
 import io.mailit.core.model.PlainTextMailMessageType
+import io.mailit.value.exception.ValidationException
 import java.time.Instant
 
 interface MailMessageTypeStateUpdater<T : MailMessageType> {

@@ -1,4 +1,4 @@
-package io.mailit.core.exception
+package io.mailit.value.exception
 
 sealed class ApplicationException(message: String, cause: Exception? = null) : Exception(message, cause) {
 

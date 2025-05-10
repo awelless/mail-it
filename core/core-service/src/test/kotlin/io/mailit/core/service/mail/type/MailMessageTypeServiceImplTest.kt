@@ -3,11 +3,11 @@ package io.mailit.core.service.mail.type
 import io.mailit.core.api.admin.type.CreateMailMessageTypeCommand
 import io.mailit.core.api.admin.type.MailMessageContentType
 import io.mailit.core.api.admin.type.UpdateMailMessageTypeCommand
-import io.mailit.core.exception.DuplicateUniqueKeyException
-import io.mailit.core.exception.ValidationException
 import io.mailit.core.model.MailMessageType
 import io.mailit.core.spi.MailMessageTypeRepository
 import io.mailit.test.createPlainMailMessageType
+import io.mailit.value.exception.DuplicateUniqueKeyException
+import io.mailit.value.exception.ValidationException
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs

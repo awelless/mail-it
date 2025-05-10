@@ -3,8 +3,6 @@ package io.mailit.core.service.mail
 import io.mailit.core.api.admin.mail.MailMessageService
 import io.mailit.core.api.connector.CreateMailRequest
 import io.mailit.core.api.connector.MailMessageService as ConnectorMailMessageService
-import io.mailit.core.exception.DuplicateUniqueKeyException
-import io.mailit.core.exception.ValidationException
 import io.mailit.core.model.MailMessage
 import io.mailit.core.spi.MailMessageRepository
 import io.mailit.core.spi.MailMessageTypeRepository
@@ -12,6 +10,8 @@ import io.mailit.idgenerator.api.IdGenerator
 import io.mailit.value.MailId
 import io.mailit.value.MailState
 import io.mailit.value.Slice
+import io.mailit.value.exception.DuplicateUniqueKeyException
+import io.mailit.value.exception.ValidationException
 import java.time.Instant
 import mu.KLogging
 

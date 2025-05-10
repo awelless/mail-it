@@ -5,7 +5,6 @@ dependencies {
     api(project(":id-generator:id-generator-spi-locking"))
     api(project(":template:template-spi-persistence"))
 
-    api(project(":core:exception"))
     api(project(":value-classes"))
     api("commons-dbutils:commons-dbutils")
 

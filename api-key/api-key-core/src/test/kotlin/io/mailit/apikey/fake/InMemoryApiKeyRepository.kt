@@ -2,7 +2,7 @@ package io.mailit.apikey.fake
 
 import io.mailit.apikey.spi.persistence.ApiKey
 import io.mailit.apikey.spi.persistence.ApiKeyRepository
-import io.mailit.core.exception.DuplicateUniqueKeyException
+import io.mailit.value.exception.DuplicateUniqueKeyException
 import java.util.concurrent.ConcurrentHashMap
 
 class InMemoryApiKeyRepository : ApiKeyRepository {

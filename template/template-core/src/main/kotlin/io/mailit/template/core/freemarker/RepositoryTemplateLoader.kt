@@ -1,9 +1,9 @@
 package io.mailit.template.core.freemarker
 
 import freemarker.cache.TemplateLoader
-import io.mailit.core.exception.NotFoundException
 import io.mailit.template.spi.persistence.TemplateRepository
 import io.mailit.value.MailTypeId
+import io.mailit.value.exception.NotFoundException
 import java.io.StringReader
 import kotlinx.coroutines.runBlocking
 
