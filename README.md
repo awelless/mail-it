@@ -6,8 +6,8 @@ Open source e-mail service featuring template management and processing
 
 ### Requirements
 
-- JDK 17
-- Kotlin 1.8
+- JDK 21
+- Kotlin 1.9
 - GraalVM 22.3 (for native build only)
 - Node.js 18
 - Docker (for tests only)
