@@ -1,10 +1,10 @@
-name: "CodeQL"
+name: CodeQL
 
 on:
   push:
-    branches: [ "master" ]
+    branches: [ main ]
   pull_request:
-    branches: [ "master" ]
+    branches: [ main ]
   schedule:
     - cron: '15 17 * * 0'
 
@@ -20,7 +20,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        language: [ 'java', 'javascript' ]
+        language: [ java, javascript ]
 
     steps:
     - name: Checkout repository
@@ -36,8 +36,8 @@ jobs:
       if: ${{ matrix.language == 'java' }}
       uses: actions/setup-java@v3
       with:
-        java-version: '21'
-        distribution: 'corretto'
+        java-version: 21
+        distribution: corretto
 
     - name: Set up Gradle
       if: ${{ matrix.language == 'java' }}
@@ -50,4 +50,4 @@ jobs:
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v2
       with:
-        category: "/language:${{matrix.language}}"
+        category: /language:${{matrix.language}}
