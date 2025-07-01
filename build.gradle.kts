@@ -40,7 +40,7 @@ subprojects {
     val restAssuredKotlinExtensionsVersion = "5.5.1" // https://mvnrepository.com/artifact/io.rest-assured/kotlin-extensions
     val svmVersion = "24.2.1" // https://mvnrepository.com/artifact/org.graalvm.nativeimage/svm
 
-    val mockkVersion = "1.14.2" // https://mvnrepository.com/artifact/io.mockk/mockk
+    val mockkVersion = "1.14.4" // https://mvnrepository.com/artifact/io.mockk/mockk
 
     dependencyManagement {
         dependencies {
